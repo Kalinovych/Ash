@@ -50,10 +50,11 @@ package ash.core
 			var variables : XMLList = describeType( nodeClass ).factory.variable;
 			for each ( var atom:XML in variables )
 			{
-				if ( atom.@name != "entity" && atom.@name != "previous" && atom.@name != "next" )
+				var atomName : String = atom.@name.toString();
+				if ( atomName != "entity" && atomName != "previous" && atomName != "next" )
 				{
-					var componentClass : Class = getDefinitionByName( atom.@type ) as Class;
-					components[componentClass] = atom.@name.toString();
+					var componentClass : Class = getDefinitionByName( atom.@type.toString() ) as Class;
+					components[componentClass] = atomName;
 				}
 			}
 		}
@@ -83,7 +84,10 @@ package ash.core
 		 */
 		public function componentAddedToEntity( entity : Entity, componentClass : Class ) : void
 		{
-			addIfMatch( entity );
+			if( components[componentClass] )
+			{
+				addIfMatch( entity );
+			}
 		}
 		
 		/**
