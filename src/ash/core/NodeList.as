@@ -335,5 +335,39 @@ package ash.core
 			}
 			return head;
 		}
+
+		/**
+		 * Executes a function on each node in the NodeList.
+		 * <code>
+		 *     function processNode(node:MyNode):void {
+		 *         // your code here
+		 *     }
+		 *     nodeList.forEach( processNode );
+		 * </code>
+		 * <code>
+		 *     function updateNode(node:MyNode, deltaTime:Number):void {
+		 *          // your code here
+		 *     }
+		 *     nodeList.forEach(updateNode, deltaTime);
+		 * </code>
+		 * @param callback The function to run on each node in the NodeList.
+		 * This function is invoked with one or more arguments:
+		 * the current node from the NodeList and other arguments passed in the args parameter:
+		 * <code>function callback(node:MyNode):void</code>
+		 * <code>function callback(node:MyNode, someValue:SomeType ):void</code>
+		 * @param args An optional list of one or more comma-separated values to pass as arguments into callback function call.
+		 */
+		public function forEach( callback : Function, ...args ) : void
+		{
+			if ( head )
+			{
+				args.unshift( null );
+				for( var node : Node = head; node; node = node.next )
+				{
+					args[0] = node;
+					callback.apply( null, args );
+				}
+			}
+		}
 	}
 }
