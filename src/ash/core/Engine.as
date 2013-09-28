@@ -208,7 +208,7 @@ package ash.core
 		 * @param priority The priority for updating the systems during the engine loop. A 
 		 * lower number means the system is updated sooner.
 		 */
-		public function addSystem( system : System, priority : int ) : void
+		public function addSystem( system : System, priority : int = 0) : void
 		{
 			system.priority = priority;
 			system.addToEngine( this );
