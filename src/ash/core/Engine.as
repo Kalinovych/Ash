@@ -55,6 +55,7 @@ package ash.core
 			{
 				throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 			}
+			entity._engine = this;
 			entityList.add( entity );
 			entityNames[ entity.name ] = entity;
 			entity.componentAdded.add( componentAdded );
@@ -82,6 +83,7 @@ package ash.core
 			}
 			delete entityNames[ entity.name ];
 			entityList.remove( entity );
+			entity._engine = null;
 		}
 		
 		private function entityNameChanged( entity : Entity, oldName : String ) : void

@@ -46,6 +46,8 @@ package ash.core
 		internal var previous : Entity;
 		internal var next : Entity;
 		internal var components : Dictionary;
+		
+		internal var _engine:Engine;
 
 		/**
 		 * The constructor
@@ -84,6 +86,10 @@ package ash.core
 				_name = value;
 				nameChanged.dispatch( this, previous );
 			}
+		}
+		
+		public function get engine():Engine {
+			return _engine;
 		}
 
 		/**
