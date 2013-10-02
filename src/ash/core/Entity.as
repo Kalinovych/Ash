@@ -88,10 +88,6 @@ package ash.core
 			}
 		}
 		
-		public function get engine():Engine {
-			return _engine;
-		}
-
 		/**
 		 * Add a component to the entity.
 		 * 
@@ -175,6 +171,16 @@ package ash.core
 		public function has( componentClass : Class ) : Boolean
 		{
 			return components[ componentClass ] != null;
+		}
+
+		public function get engine():Engine {
+			return _engine;
+		}
+		
+		public function removeFromEngine():void {
+			if (_engine) {
+				_engine.removeEntity(this);
+			}
 		}
 	}
 }
