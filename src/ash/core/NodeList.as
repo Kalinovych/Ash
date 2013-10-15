@@ -43,6 +43,8 @@ package ash.core
 		 */
 		public var nodeRemoved : Signal1;
 		
+		private var _length:int = 0;
+		
 		public function NodeList()
 		{
 			nodeAdded = new Signal1( Node );
@@ -63,6 +65,7 @@ package ash.core
 				node.next = null;
 				tail = node;
 			}
+			_length++;
 			nodeAdded.dispatch( node );
 		}
 		
@@ -86,6 +89,7 @@ package ash.core
 			{
 				node.next.previous = node.previous;
 			}
+			_length--;
 			nodeRemoved.dispatch( node );
 			// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
 		}
@@ -101,6 +105,7 @@ package ash.core
 				nodeRemoved.dispatch( node );
 			}
 			tail = null;
+			_length = 0;
 		}
 		
 		/**
@@ -368,6 +373,10 @@ package ash.core
 					callback.apply( null, args );
 				}
 			}
+		}
+
+		public function get length():int {
+			return _length;
 		}
 	}
 }
