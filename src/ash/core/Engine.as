@@ -144,7 +144,7 @@ public class Engine {
 		var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
 		if (matcherList) {
 			for each(var matcher:NodeMatcher in matcherList) {
-				matcher.entityAdded(entity);
+				matcher.componentAdded(entity);
 			}
 		}
 	}
@@ -156,7 +156,7 @@ public class Engine {
 		var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
 		if (matcherList) {
 			for each(var matcher:NodeMatcher in matcherList) {
-				matcher.entityRemoved(entity);
+				matcher.componentRemoved(entity, componentClass);
 			}
 		}
 	}

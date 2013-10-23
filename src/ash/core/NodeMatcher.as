@@ -20,7 +20,7 @@ public class NodeMatcher {
 
 	/** Node property name by a component class */
 	private var propertyMap:Dictionary = new Dictionary();
-	
+
 	/** List of component classes defined in node */
 	internal var componentSet:Vector.<Class> = new Vector.<Class>();
 
@@ -50,28 +50,19 @@ public class NodeMatcher {
 	}
 
 	internal function entityAdded(entity:Entity):void {
-		// do nothing if entity already identified as node
+		// do nothing if an entity already identified as node
 		if (nodeMap[entity]) {
 			return;
 		}
 
 		// verify existence of required component set in the entity
-		var componentClass:Class;
-		for each (componentClass in componentSet) {
-			if (!entity.has(componentClass)) {
+		for each (var requiredClass:Class in componentSet) {
+			if (!entity.has(requiredClass)) {
 				return;
 			}
 		}
 
-		// Create new node and assign components from the entity to it fields
-		var node:Node = nodePool.get();
-		node.entity = entity;
-		for each (componentClass in componentSet) {
-			var property:String = propertyMap[componentClass];
-			node[property] = entity.get(componentClass);
-		}
-		nodeMap[entity] = node;
-		nodeList.add(node);
+		createNode(entity);
 	}
 
 	/**
@@ -79,15 +70,57 @@ public class NodeMatcher {
 	 */
 	internal function entityRemoved(entity:Entity):void {
 		if (nodeMap[entity]) {
-			var node:Node = nodeMap[entity];
-			delete nodeMap[entity];
-			nodeList.remove(node);
-			if (engine.updating) {
-				nodePool.cache(node);
-				engine.updateComplete.add(releaseNodePoolCache);
-			} else {
-				nodePool.dispose(node);
+			removeNode(entity);
+		}
+	}
+
+	internal function componentAdded(entity:Entity, componentClass:Class):void {
+		// do nothing if an entity already identified or component isn't interest 
+		if (nodeMap[entity] || !propertyMap[componentClass]) {
+			return;
+		}
+
+		// verify that a new component complete a set of required components in the entity
+		for each (var requiredClass:Class in componentSet) {
+			if (!entity.has(requiredClass)) {
+				return;
 			}
+		}
+
+		createNode(entity);
+	}
+
+	internal function componentRemoved(entity:Entity, componentClass:Class):void {
+		if (nodeMap[entity] && propertyMap[componentClass]) {
+			removeNode(entity);
+		}
+	}
+	
+	[Inline]
+	private function createNode(entity:Entity):void {
+		// Create new node and assign components from the entity to it fields
+		var node:Node = nodePool.get();
+		node.entity = entity;
+		for each (var componentClass:Class in componentSet) {
+			var property:String = propertyMap[componentClass];
+			node[property] = entity.get(componentClass);
+		}
+		nodeMap[entity] = node;
+		nodeList.add(node);
+	}
+
+	[Inline]
+	private function removeNode(entity:Entity):void {
+		var node:Node = nodeMap[entity];
+		delete nodeMap[entity];
+
+		nodeList.remove(node);
+
+		if (engine.updating) {
+			nodePool.cache(node);
+			engine.updateComplete.add(releaseNodePoolCache);
+		} else {
+			nodePool.dispose(node);
 		}
 	}
 
