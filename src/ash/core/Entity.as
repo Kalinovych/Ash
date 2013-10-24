@@ -48,6 +48,8 @@ package ash.core
 		internal var components : Dictionary;
 		
 		internal var _engine:Engine;
+		
+		internal var dna:uint = 0;
 
 		/**
 		 * The constructor

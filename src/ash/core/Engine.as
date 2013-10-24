@@ -1,4 +1,5 @@
 package ash.core {
+import ash.core.Entity;
 import ash.signals.Signal0;
 
 import flash.utils.Dictionary;
@@ -8,23 +9,26 @@ import flash.utils.Dictionary;
  * entities and systems to the engine, and fetch families of nodes from the engine.
  */
 public class Engine {
-	private var entityNames:Dictionary;
+	private var entityByName:Dictionary;
 	private var entityList:EntityList;
 	private var systemList:SystemList;
 
-	/**
-	 * NodeMatcher by a node class
-	 */
-	private var nodeMatcherMap:Dictionary = new Dictionary();
+	private var dnaBitIndex:uint = 0;
+	private var dnaBitByType:Dictionary = new Dictionary();
 
 	/**
-	 * Vectors of NodeMatcher by a component class.
-	 * 
+	 * Family by a node class
+	 */
+	private var familyMap:Dictionary = new Dictionary();
+
+	/**
+	 * Vectors of Family by a component class.
+	 *
 	 * Designed to optimize node matchers notification about a component added or removed from an Entity.
 	 * The Engine will process only a list of matchers interested in added/removed component.
-	 * Matchers not interested in a component stays out of notification loop. 
+	 * Matchers not interested in a component stays out of notification loop.
 	 */
-	private var matcherListByComponent:Dictionary = new Dictionary();
+	private var familiesByComponent:Dictionary = new Dictionary();
 
 	/**
 	 * Indicates if the engine is currently in its update loop.
@@ -43,7 +47,7 @@ public class Engine {
 	 */
 	public function Engine() {
 		entityList = new EntityList();
-		entityNames = new Dictionary();
+		entityByName = new Dictionary();
 		systemList = new SystemList();
 		updateComplete = new Signal0();
 	}
@@ -55,23 +59,27 @@ public class Engine {
 	 */
 
 	public function addEntity(entity:Entity):void {
-		if (entityNames[ entity.name ]) {
+		if (entityByName[ entity.name ]) {
 			throw new Error("The entity name " + entity.name + " is already in use by another entity.");
 		}
+
+		entity.dna = 0x0;
+		for (var componentClass:Class in entity.components) {
+			entity.dna |= getDNABit(componentClass);
+		}
+
 		entity._engine = this;
 		entityList.add(entity);
-		entityNames[ entity.name ] = entity;
+		entityByName[ entity.name ] = entity;
 
 		entity.componentAdded.add(componentAdded);
 		entity.componentRemoved.add(componentRemoved);
 		entity.nameChanged.add(entityNameChanged);
 
-		for (var componentClass:* in entity.components) {
-			var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
-			if (matcherList) {
-				for each(var matcher:NodeMatcher in matcherList) {
-					matcher.entityAdded(entity);
-				}
+		for (var nodeClass:Class in familyMap) {
+			var family:Family = familyMap[nodeClass];
+			if (entityBelongToFamily(entity, family)) {
+				family.addEntity(entity);
 			}
 		}
 	}
@@ -86,24 +94,87 @@ public class Engine {
 		entity.componentRemoved.remove(componentRemoved);
 		entity.nameChanged.remove(entityNameChanged);
 
-		for (var componentClass:* in entity.components) {
-			var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
-			if (matcherList) {
-				for each(var matcher:NodeMatcher in matcherList) {
-					matcher.entityRemoved(entity);
-				}
+		for (var nodeClass:Class in familyMap) {
+			var family:Family = familyMap[nodeClass];
+			if (entityBelongToFamily(entity, family)) {
+				family.removeEntity(entity);
 			}
 		}
 
-		delete entityNames[ entity.name ];
+		delete entityByName[ entity.name ];
 		entityList.remove(entity);
 		entity._engine = null;
 	}
 
+	/**
+	 * @private
+	 */
+	private function componentAdded(entity:Entity, componentClass:Class):void {
+		// put component bit to the entity dna
+		entity.dna |= getDNABit(componentClass);
+
+		var familyList:Vector.<Family> = familiesByComponent[componentClass];
+		if (familyList) {
+			for each(var family:Family in familyList) {
+				if (entityBelongToFamily(entity, family)) {
+					family.componentAdded(entity, componentClass);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	private function componentRemoved(entity:Entity, componentClass:Class):void {
+		var familyList:Vector.<Family> = familiesByComponent[componentClass];
+		if (familyList) {
+			for each(var family:Family in familyList) {
+				if (entityBelongToFamily(entity, family)) {
+					family.componentRemoved(entity, componentClass);
+				}
+			}
+		}
+
+		// exclude component bit from the entity dna
+		entity.dna ^= getDNABit(componentClass);
+	}
+
+	[Inline]
+	private function getDNABit(type:Class):uint {
+		return ( dnaBitByType[type] ||= (0x00000001 << dnaBitIndex++) );
+	}
+
+	[Inline]
+	private function entityBelongToFamily(entity:Entity, family:Family):Boolean {
+		return ( (entity.dna & family.dna) == family.dna );
+	}
+
+	/**
+	 * Return node of the entity if the entity belong to a family of the node.
+	 * Return null if family of the node not exists or not created yet.
+	 * @param entity
+	 * @param nodeClass
+	 * @return
+	 */
+	public function entityAsNode(entity:Entity, nodeClass:Class):* {
+		var family:Family = familyMap[nodeClass];
+		return (family ? family.nodeByEntity[entity] : null);
+	}
+
+	/**
+	 * Return true if the entity in the engine
+	 * @param entity
+	 * @return
+	 */
+	public function hasEntity(entity:Entity):Boolean {
+		return (entityByName[entity.name] == entity);
+	}
+
 	private function entityNameChanged(entity:Entity, oldName:String):void {
-		if (entityNames[ oldName ] == entity) {
-			delete entityNames[ oldName ];
-			entityNames[ entity.name ] = entity;
+		if (entityByName[ oldName ] == entity) {
+			delete entityByName[ oldName ];
+			entityByName[ entity.name ] = entity;
 		}
 	}
 
@@ -114,7 +185,7 @@ public class Engine {
 	 * @return The entity, or null if no entity with that name exists on the engine
 	 */
 	public function getEntityByName(name:String):Entity {
-		return entityNames[ name ];
+		return entityByName[ name ];
 	}
 
 	/**
@@ -138,30 +209,6 @@ public class Engine {
 	}
 
 	/**
-	 * @private
-	 */
-	private function componentAdded(entity:Entity, componentClass:Class):void {
-		var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
-		if (matcherList) {
-			for each(var matcher:NodeMatcher in matcherList) {
-				matcher.componentAdded(entity);
-			}
-		}
-	}
-
-	/**
-	 * @private
-	 */
-	private function componentRemoved(entity:Entity, componentClass:Class):void {
-		var matcherList:Vector.<NodeMatcher> = matcherListByComponent[componentClass];
-		if (matcherList) {
-			for each(var matcher:NodeMatcher in matcherList) {
-				matcher.componentRemoved(entity, componentClass);
-			}
-		}
-	}
-
-	/**
 	 * Get a collection of nodes from the engine, based on the type of the node required.
 	 *
 	 * <p>The engine will create the appropriate NodeList if it doesn't already exist and
@@ -174,7 +221,7 @@ public class Engine {
 	 * @return A linked list of all nodes of this type from all entities in the engine.
 	 */
 	public function getNodeList(nodeClass:Class):NodeList {
-		return ( nodeMatcherMap[nodeClass] || createNodeMatcher(nodeClass) ).nodeList;
+		return ( familyMap[nodeClass] || createFamily(nodeClass) ).nodeList;
 	}
 
 	/**
@@ -188,29 +235,40 @@ public class Engine {
 	 * @param nodeClass The type of the node class if the list to be released.
 	 */
 	public function releaseNodeList(nodeClass:Class):void {
-		var matcher:NodeMatcher = nodeMatcherMap[nodeClass];
-		if (matcher) {
-			matcher.clear();
-			delete nodeMatcherMap[nodeClass];
+		var family:Family = familyMap[nodeClass];
+		if (family) {
+			// TODO: unsubscribe from components notifications
+			family.clear();
+			delete familyMap[nodeClass];
 		}
 	}
 
-	
+
 	[Inline]
-	private function createNodeMatcher(nodeClass:Class):NodeMatcher {
-		var matcher:NodeMatcher = nodeMatcherMap[nodeClass] = new NodeMatcher(nodeClass, this);
+	private function createFamily(nodeClass:Class):Family {
+		var family:Family = familyMap[nodeClass] = new Family(nodeClass, this);
 
+		// DNA
+		family.dna = 0x0;
+		for each(var componentClass:Class in family.componentSet) {
+			family.dna |= getDNABit(componentClass);
+		}
+
+		// build family from current entities
 		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
-			matcher.entityAdded(entity);
+			if (entityBelongToFamily(entity, family)) {
+				family.addEntity(entity);
+			}
 		}
 
-		// subscribe for new components notification
-		for each(var componentClass:Class in matcher.componentSet) {
-			var matcherList:Vector.<NodeMatcher> = ( matcherListByComponent[componentClass] ||= new Vector.<NodeMatcher>() );
-			matcherList.push(matcher);
+		// TODO: move to DNA build block
+		// subscribe for components add/remove notification
+		for each(componentClass in family.componentSet) {
+			var familyList:Vector.<Family> = familiesByComponent[componentClass] ||= new Vector.<Family>();
+			familyList.push(family);
 		}
 
-		return matcher;
+		return family;
 	}
 
 

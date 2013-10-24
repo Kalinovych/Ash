@@ -2,65 +2,87 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
+import ash.core.Family;
+import ash.tools.ComponentPool;
+
 import flash.system.System;
 import flash.utils.Dictionary;
 import flash.utils.describeType;
 import flash.utils.getDefinitionByName;
 
 /**
- * NodeMatcher designed to identify entities as defined node and add or remove that node to the NodeList.
+ * Family designed to identify entities as defined node and add or remove that node to the NodeList.
  */
-public class NodeMatcher {
+public class Family {
+
+	private static var nodePropertyMap:Dictionary = new Dictionary();
+	private static var nodeComponentSet:Dictionary = new Dictionary();
+	
+	private static function initFamily(family:Family, nodeClass:Class):void {
+		var propertyMap:Dictionary = nodePropertyMap[nodeClass];
+		var componentSet:Vector.<Class> = nodeComponentSet[nodeClass];
+		
+		if (!propertyMap) {
+			propertyMap = nodePropertyMap[nodeClass] = new Dictionary();
+			componentSet = nodeComponentSet[nodeClass] = new Vector.<Class>();
+			
+			var classXML:XML = describeType(nodeClass);
+			var variables:XMLList = classXML.factory.variable;
+			for each (var item:XML in variables) {
+				var propertyName:String = item.@name.toString();
+				if (propertyName != "entity" && propertyName != "previous" && propertyName != "next") {
+					var componentClass:Class = getDefinitionByName(item.@type.toString()) as Class;
+					propertyMap[componentClass] = propertyName;
+					componentSet.push(componentClass);
+				}
+			}
+			flash.system.System.disposeXML(classXML);
+		}
+
+		family.propertyMap = propertyMap;
+		family.componentSet = componentSet;
+	}
+	
 	private var nodeClass:Class;
 	private var engine:Engine;
 	private var nodePool:NodePool;
 
-	/** Node by entity */
-	private var nodeMap:Dictionary = new Dictionary();
+	internal var nodeByEntity:Dictionary = new Dictionary();
 
 	/** Node property name by a component class */
-	private var propertyMap:Dictionary = new Dictionary();
+	internal var propertyMap:Dictionary;
 
 	/** List of component classes defined in node */
-	internal var componentSet:Vector.<Class> = new Vector.<Class>();
+	internal var componentSet:Vector.<Class>;
 
 	/** Store of all matched nodes of 'alive' entities */
 	internal var nodeList:NodeList = new NodeList();
+	
+	internal var dna:uint = 0x0;
 
-	public function NodeMatcher(nodeClass:Class, engine:Engine) {
+	public function Family(nodeClass:Class, engine:Engine) {
 		this.nodeClass = nodeClass;
 		this.engine = engine;
 		init();
 	}
 
 	private function init():void {
+		initFamily(this,  nodeClass);
 		nodePool = new NodePool(nodeClass, propertyMap);
-
-		var classXML:XML = describeType(nodeClass);
-		var variables:XMLList = classXML.factory.variable;
-		for each (var item:XML in variables) {
-			var propertyName:String = item.@name.toString();
-			if (propertyName != "entity" && propertyName != "previous" && propertyName != "next") {
-				var componentClass:Class = getDefinitionByName(item.@type.toString()) as Class;
-				propertyMap[componentClass] = propertyName;
-				componentSet.push(componentClass);
-			}
-		}
-		flash.system.System.disposeXML(classXML);
 	}
 
-	internal function entityAdded(entity:Entity):void {
-		// do nothing if an entity already identified as node
-		if (nodeMap[entity]) {
+	internal function addEntity(entity:Entity):void {
+		// do nothing if an entity already identified in this family
+		if (nodeByEntity[entity]) {
 			return;
 		}
 
 		// verify existence of required component set in the entity
-		for each (var requiredClass:Class in componentSet) {
+		/*for each (var requiredClass:Class in componentSet) {
 			if (!entity.has(requiredClass)) {
 				return;
 			}
-		}
+		}*/
 
 		createNode(entity);
 	}
@@ -68,30 +90,30 @@ public class NodeMatcher {
 	/**
 	 * Removes the entity if it is in this family's NodeList.
 	 */
-	internal function entityRemoved(entity:Entity):void {
-		if (nodeMap[entity]) {
+	internal function removeEntity(entity:Entity):void {
+		if (nodeByEntity[entity]) {
 			removeNode(entity);
 		}
 	}
 
 	internal function componentAdded(entity:Entity, componentClass:Class):void {
 		// do nothing if an entity already identified or component isn't interest 
-		if (nodeMap[entity] || !propertyMap[componentClass]) {
+		if (nodeByEntity[entity] || !propertyMap[componentClass]) {
 			return;
 		}
 
 		// verify that a new component complete a set of required components in the entity
-		for each (var requiredClass:Class in componentSet) {
+		/*for each (var requiredClass:Class in componentSet) {
 			if (!entity.has(requiredClass)) {
 				return;
 			}
-		}
+		}*/
 
 		createNode(entity);
 	}
 
 	internal function componentRemoved(entity:Entity, componentClass:Class):void {
-		if (nodeMap[entity] && propertyMap[componentClass]) {
+		if (nodeByEntity[entity] && propertyMap[componentClass]) {
 			removeNode(entity);
 		}
 	}
@@ -105,14 +127,14 @@ public class NodeMatcher {
 			var property:String = propertyMap[componentClass];
 			node[property] = entity.get(componentClass);
 		}
-		nodeMap[entity] = node;
+		nodeByEntity[entity] = node;
 		nodeList.add(node);
 	}
 
 	[Inline]
 	private function removeNode(entity:Entity):void {
-		var node:Node = nodeMap[entity];
-		delete nodeMap[entity];
+		var node:Node = nodeByEntity[entity];
+		delete nodeByEntity[entity];
 
 		nodeList.remove(node);
 
@@ -131,7 +153,7 @@ public class NodeMatcher {
 
 	internal function clear():void {
 		for (var node:Node = nodeList.head; node; node = node.next) {
-			delete nodeMap[node.entity];
+			delete nodeByEntity[node.entity];
 		}
 		nodeList.removeAll();
 	}
@@ -141,7 +163,7 @@ public class NodeMatcher {
 		engine = null;
 		nodeList.removeAll();
 		nodeList = null;
-		nodeMap = null;
+		nodeByEntity = null;
 		nodePool = null;
 		nodeClass = null;
 		propertyMap = null;
