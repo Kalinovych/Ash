@@ -58,7 +58,7 @@ public class Family {
 	/** Store of all matched nodes of 'alive' entities */
 	internal var nodeList:NodeList = new NodeList();
 	
-	internal var dna:uint = 0x0;
+	internal var dnaChain:Vector.<uint>;
 
 	public function Family(nodeClass:Class, engine:Engine) {
 		this.nodeClass = nodeClass;

@@ -49,7 +49,7 @@ package ash.core
 		
 		internal var _engine:Engine;
 		
-		internal var dna:uint = 0;
+		internal var dnaChain:Vector.<uint>;
 
 		/**
 		 * The constructor
