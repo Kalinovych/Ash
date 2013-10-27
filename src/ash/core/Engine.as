@@ -3,6 +3,8 @@ import ash.signals.Signal0;
 import ash.tools.dna.Dna;
 import ash.tools.dna.Dna32;
 
+import com.flashrush.signatures.BitSigner;
+
 import flash.utils.Dictionary;
 
 /**
@@ -29,6 +31,8 @@ public class Engine {
 	 * Matchers not interested in a component stays out of notification loop.
 	 */
 	private var familiesByComponent:Dictionary = new Dictionary();
+	
+	private var signer:BitSigner
 
 	/**
 	 * Indicates if the engine is currently in its update loop.
@@ -47,12 +51,14 @@ public class Engine {
 	/**
 	 * Constructor
 	 */
-	public function Engine() {
+	public function Engine( componentCapacityLevel:uint = 1 ) {
 		entityList = new EntityList();
 		entityByName = new Dictionary();
 		systemList = new SystemList();
 		updateComplete = new Signal0();
 
+		signer = new BitSigner( componentCapacityLevel );
+		
 		dna = new dnaClass();
 	}
 

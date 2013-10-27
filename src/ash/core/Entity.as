@@ -2,7 +2,9 @@ package ash.core
 {
 	import ash.signals.Signal2;
 
-	import flash.utils.Dictionary;
+import com.flashrush.signatures.BitSign;
+
+import flash.utils.Dictionary;
 
 	/**
 	 * An entity is composed from components. As such, it is essentially a collection object for components. 
@@ -46,6 +48,7 @@ package ash.core
 		internal var previous : Entity;
 		internal var next : Entity;
 		internal var components : Dictionary;
+		internal var sing : BitSign;
 		
 		internal var _engine:Engine;
 		

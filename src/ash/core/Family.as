@@ -2,8 +2,7 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
-import ash.core.Family;
-import ash.tools.ComponentPool;
+import com.flashrush.signatures.BitSign;
 
 import flash.system.System;
 import flash.utils.Dictionary;
@@ -57,6 +56,8 @@ public class Family {
 
 	/** Store of all matched nodes of 'alive' entities */
 	internal var nodeList:NodeList = new NodeList();
+	
+	internal var sign:BitSign;
 	
 	internal var dnaChain:Vector.<uint>;
 
