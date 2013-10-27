@@ -1,7 +1,5 @@
 package ash.core {
 import ash.signals.Signal0;
-import ash.tools.dna.Dna;
-import ash.tools.dna.Dna32;
 
 import com.flashrush.signatures.BitSigner;
 
@@ -16,8 +14,6 @@ public class Engine {
 	private var entityList:EntityList;
 	private var systemList:SystemList;
 	
-	private var dna:Dna;
-
 	/**
 	 * Family by a node class
 	 */
@@ -46,8 +42,6 @@ public class Engine {
 	 */
 	public var updateComplete:Signal0;
 	
-	public static var dnaClass:Class = Dna32;
-
 	/**
 	 * Constructor
 	 */
@@ -59,7 +53,7 @@ public class Engine {
 
 		signer = new BitSigner( componentCapacityLevel );
 		
-		dna = new dnaClass();
+		//dna = new dnaClass();
 	}
 
 	/**
@@ -73,7 +67,7 @@ public class Engine {
 			throw new Error("The entity name " + entity.name + " is already in use by another entity.");
 		}
 		
-		entity.dnaChain = dna.createDNA(entity.components);
+		entity.sing = signer.getSign(entity.components);
 
 		entity._engine = this;
 		entityList.add(entity);
@@ -85,7 +79,8 @@ public class Engine {
 
 		for (var nodeClass:Class in familyMap) {
 			var family:Family = familyMap[nodeClass];
-			if (dna.dnaBelongToFamily(entity.dnaChain, family.dnaChain)) {
+			//if (family.sign.partOf(entity.sing)) {
+			if (entity.sing.contains(family.sign)) {
 				family.addEntity(entity);
 			}
 		}
@@ -103,13 +98,15 @@ public class Engine {
 
 		for (var nodeClass:Class in familyMap) {
 			var family:Family = familyMap[nodeClass];
-			if (dna.dnaBelongToFamily(entity.dnaChain, family.dnaChain)) {
+			if (entity.sing.contains(family.sign)) {
 				family.removeEntity(entity);
 			}
 		}
-
+		
 		delete entityByName[ entity.name ];
 		entityList.remove(entity);
+		signer.recycleSign(entity.sing);
+		entity.sing = null;
 		entity._engine = null;
 	}
 
@@ -118,12 +115,12 @@ public class Engine {
 	 */
 	private function componentAdded(entity:Entity, componentClass:Class):void {
 		// put component bit to the entity dna
-		dna.addElementToDNA(entity.dnaChain, componentClass);
+		entity.sing.add(componentClass);
 
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if (familyList) {
 			for each(var family:Family in familyList) {
-				if (dna.dnaBelongToFamily(entity.dnaChain, family.dnaChain)) {
+				if (entity.sing.contains(family.sign)) {
 					family.componentAdded(entity, componentClass);
 				}
 			}
@@ -137,14 +134,13 @@ public class Engine {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if (familyList) {
 			for each(var family:Family in familyList) {
-				if (dna.dnaBelongToFamily(entity.dnaChain, family.dnaChain)) {
+				if (entity.sing.contains(family.sign)) {
 					family.componentRemoved(entity, componentClass);
 				}
 			}
 		}
 
-		// exclude component bit from the entity dna
-		dna.removeElementFromDNA(entity.dnaChain, componentClass);
+		entity.sing.remove(componentClass);
 	}
 
 	/**
@@ -252,13 +248,11 @@ public class Engine {
 	[Inline]
 	private function createFamily(nodeClass:Class):Family {
 		var family:Family = familyMap[nodeClass] = new Family(nodeClass, this);
-
-		// set up family DNA
-		family.dnaChain = dna.createDNA(family.propertyMap);
+		family.sign = signer.getSign(family.propertyMap);
 
 		// build family from current entities
 		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
-			if (dna.dnaBelongToFamily(entity.dnaChain, family.dnaChain)) {
+			if (entity.sing.contains(family.sign)) {
 				family.addEntity(entity);
 			}
 		}

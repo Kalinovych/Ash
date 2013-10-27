@@ -52,8 +52,6 @@ import flash.utils.Dictionary;
 		
 		internal var _engine:Engine;
 		
-		internal var dnaChain:Vector.<uint>;
-
 		/**
 		 * The constructor
 		 * 

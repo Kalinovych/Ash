@@ -14,6 +14,8 @@ import flash.utils.getDefinitionByName;
  */
 public class Family {
 
+	/* Static */
+	
 	private static var nodePropertyMap:Dictionary = new Dictionary();
 	private static var nodeComponentSet:Dictionary = new Dictionary();
 	
@@ -42,6 +44,8 @@ public class Family {
 		family.componentSet = componentSet;
 	}
 	
+	/* Implementation */
+	
 	private var nodeClass:Class;
 	private var engine:Engine;
 	private var nodePool:NodePool;
@@ -58,9 +62,13 @@ public class Family {
 	internal var nodeList:NodeList = new NodeList();
 	
 	internal var sign:BitSign;
-	
-	internal var dnaChain:Vector.<uint>;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param nodeClass
+	 * @param engine
+	 */
 	public function Family(nodeClass:Class, engine:Engine) {
 		this.nodeClass = nodeClass;
 		this.engine = engine;
