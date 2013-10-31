@@ -13,7 +13,7 @@ public class Engine {
 	private var entityByName:Dictionary;
 	private var entityList:EntityList;
 	private var systemList:SystemList;
-	
+
 	/**
 	 * Family by a node class
 	 */
@@ -27,7 +27,7 @@ public class Engine {
 	 * Matchers not interested in a component stays out of notification loop.
 	 */
 	private var familiesByComponent:Dictionary = new Dictionary();
-	
+
 	private var signer:BitSigner
 
 	/**
@@ -41,7 +41,7 @@ public class Engine {
 	 * listen for this signal and make the change when the signal is dispatched.
 	 */
 	public var updateComplete:Signal0;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -52,7 +52,7 @@ public class Engine {
 		updateComplete = new Signal0();
 
 		signer = new BitSigner( componentCapacityLevel );
-		
+
 		//dna = new dnaClass();
 	}
 
@@ -62,26 +62,25 @@ public class Engine {
 	 * @param entity The entity to add.
 	 */
 
-	public function addEntity(entity:Entity):void {
-		if (entityByName[ entity.name ]) {
-			throw new Error("The entity name " + entity.name + " is already in use by another entity.");
+	public function addEntity( entity:Entity ):void {
+		if ( entityByName[ entity.name ] ) {
+			throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 		}
-		
-		entity.sing = signer.getSign(entity.components);
+
+		entity.sing = signer.getSign( entity.components );
 
 		entity._engine = this;
-		entityList.add(entity);
+		entityList.add( entity );
 		entityByName[ entity.name ] = entity;
 
-		entity.componentAdded.add(componentAdded);
-		entity.componentRemoved.add(componentRemoved);
-		entity.nameChanged.add(entityNameChanged);
+		entity.componentAdded.add( componentAdded );
+		entity.componentRemoved.add( componentRemoved );
+		entity.nameChanged.add( entityNameChanged );
 
-		for (var nodeClass:Class in familyMap) {
+		for ( var nodeClass:Class in familyMap ) {
 			var family:Family = familyMap[nodeClass];
-			//if (family.sign.partOf(entity.sing)) {
-			if (entity.sing.contains(family.sign)) {
-				family.addEntity(entity);
+			if ( entityBelongToFamily( entity, family ) ) {
+				family.addEntity( entity );
 			}
 		}
 	}
@@ -91,21 +90,21 @@ public class Engine {
 	 *
 	 * @param entity The entity to remove.
 	 */
-	public function removeEntity(entity:Entity):void {
-		entity.componentAdded.remove(componentAdded);
-		entity.componentRemoved.remove(componentRemoved);
-		entity.nameChanged.remove(entityNameChanged);
+	public function removeEntity( entity:Entity ):void {
+		entity.componentAdded.remove( componentAdded );
+		entity.componentRemoved.remove( componentRemoved );
+		entity.nameChanged.remove( entityNameChanged );
 
-		for (var nodeClass:Class in familyMap) {
+		for ( var nodeClass:Class in familyMap ) {
 			var family:Family = familyMap[nodeClass];
-			if (entity.sing.contains(family.sign)) {
-				family.removeEntity(entity);
+			if ( entityBelongToFamily( entity, family ) ) {
+				family.removeEntity( entity );
 			}
 		}
-		
+
 		delete entityByName[ entity.name ];
-		entityList.remove(entity);
-		signer.recycleSign(entity.sing);
+		entityList.remove( entity );
+		signer.recycleSign( entity.sing );
 		entity.sing = null;
 		entity._engine = null;
 	}
@@ -113,15 +112,15 @@ public class Engine {
 	/**
 	 * @private
 	 */
-	private function componentAdded(entity:Entity, componentClass:Class):void {
+	private function componentAdded( entity:Entity, componentClass:Class ):void {
 		// put component bit to the entity dna
-		entity.sing.add(componentClass);
-
+		entity.sing.add( componentClass );
+		
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
-		if (familyList) {
-			for each(var family:Family in familyList) {
-				if (entity.sing.contains(family.sign)) {
-					family.componentAdded(entity, componentClass);
+		if ( familyList ) {
+			for each( var family:Family in familyList ) {
+				if ( entity.sing.contains( family.sign ) ) {
+					family.componentAdded( entity, componentClass );
 				}
 			}
 		}
@@ -130,17 +129,17 @@ public class Engine {
 	/**
 	 * @private
 	 */
-	private function componentRemoved(entity:Entity, componentClass:Class):void {
+	private function componentRemoved( entity:Entity, componentClass:Class ):void {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
-		if (familyList) {
-			for each(var family:Family in familyList) {
-				if (entity.sing.contains(family.sign)) {
-					family.componentRemoved(entity, componentClass);
+		if ( familyList ) {
+			for each( var family:Family in familyList ) {
+				if ( entity.sing.contains( family.sign ) ) {
+					family.componentRemoved( entity, componentClass );
 				}
 			}
 		}
 
-		entity.sing.remove(componentClass);
+		entity.sing.remove( componentClass );
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class Engine {
 	 * @param nodeClass
 	 * @return
 	 */
-	public function entityAsNode(entity:Entity, nodeClass:Class):* {
+	public function entityAsNode( entity:Entity, nodeClass:Class ):* {
 		var family:Family = familyMap[nodeClass];
 		return (family ? family.nodeByEntity[entity] : null);
 	}
@@ -160,12 +159,12 @@ public class Engine {
 	 * @param entity
 	 * @return
 	 */
-	public function hasEntity(entity:Entity):Boolean {
+	public function hasEntity( entity:Entity ):Boolean {
 		return (entityByName[entity.name] == entity);
 	}
 
-	private function entityNameChanged(entity:Entity, oldName:String):void {
-		if (entityByName[ oldName ] == entity) {
+	private function entityNameChanged( entity:Entity, oldName:String ):void {
+		if ( entityByName[ oldName ] == entity ) {
 			delete entityByName[ oldName ];
 			entityByName[ entity.name ] = entity;
 		}
@@ -177,7 +176,7 @@ public class Engine {
 	 * @param name The name of the entity
 	 * @return The entity, or null if no entity with that name exists on the engine
 	 */
-	public function getEntityByName(name:String):Entity {
+	public function getEntityByName( name:String ):Entity {
 		return entityByName[ name ];
 	}
 
@@ -185,8 +184,8 @@ public class Engine {
 	 * Remove all entities from the engine.
 	 */
 	public function removeAllEntities():void {
-		while (entityList.head) {
-			removeEntity(entityList.head);
+		while ( entityList.head ) {
+			removeEntity( entityList.head );
 		}
 	}
 
@@ -195,8 +194,8 @@ public class Engine {
 	 */
 	public function get entities():Vector.<Entity> {
 		var entities:Vector.<Entity> = new Vector.<Entity>();
-		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
-			entities.push(entity);
+		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
+			entities.push( entity );
 		}
 		return entities;
 	}
@@ -213,8 +212,8 @@ public class Engine {
 	 * @param nodeClass The type of node required.
 	 * @return A linked list of all nodes of this type from all entities in the engine.
 	 */
-	public function getNodeList(nodeClass:Class):NodeList {
-		return ( familyMap[nodeClass] || createFamily(nodeClass) ).nodeList;
+	public function getNodeList( nodeClass:Class ):NodeList {
+		return ( familyMap[nodeClass] || createFamily( nodeClass ) ).nodeList;
 	}
 
 	/**
@@ -227,18 +226,18 @@ public class Engine {
 	 *
 	 * @param nodeClass The type of the node class if the list to be released.
 	 */
-	public function releaseNodeList(nodeClass:Class):void {
+	public function releaseNodeList( nodeClass:Class ):void {
 		var family:Family = familyMap[nodeClass];
-		if (family) {
+		if ( family ) {
 			// unsubscribe for components add/remove notification
-			for each(var componentClass:Class in family.componentSet) {
+			for each( var componentClass:Class in family.componentInterests ) {
 				var familyList:Vector.<Family> = familiesByComponent[componentClass];
-				var index:int = familyList.indexOf(family);
-				if (index >= 0) {
-					familyList.splice(index, 1);
+				var index:int = familyList.indexOf( family );
+				if ( index >= 0 ) {
+					familyList.splice( index, 1 );
 				}
 			}
-			
+
 			family.clear();
 			delete familyMap[nodeClass];
 		}
@@ -246,24 +245,32 @@ public class Engine {
 
 
 	[Inline]
-	private function createFamily(nodeClass:Class):Family {
-		var family:Family = familyMap[nodeClass] = new Family(nodeClass, this);
-		family.sign = signer.getSign(family.propertyMap);
+	private function createFamily( nodeClass:Class ):Family {
+		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
+		family.sign = signer.getSign( family.propertyMap );
+		if ( family.withoutComponents ) {
+			family.excludeSign = signer.getSign( family.withoutComponents );
+		}
 
-		// build family from current entities
-		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
-			if (entity.sing.contains(family.sign)) {
-				family.addEntity(entity);
+		// find family nodes in current entities
+		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
+			if ( entityBelongToFamily( entity, family ) ) {
+				family.addEntity( entity );
 			}
 		}
 
 		// subscribe for components add/remove notification
-		for each(var componentClass:Class in family.componentSet) {
+		for each( var componentClass:Class in family.componentInterests ) {
 			var familyList:Vector.<Family> = familiesByComponent[componentClass] ||= new Vector.<Family>();
-			familyList.push(family);
+			familyList.push( family );
 		}
 
 		return family;
+	}
+
+	[Inline]
+	private function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
+		return ( entity.sing.contains( family.sign ) && !( family.excludeSign && entity.sing.contains( family.excludeSign ) ) );
 	}
 
 
@@ -279,10 +286,10 @@ public class Engine {
 	 * @param priority The priority for updating the systems during the engine loop. A
 	 * lower number means the system is updated sooner.
 	 */
-	public function addSystem(system:System, priority:int = 0):void {
+	public function addSystem( system:System, priority:int = 0 ):void {
 		system.priority = priority;
-		system.addToEngine(this);
-		systemList.add(system);
+		system.addToEngine( this );
+		systemList.add( system );
 	}
 
 	/**
@@ -292,8 +299,8 @@ public class Engine {
 	 * @return The instance of the system type that is in the engine, or
 	 * null if no systems of this type are in the engine.
 	 */
-	public function getSystem(type:Class):System {
-		return systemList.get(type);
+	public function getSystem( type:Class ):System {
+		return systemList.get( type );
 	}
 
 	/**
@@ -301,8 +308,8 @@ public class Engine {
 	 */
 	public function get systems():Vector.<System> {
 		var systems:Vector.<System> = new Vector.<System>();
-		for (var system:System = systemList.head; system; system = system.next) {
-			systems.push(system);
+		for ( var system:System = systemList.head; system; system = system.next ) {
+			systems.push( system );
 		}
 		return systems;
 	}
@@ -312,17 +319,17 @@ public class Engine {
 	 *
 	 * @param system The system to remove from the engine.
 	 */
-	public function removeSystem(system:System):void {
-		systemList.remove(system);
-		system.removeFromEngine(this);
+	public function removeSystem( system:System ):void {
+		systemList.remove( system );
+		system.removeFromEngine( this );
 	}
 
 	/**
 	 * Remove all systems from the engine.
 	 */
 	public function removeAllSystems():void {
-		while (systemList.head) {
-			removeSystem(systemList.head);
+		while ( systemList.head ) {
+			removeSystem( systemList.head );
 		}
 	}
 
@@ -335,10 +342,10 @@ public class Engine {
 	 *
 	 * @time The duration, in seconds, of this update step.
 	 */
-	public function update(time:Number):void {
+	public function update( time:Number ):void {
 		updating = true;
-		for (var system:System = systemList.head; system; system = system.next) {
-			system.update(time);
+		for ( var system:System = systemList.head; system; system = system.next ) {
+			system.update( time );
 		}
 		updating = false;
 		updateComplete.dispatch();
