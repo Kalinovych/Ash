@@ -80,7 +80,7 @@ public class Engine {
 		for ( var nodeClass:Class in familyMap ) {
 			var family:Family = familyMap[nodeClass];
 			if ( entityBelongToFamily( entity, family ) ) {
-				family.addEntity( entity );
+				family.entityFound( entity );
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public class Engine {
 		for ( var nodeClass:Class in familyMap ) {
 			var family:Family = familyMap[nodeClass];
 			if ( entityBelongToFamily( entity, family ) ) {
-				family.removeEntity( entity );
+				family.entityLost( entity );
 			}
 		}
 
@@ -248,14 +248,14 @@ public class Engine {
 	private function createFamily( nodeClass:Class ):Family {
 		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
 		family.sign = signer.getSign( family.propertyMap );
-		if ( family.withoutComponents ) {
-			family.excludeSign = signer.getSign( family.withoutComponents );
+		if ( family.forbiddenComponents ) {
+			family.forbiddenSign = signer.getSign( family.forbiddenComponents );
 		}
 
 		// find family nodes in current entities
 		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
 			if ( entityBelongToFamily( entity, family ) ) {
-				family.addEntity( entity );
+				family.entityFound( entity );
 			}
 		}
 
@@ -270,7 +270,7 @@ public class Engine {
 
 	[Inline]
 	private function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
-		return ( entity.sing.contains( family.sign ) && !( family.excludeSign && entity.sing.contains( family.excludeSign ) ) );
+		return ( entity.sing.contains( family.sign ) && !( family.forbiddenSign && entity.sing.contains( family.forbiddenSign ) ) );
 	}
 
 
