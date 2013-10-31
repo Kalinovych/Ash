@@ -248,8 +248,8 @@ public class Engine {
 	private function createFamily( nodeClass:Class ):Family {
 		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
 		family.sign = signer.getSign( family.propertyMap );
-		if ( family.forbiddenComponents ) {
-			family.forbiddenSign = signer.getSign( family.forbiddenComponents );
+		if ( family.bannedComponents ) {
+			family.bannedSign = signer.getSign( family.bannedComponents );
 		}
 
 		// find family nodes in current entities
@@ -270,7 +270,7 @@ public class Engine {
 
 	[Inline]
 	private function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
-		return ( entity.sing.contains( family.sign ) && !( family.forbiddenSign && entity.sing.contains( family.forbiddenSign ) ) );
+		return ( entity.sing.contains( family.sign ) && !( family.bannedSign && entity.sing.contains( family.bannedSign ) ) );
 	}
 
 
