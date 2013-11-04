@@ -24,7 +24,7 @@ public class Family {
 	private static function initFamily( family:Family, nodeClass:Class ):void {
 		var propertyMap:Dictionary = propertyMapByNode[nodeClass];
 		var componentInterests:Vector.<Class> = componentInterestsByNode[nodeClass];
-		var bannedComponents:Dictionary = withoutComponentsByNode[nodeClass];
+		var excludedComponents:Dictionary = withoutComponentsByNode[nodeClass];
 		var optionalComponents:Dictionary = optionalComponentsByNode[nodeClass];
 
 		if ( !propertyMap ) {
@@ -39,12 +39,12 @@ public class Family {
 				if ( propertyName != "entity" && propertyName != "previous" && propertyName != "next" ) {
 					var componentClass:Class = getDefinitionByName( item.@type.toString() ) as Class;
 
-					// banned by metadata
-					if ( item.metadata.(@name == "Banned").length() > 0 ) {
-						if ( !bannedComponents ) {
-							bannedComponents = withoutComponentsByNode[nodeClass] = new Dictionary();
+					// excluded by metadata
+					if ( item.metadata.(@name == "Without").length() > 0 ) {
+						if ( !excludedComponents ) {
+							excludedComponents = withoutComponentsByNode[nodeClass] = new Dictionary();
 						}
-						bannedComponents[componentClass] = propertyName;
+						excludedComponents[componentClass] = propertyName;
 					}
 					else if ( item.metadata.(@name == "Optional").length() > 0 ) {
 						// optional
@@ -64,7 +64,7 @@ public class Family {
 
 		family.propertyMap = propertyMap;
 		family.componentInterests = componentInterests;
-		family.bannedComponents = bannedComponents;
+		family.excludedComponents = excludedComponents;
 		family.optionalComponents = optionalComponents;
 	}
 
@@ -83,7 +83,7 @@ public class Family {
 	internal var componentInterests:Vector.<Class>;
 
 	/** Components that should not be in the entity to match the family. */
-	internal var bannedComponents:Dictionary;
+	internal var excludedComponents:Dictionary;
 	
 	/** Components that are not required to match an entity to the family */
 	internal var optionalComponents:Dictionary;
@@ -94,8 +94,8 @@ public class Family {
 	/** Bit representation of the family's required components for fast matching */
 	internal var sign:BitSign;
 
-	/** Bit representation of the family's banned components for fast matching */
-	internal var bannedSign:BitSign;
+	/** Bit representation of the family's excluded components for fast matching */
+	internal var exclusionSign:BitSign;
 
 	/**
 	 * Constructor
@@ -144,10 +144,10 @@ public class Family {
 		// The node of the entity if it belongs to this family.
 		var node:Node = nodeByEntity[entity];
 		
-		/* Banned component check */
+		/* Excluded component check */
 		
 		// Check is new component excludes the entity from this family
-		if ( bannedComponents && bannedComponents[componentClass] ) {
+		if ( excludedComponents && excludedComponents[componentClass] ) {
 			if ( node ) {
 				entityLost( entity );
 			}
@@ -186,12 +186,12 @@ public class Family {
 		// The node of the entity if it belongs to this family.
 		var node:Node = nodeByEntity[entity];
 
-		/* Banned component check */
+		/* Excluded component check */
 		
 		// Check is after the component removed the entity will match to this family
-		if ( bannedComponents && bannedComponents[componentClass] ) {
-			// no more banned components?
-			if (!entity.sing.contains(bannedSign)) {
+		if ( excludedComponents && excludedComponents[componentClass] ) {
+			// no more unacceptable components?
+			if (!entity.sing.contains(exclusionSign)) {
 				entityFound(entity);
 			}
 			return;
@@ -277,7 +277,7 @@ public class Family {
 		nodeClass = null;
 		componentInterests = null;
 		propertyMap = null;
-		bannedComponents = null;
+		excludedComponents = null;
 		optionalComponents = null;
 	}
 }
