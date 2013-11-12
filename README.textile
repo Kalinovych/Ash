@@ -1,3 +1,10 @@
+Improved version of Ash.
+* Improved performance of component matching
+* Added support of two metatags for nodes:
+** [Optional] - to define an optional components in the node
+** [Without] - to define component that should not be in the entity
+
+
 h1. Ash: An entity framework for Actionscript games
 
 Ash is an Actionscript 3 entity framework for game development
