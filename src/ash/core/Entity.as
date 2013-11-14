@@ -176,14 +176,16 @@ import flash.utils.Dictionary;
 			return components[ componentClass ] != null;
 		}
 
+		/**
+		 * Determines whether the entity was added and wasn't removed from engine.
+		 */
+		public function get exists():Boolean {
+			return (_engine != null);
+		}
+
 		public function get engine():Engine {
 			return _engine;
 		}
 		
-		public function removeFromEngine():void {
-			if (_engine) {
-				_engine.removeEntity(this);
-			}
-		}
 	}
 }
