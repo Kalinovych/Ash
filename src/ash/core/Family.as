@@ -224,7 +224,7 @@ public class Family {
 		// Create new node and assign components from the entity to the node variables
 		var node:Node = nodePool.get();
 		node.entity = entity;
-		for ( var componentClass:Class in propertyMap ) {
+		for ( var componentClass:* in propertyMap ) {
 			var property:String = propertyMap[componentClass];
 			node[property] = entity.get( componentClass );
 		}

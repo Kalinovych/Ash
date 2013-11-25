@@ -77,7 +77,7 @@ public class Engine {
 		entity.componentRemoved.add( componentRemoved );
 		entity.nameChanged.add( entityNameChanged );
 
-		for ( var nodeClass:Class in familyMap ) {
+		for ( var nodeClass:* in familyMap ) {
 			var family:Family = familyMap[nodeClass];
 			if ( entityBelongToFamily( entity, family ) ) {
 				family.entityFound( entity );
@@ -95,7 +95,7 @@ public class Engine {
 		entity.componentRemoved.remove( componentRemoved );
 		entity.nameChanged.remove( entityNameChanged );
 
-		for ( var nodeClass:Class in familyMap ) {
+		for ( var nodeClass:* in familyMap ) {
 			var family:Family = familyMap[nodeClass];
 			if ( entityBelongToFamily( entity, family ) ) {
 				family.entityLost( entity );
