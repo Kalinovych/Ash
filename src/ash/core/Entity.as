@@ -48,7 +48,7 @@ import flash.utils.Dictionary;
 		internal var previous : Entity;
 		internal var next : Entity;
 		internal var components : Dictionary;
-		internal var sing : BitSign;
+		internal var sign : BitSign;
 		
 		internal var _engine:Engine;
 		

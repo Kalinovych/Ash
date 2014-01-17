@@ -42,6 +42,16 @@ package ash.core
 		 * <p>The signal will pass a single parameter to the listeners - the node that was removed.</p>
 		 */
 		public var nodeRemoved : Signal1;
+
+		/**
+		 * List of nodes that was added in the current update
+		 */
+		public var addedNodes:Vector.<Node>;
+		
+		/**
+		 * List of nodes that was removed in the current update
+		 */
+		public var removedNodes:Vector.<Node>;
 		
 		private var _length:int = 0;
 		
@@ -49,8 +59,16 @@ package ash.core
 		{
 			nodeAdded = new Signal1( Node );
 			nodeRemoved = new Signal1( Node );
+
+			addedNodes = new Vector.<Node>();
+			removedNodes = new Vector.<Node>();
 		}
-		
+
+		internal function beginStep():void {
+			addedNodes.length = 0;
+			removedNodes.length = 0;
+		}
+
 		internal function add( node : Node ) : void
 		{
 			if( ! head )
@@ -66,6 +84,7 @@ package ash.core
 				tail = node;
 			}
 			_length++;
+			addedNodes.push( node );
 			nodeAdded.dispatch( node );
 		}
 		
@@ -90,6 +109,7 @@ package ash.core
 				node.next.previous = node.previous;
 			}
 			_length--;
+			removedNodes.push( node );
 			nodeRemoved.dispatch( node );
 			// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
 		}

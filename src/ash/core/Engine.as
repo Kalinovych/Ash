@@ -28,7 +28,7 @@ public class Engine {
 	 */
 	private var familiesByComponent:Dictionary = new Dictionary();
 
-	private var signer:BitSigner
+	private var signer:BitSigner;
 
 	/**
 	 * Indicates if the engine is currently in its update loop.
@@ -52,8 +52,6 @@ public class Engine {
 		updateComplete = new Signal0();
 
 		signer = new BitSigner( componentCapacityLevel );
-
-		//dna = new dnaClass();
 	}
 
 	/**
@@ -67,7 +65,7 @@ public class Engine {
 			throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 		}
 
-		entity.sing = signer.getSign( entity.components );
+		entity.sign = signer.getSign( entity.components );
 
 		entity._engine = this;
 		entityList.add( entity );
@@ -104,22 +102,22 @@ public class Engine {
 
 		delete entityByName[ entity.name ];
 		entityList.remove( entity );
-		signer.recycleSign( entity.sing );
-		entity.sing = null;
+		signer.recycleSign( entity.sign );
+		entity.sign = null;
 		entity._engine = null;
 	}
 
 	/**
 	 * @private
 	 */
-	private function componentAdded( entity:Entity, componentClass:Class ):void {
+	protected function componentAdded( entity:Entity, componentClass:Class ):void {
 		// put component bit to the entity dna
-		entity.sing.add( componentClass );
+		entity.sign.add( componentClass );
 		
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList ) {
 			for each( var family:Family in familyList ) {
-				if ( entity.sing.contains( family.sign ) ) {
+				if ( entity.sign.contains( family.sign ) ) {
 					family.componentAdded( entity, componentClass );
 				}
 			}
@@ -129,17 +127,17 @@ public class Engine {
 	/**
 	 * @private
 	 */
-	private function componentRemoved( entity:Entity, componentClass:Class ):void {
+	protected function componentRemoved( entity:Entity, componentClass:Class ):void {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList ) {
 			for each( var family:Family in familyList ) {
-				if ( entity.sing.contains( family.sign ) ) {
+				if ( entity.sign.contains( family.sign ) ) {
 					family.componentRemoved( entity, componentClass );
 				}
 			}
 		}
 
-		entity.sing.remove( componentClass );
+		entity.sign.remove( componentClass );
 	}
 
 	/**
@@ -163,7 +161,7 @@ public class Engine {
 		return (entityByName[entity.name] == entity);
 	}
 
-	private function entityNameChanged( entity:Entity, oldName:String ):void {
+	protected function entityNameChanged( entity:Entity, oldName:String ):void {
 		if ( entityByName[ oldName ] == entity ) {
 			delete entityByName[ oldName ];
 			entityByName[ entity.name ] = entity;
@@ -245,14 +243,14 @@ public class Engine {
 
 
 	[Inline]
-	private function createFamily( nodeClass:Class ):Family {
+	protected function createFamily( nodeClass:Class ):Family {
 		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
 		family.sign = signer.getSign( family.propertyMap );
 		if ( family.excludedComponents ) {
 			family.exclusionSign = signer.getSign( family.excludedComponents );
 		}
 
-		// find family nodes in current entities
+		// find family nodes of alive entities
 		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
 			if ( entityBelongToFamily( entity, family ) ) {
 				family.entityFound( entity );
@@ -269,8 +267,8 @@ public class Engine {
 	}
 
 	[Inline]
-	private function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
-		return ( entity.sing.contains( family.sign ) && !( family.exclusionSign && entity.sing.contains( family.exclusionSign ) ) );
+	protected function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
+		return ( entity.sign.contains( family.sign ) && !( family.exclusionSign && entity.sign.contains( family.exclusionSign ) ) );
 	}
 
 

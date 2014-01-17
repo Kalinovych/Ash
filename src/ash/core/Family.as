@@ -68,7 +68,7 @@ public class Family {
 		family.optionalComponents = optionalComponents;
 	}
 
-	/* Implementation */
+	/* Family Class implementation */
 
 	private var nodeClass:Class;
 	private var engine:Engine;
@@ -158,7 +158,7 @@ public class Family {
 		
 		// Optional component can't affect entity matching to the family,
 		// so just assign it to the node if it exists
-		if (optionalComponents && node && optionalComponents[componentClass]) {
+		if (node && optionalComponents && optionalComponents[componentClass]) {
 			var property:String = optionalComponents[componentClass];
 			node[property] = entity.get( componentClass );
 			return;
@@ -166,7 +166,7 @@ public class Family {
 		
 		/* Required component check */
 
-		// do nothing if the entity already identified or the component isn't required by this family
+		// do nothing if the entity already identified as member of this family or the component isn't required by this family
 		if ( node || !propertyMap[componentClass] ) {
 			return;
 		}
@@ -191,7 +191,7 @@ public class Family {
 		// Check is after the component removed the entity will match to this family
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			// no more unacceptable components?
-			if (!entity.sing.contains(exclusionSign)) {
+			if (!entity.sign.contains(exclusionSign)) {
 				entityFound(entity);
 			}
 			return;
@@ -201,7 +201,7 @@ public class Family {
 		
 		// Removed optional component can't decline the entity from matching to a family,
 		// so just set node property to null
-		if (optionalComponents && node && optionalComponents[componentClass]) {
+		if (node && optionalComponents && optionalComponents[componentClass]) {
 			var property:String = optionalComponents[componentClass];
 			node[property] = null;
 			return;
