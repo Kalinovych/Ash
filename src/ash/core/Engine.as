@@ -1,4 +1,5 @@
 package ash.core {
+
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSigner;
@@ -61,7 +62,7 @@ public class Engine {
 	 */
 
 	public function addEntity( entity:Entity ):void {
-		if ( entityByName[ entity.name ] ) {
+		if (entityByName[ entity.name ]) {
 			throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 		}
 
@@ -75,9 +76,9 @@ public class Engine {
 		entity.componentRemoved.add( componentRemoved );
 		entity.nameChanged.add( entityNameChanged );
 
-		for ( var nodeClass:* in familyMap ) {
+		for (var nodeClass:* in familyMap) {
 			var family:Family = familyMap[nodeClass];
-			if ( entityBelongToFamily( entity, family ) ) {
+			if (entityBelongToFamily( entity, family )) {
 				family.entityFound( entity );
 			}
 		}
@@ -93,9 +94,9 @@ public class Engine {
 		entity.componentRemoved.remove( componentRemoved );
 		entity.nameChanged.remove( entityNameChanged );
 
-		for ( var nodeClass:* in familyMap ) {
+		for (var nodeClass:* in familyMap) {
 			var family:Family = familyMap[nodeClass];
-			if ( entityBelongToFamily( entity, family ) ) {
+			if (entityBelongToFamily( entity, family )) {
 				family.entityLost( entity );
 			}
 		}
@@ -113,11 +114,11 @@ public class Engine {
 	protected function componentAdded( entity:Entity, componentClass:Class ):void {
 		// put component bit to the entity dna
 		entity.sign.add( componentClass );
-		
+
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
-		if ( familyList ) {
-			for each( var family:Family in familyList ) {
-				if ( entity.sign.contains( family.sign ) ) {
+		if (familyList) {
+			for each(var family:Family in familyList) {
+				if (entity.sign.contains( family.sign )) {
 					family.componentAdded( entity, componentClass );
 				}
 			}
@@ -129,15 +130,41 @@ public class Engine {
 	 */
 	protected function componentRemoved( entity:Entity, componentClass:Class ):void {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
-		if ( familyList ) {
-			for each( var family:Family in familyList ) {
-				if ( entity.sign.contains( family.sign ) ) {
+		if (familyList) {
+			for each(var family:Family in familyList) {
+				if (entity.sign.contains( family.sign )) {
 					family.componentRemoved( entity, componentClass );
 				}
 			}
 		}
 
 		entity.sign.remove( componentClass );
+	}
+
+	/**
+	 * Return true if the entity in the engine
+	 * @param entity
+	 * @return
+	 */
+	public function hasEntity( entity:Entity ):Boolean {
+		return (entityByName[entity.name] == entity);
+	}
+
+	protected function entityNameChanged( entity:Entity, oldName:String ):void {
+		if (entityByName[ oldName ] == entity) {
+			delete entityByName[ oldName ];
+			entityByName[ entity.name ] = entity;
+		}
+	}
+
+	/**
+	 * Get an entity based on its name.
+	 *
+	 * @param name The name of the entity
+	 * @return The entity, or null if no entity with that name exists on the engine
+	 */
+	public function getEntity( name:String ):Entity {
+		return entityByName[ name ];
 	}
 
 	/**
@@ -153,36 +180,20 @@ public class Engine {
 	}
 
 	/**
-	 * Return true if the entity in the engine
-	 * @param entity
-	 * @return
+	 * Search an Entity with the name and try to get it's node with type of nodeClass.
+	 * @param name The name of the entity to find
+	 * @param nodeClass The Class that represents the family
+	 * @return A node of nodeClass type of the entity with the name, otherwise null 
 	 */
-	public function hasEntity( entity:Entity ):Boolean {
-		return (entityByName[entity.name] == entity);
-	}
-
-	protected function entityNameChanged( entity:Entity, oldName:String ):void {
-		if ( entityByName[ oldName ] == entity ) {
-			delete entityByName[ oldName ];
-			entityByName[ entity.name ] = entity;
-		}
-	}
-
-	/**
-	 * Get an entity based on its name.
-	 *
-	 * @param name The name of the entity
-	 * @return The entity, or null if no entity with that name exists on the engine
-	 */
-	public function getEntityByName( name:String ):Entity {
-		return entityByName[ name ];
+	public function getEntityNode( name:String, nodeClass:Class ):* {
+		return entityAsNode( getEntity( name ), nodeClass );
 	}
 
 	/**
 	 * Remove all entities from the engine.
 	 */
 	public function removeAllEntities():void {
-		while ( entityList.head ) {
+		while (entityList.head) {
 			removeEntity( entityList.head );
 		}
 	}
@@ -192,7 +203,7 @@ public class Engine {
 	 */
 	public function get entities():Vector.<Entity> {
 		var entities:Vector.<Entity> = new Vector.<Entity>();
-		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
+		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
 			entities.push( entity );
 		}
 		return entities;
@@ -226,12 +237,12 @@ public class Engine {
 	 */
 	public function releaseNodeList( nodeClass:Class ):void {
 		var family:Family = familyMap[nodeClass];
-		if ( family ) {
+		if (family) {
 			// unsubscribe for components add/remove notification
-			for each( var componentClass:Class in family.componentInterests ) {
+			for each(var componentClass:Class in family.componentInterests) {
 				var familyList:Vector.<Family> = familiesByComponent[componentClass];
 				var index:int = familyList.indexOf( family );
-				if ( index >= 0 ) {
+				if (index >= 0) {
 					familyList.splice( index, 1 );
 				}
 			}
@@ -246,19 +257,19 @@ public class Engine {
 	protected function createFamily( nodeClass:Class ):Family {
 		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
 		family.sign = signer.getSign( family.propertyMap );
-		if ( family.excludedComponents ) {
+		if (family.excludedComponents) {
 			family.exclusionSign = signer.getSign( family.excludedComponents );
 		}
 
 		// find family nodes of alive entities
-		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
-			if ( entityBelongToFamily( entity, family ) ) {
+		for (var entity:Entity = entityList.head; entity; entity = entity.next) {
+			if (entityBelongToFamily( entity, family )) {
 				family.entityFound( entity );
 			}
 		}
 
 		// subscribe for components add/remove notification
-		for each( var componentClass:Class in family.componentInterests ) {
+		for each(var componentClass:Class in family.componentInterests) {
 			var familyList:Vector.<Family> = familiesByComponent[componentClass] ||= new Vector.<Family>();
 			familyList.push( family );
 		}
@@ -306,7 +317,7 @@ public class Engine {
 	 */
 	public function get systems():Vector.<System> {
 		var systems:Vector.<System> = new Vector.<System>();
-		for ( var system:System = systemList.head; system; system = system.next ) {
+		for (var system:System = systemList.head; system; system = system.next) {
 			systems.push( system );
 		}
 		return systems;
@@ -326,7 +337,7 @@ public class Engine {
 	 * Remove all systems from the engine.
 	 */
 	public function removeAllSystems():void {
-		while ( systemList.head ) {
+		while (systemList.head) {
 			removeSystem( systemList.head );
 		}
 	}
@@ -342,7 +353,7 @@ public class Engine {
 	 */
 	public function update( time:Number ):void {
 		updating = true;
-		for ( var system:System = systemList.head; system; system = system.next ) {
+		for (var system:System = systemList.head; system; system = system.next) {
 			system.update( time );
 		}
 		updating = false;
