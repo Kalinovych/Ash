@@ -254,7 +254,7 @@ public class Engine {
 
 
 	[Inline]
-	protected function createFamily( nodeClass:Class ):Family {
+	protected final function createFamily( nodeClass:Class ):Family {
 		var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
 		family.sign = signer.getSign( family.propertyMap );
 		if (family.excludedComponents) {
@@ -278,7 +278,7 @@ public class Engine {
 	}
 
 	[Inline]
-	protected function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
+	protected final function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
 		return ( entity.sign.contains( family.sign ) && !( family.exclusionSign && entity.sign.contains( family.exclusionSign ) ) );
 	}
 
@@ -321,6 +321,10 @@ public class Engine {
 			systems.push( system );
 		}
 		return systems;
+	}
+	
+	public function get rawSystemList():SystemList {
+		return systemList;
 	}
 
 	/**

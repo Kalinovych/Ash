@@ -220,7 +220,7 @@ public class Family {
 	 * @param entity
 	 */
 	[Inline]
-	private function createNodeOf( entity:Entity ):void {
+	private final function createNodeOf( entity:Entity ):void {
 		// Create new node and assign components from the entity to the node variables
 		var node:Node = nodePool.get();
 		node.entity = entity;
@@ -241,7 +241,7 @@ public class Family {
 	}
 
 	[Inline]
-	private function removeNodeOf( entity:Entity ):void {
+	private final function removeNodeOf( entity:Entity ):void {
 		var node:Node = nodeByEntity[entity];
 		delete nodeByEntity[entity];
 
