@@ -53,7 +53,7 @@ package ash.io.enginecodecs
 					var name : String = encodedEntity.name;
 					if( name )
 					{
-						var existingEntity : Entity = engine.getEntity( name );
+						var existingEntity : Entity = engine.getEntityByName( name );
 						if( existingEntity )
 						{
 							overlayEntity( existingEntity, encodedEntity );

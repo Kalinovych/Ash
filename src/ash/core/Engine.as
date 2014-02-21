@@ -163,7 +163,7 @@ public class Engine {
 	 * @param name The name of the entity
 	 * @return The entity, or null if no entity with that name exists on the engine
 	 */
-	public function getEntity( name:String ):Entity {
+	public function getEntityByName( name:String ):Entity {
 		return entityByName[ name ];
 	}
 
@@ -186,7 +186,7 @@ public class Engine {
 	 * @return A node of nodeClass type of the entity with the name, otherwise null 
 	 */
 	public function getEntityNode( name:String, nodeClass:Class ):* {
-		return entityAsNode( getEntity( name ), nodeClass );
+		return entityAsNode( getEntityByName( name ), nodeClass );
 	}
 
 	/**
