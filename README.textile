@@ -4,6 +4,8 @@ Improved version of Ash.
 ** [Optional] - to define an optional components in the node
 ** [Without] - to define component that should not be in the entity
 
+Dependencies:
+* "BitSign":http://github.com/Kalinovych/BitSign
 
 h1. Ash: An entity framework for Actionscript games
 
