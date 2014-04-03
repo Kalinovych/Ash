@@ -18,18 +18,20 @@ public class Family {
 
 	private static var propertyMapByNode:Dictionary = new Dictionary();
 	private static var componentInterestsByNode:Dictionary = new Dictionary();
-	private static var withoutComponentsByNode:Dictionary = new Dictionary();
+	private static var excludedComponentsByNode:Dictionary = new Dictionary();
 	private static var optionalComponentsByNode:Dictionary = new Dictionary();
 
 	private static function initFamily( family:Family, nodeClass:Class ):void {
 		var propertyMap:Dictionary = propertyMapByNode[nodeClass];
 		var componentInterests:Vector.<Class> = componentInterestsByNode[nodeClass];
-		var excludedComponents:Dictionary = withoutComponentsByNode[nodeClass];
+		var excludedComponents:Dictionary = excludedComponentsByNode[nodeClass];
 		var optionalComponents:Dictionary = optionalComponentsByNode[nodeClass];
 
 		if ( !propertyMap ) {
 			propertyMap = propertyMapByNode[nodeClass] = new Dictionary();
 			componentInterests = componentInterestsByNode[nodeClass] = new Vector.<Class>();
+
+			// TODO: refactor to use describeTypeJSON instead of describeType
 
 			var classXML:XML = describeType( nodeClass );
 			var variables:XMLList = classXML.factory.variable;
@@ -42,7 +44,7 @@ public class Family {
 					// excluded by metadata
 					if ( item.metadata.(@name == "Without").length() > 0 ) {
 						if ( !excludedComponents ) {
-							excludedComponents = withoutComponentsByNode[nodeClass] = new Dictionary();
+							excludedComponents = excludedComponentsByNode[nodeClass] = new Dictionary();
 						}
 						excludedComponents[componentClass] = propertyName;
 					}
@@ -56,7 +58,7 @@ public class Family {
 						propertyMap[componentClass] = propertyName;
 					}
 
-					componentInterests.push( componentClass );
+					componentInterests[componentInterests.length] = componentClass;
 				}
 			}
 			flash.system.System.disposeXML( classXML );
@@ -74,23 +76,24 @@ public class Family {
 	private var engine:Engine;
 	private var nodePool:NodePool;
 
+	/** Map of this family nodes by entity */
 	internal var nodeByEntity:Dictionary = new Dictionary();
 
 	/** Node property name by a component class */
 	internal var propertyMap:Dictionary;
 
-	/** List of all component classes defined in node */
+	/** List of all component classes defined in node, and the family interested in handling of. */
 	internal var componentInterests:Vector.<Class>;
 
 	/** Components that should not be in the entity to match the family. */
 	internal var excludedComponents:Dictionary;
-	
+
 	/** Components that are not required to match an entity to the family */
 	internal var optionalComponents:Dictionary;
 
 	/** The list of all nodes of entities matched this family */
 	internal var nodeList:NodeList = new NodeList();
-	
+
 	/** Bit representation of the family's required components for fast matching */
 	internal var sign:BitSign;
 
@@ -114,72 +117,56 @@ public class Family {
 		nodePool = new NodePool( nodeClass, propertyMap );
 	}
 
-	internal function entityFound( entity:Entity ):void {
+	internal function addEntity( entity:Entity ):void {
 		// do nothing if an entity already identified in this family
 		if ( nodeByEntity[entity] ) {
 			return;
 		}
 
-		// NOTE: deprecated
-		// verify existence of required component set in the entity
-		/*for each (var requiredClass:Class in componentSet) {
-		 if (!entity.has(requiredClass)) {
-		 return;
-		 }
-		 }*/
-
-		createNodeOf( entity );
+		inline_createNodeOf( entity );
 	}
 
 	/**
-	 * Removes the entity if it have a node is in this family's NodeList.
+	 * Removes a node of the entity if such node exists in this family's NodeList.
 	 */
-	internal function entityLost( entity:Entity ):void {
+	internal function removeEntity( entity:Entity ):void {
 		if ( nodeByEntity[entity] ) {
-			removeNodeOf( entity );
+			inline_removeNodeOf( entity );
 		}
 	}
 
 	internal function componentAdded( entity:Entity, componentClass:Class ):void {
 		// The node of the entity if it belongs to this family.
 		var node:Node = nodeByEntity[entity];
-		
+
 		/* Excluded component check */
-		
+
 		// Check is new component excludes the entity from this family
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			if ( node ) {
-				entityLost( entity );
+				inline_removeNodeOf( entity );
 			}
 			return;
 		}
-		
+
 		/* Optional component check */
-		
-		// Optional component can't affect entity matching to the family,
-		// so just assign it to the node if it exists
-		if (node && optionalComponents && optionalComponents[componentClass]) {
+
+		// An optional component can't affect entity matching to the family.
+		// If a component is optional just put the reference to the node property 
+		if ( node && optionalComponents && optionalComponents[componentClass] ) {
 			var property:String = optionalComponents[componentClass];
 			node[property] = entity.get( componentClass );
 			return;
 		}
-		
+
 		/* Required component check */
 
-		// do nothing if the entity already identified as member of this family or the component isn't required by this family
+		// do nothing if the entity already identified as member of this family or a component isn't required by this family
 		if ( node || !propertyMap[componentClass] ) {
 			return;
 		}
-
-		// NOTE: deprecated
-		// verify that a new component complete a set of required components in the entity
-		/*for each (var requiredClass:Class in componentSet) {
-		 if (!entity.has(requiredClass)) {
-		 return;
-		 }
-		 }*/
-
-		createNodeOf( entity );
+		
+		inline_createNodeOf( entity );
 	}
 
 	internal function componentRemoved( entity:Entity, componentClass:Class ):void {
@@ -187,30 +174,30 @@ public class Family {
 		var node:Node = nodeByEntity[entity];
 
 		/* Excluded component check */
-		
-		// Check is after the component removed the entity will match to this family
+
+		// Check is removed component makes the entity as a member of this family
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			// no more unacceptable components?
-			if (!entity.sign.contains(exclusionSign)) {
-				entityFound(entity);
+			if ( !entity.sign.contains( exclusionSign ) ) {
+				addEntity( entity );
 			}
 			return;
 		}
 
 		/* Optional component check */
-		
+
 		// Removed optional component can't decline the entity from matching to a family,
-		// so just set node property to null
-		if (node && optionalComponents && optionalComponents[componentClass]) {
+		// so just set the node property to null
+		if ( node && optionalComponents && optionalComponents[componentClass] ) {
 			var property:String = optionalComponents[componentClass];
 			node[property] = null;
 			return;
 		}
 
 		/* Required component check */
-		
+
 		if ( node && propertyMap[componentClass] ) {
-			removeNodeOf( entity );
+			inline_removeNodeOf( entity );
 		}
 	}
 
@@ -220,7 +207,7 @@ public class Family {
 	 * @param entity
 	 */
 	[Inline]
-	private final function createNodeOf( entity:Entity ):void {
+	private final function inline_createNodeOf( entity:Entity ):void {
 		// Create new node and assign components from the entity to the node variables
 		var node:Node = nodePool.get();
 		node.entity = entity;
@@ -228,20 +215,20 @@ public class Family {
 			var property:String = propertyMap[componentClass];
 			node[property] = entity.get( componentClass );
 		}
-		
-		if (optionalComponents) {
-			for (componentClass in optionalComponents) {
+
+		if ( optionalComponents ) {
+			for ( componentClass in optionalComponents ) {
 				property = optionalComponents[componentClass];
 				node[property] = entity.get( componentClass );
 			}
 		}
-		
+
 		nodeByEntity[entity] = node;
 		nodeList.add( node );
 	}
 
 	[Inline]
-	private final function removeNodeOf( entity:Entity ):void {
+	private final function inline_removeNodeOf( entity:Entity ):void {
 		var node:Node = nodeByEntity[entity];
 		delete nodeByEntity[entity];
 

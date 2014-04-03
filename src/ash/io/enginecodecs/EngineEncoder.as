@@ -32,7 +32,7 @@ package ash.io.enginecodecs
 
 		public function encodeEngine( engine : Engine ) : Object
 		{
-			var entities : Vector.<Entity> = engine.entities;
+			var entities : Vector.<Entity> = engine.getEntityList();
 
 			for each ( var entity : Entity in entities )
 			{
