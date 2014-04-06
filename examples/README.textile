@@ -1,1 +1,0 @@
-The example project has moved to its own repository at "http://github.com/richardlord/Asteroids":http://github.com/richardlord/Asteroids
