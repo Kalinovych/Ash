@@ -1,5 +1,11 @@
 package ash.core {
 
+import ash.engine.api.IComponentProcessor;
+import ash.engine.api.IEnginePostUpdateHandler;
+import ash.engine.api.IEnginePreUpdateHandler;
+import ash.engine.api.IEngineProcess;
+import ash.engine.api.IEngineUpdateHandler;
+import ash.engine.api.IEntityProcessor;
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSignManager;
@@ -42,6 +48,21 @@ public class Engine {
 	 * listen for this signal and make the change when the signal is dispatched.
 	 */
 	public var updateComplete:Signal0;
+	
+	
+	/* ESCEngine */
+	
+	private var mEntityProcessorList:ProcessorList;
+	
+	private var mComponentProcessorList:ProcessorList;
+	
+	private var mEnginePreUpdateHandlerList:ProcessorList;
+	
+	private var mEngineUpdateHandlerList:ProcessorList;
+	
+	private var mEnginePostUpdateHandlerList:ProcessorList;
+	
+	
 
 	/**
 	 * Constructor
@@ -53,6 +74,47 @@ public class Engine {
 		updateComplete = new Signal0();
 
 		signManager = new BitSignManager( componentCapacityLevel );
+		
+		mEntityProcessorList = new ProcessorList();
+		mComponentProcessorList = new ProcessorList();
+		
+		mEnginePreUpdateHandlerList = new ProcessorList();
+		mEngineUpdateHandlerList = new ProcessorList();
+		mEnginePostUpdateHandlerList = new ProcessorList();
+	}
+	
+	public function addProcess(process:IEngineProcess, priority:int):void {
+		if (process is IEntityProcessor) mEntityProcessorList.add(process, priority);
+		if (process is IComponentProcessor) mComponentProcessorList.add(process, priority);
+		if (process is IEnginePreUpdateHandler) mEnginePreUpdateHandlerList.add(process, priority);
+		if (process is IEngineUpdateHandler) mEngineUpdateHandlerList.add(process, priority);
+		if (process is IEnginePostUpdateHandler) mEnginePostUpdateHandlerList.add(process, priority);
+		
+		process.addedToEngine( this );
+	}
+
+	public function upd( deltaTime:Number ):void {
+		var node:ProcessorNode = mEnginePreUpdateHandlerList.head.next;
+		while (node != mEnginePreUpdateHandlerList.tail) {
+			var preUpdateHandler:IEnginePreUpdateHandler = node.processor;
+			preUpdateHandler.preUpdate();
+		}
+		
+		updating = true;
+		
+		node = mEngineUpdateHandlerList.head.next;
+		while (node != mEngineUpdateHandlerList.tail) {
+			var updateHandler:IEngineUpdateHandler = node.processor;
+			updateHandler.update( deltaTime );
+		}
+
+		updating = false;
+
+		node = mEnginePostUpdateHandlerList.head.next;
+		while (node != mEngineUpdateHandlerList.tail) {
+			var postUpdateHandler:IEnginePostUpdateHandler = node.processor;
+			postUpdateHandler.postUpdate();
+		}
 	}
 
 	/**
