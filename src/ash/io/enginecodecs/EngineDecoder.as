@@ -15,8 +15,8 @@ package ash.io.enginecodecs
 		public function EngineDecoder( codecManager : CodecManager )
 		{
 			this.codecManager = codecManager;
-			componentMap = new Array();
-			encodedComponentMap = new Array();
+			componentMap = [];
+			encodedComponentMap = [];
 		}
 
 		public function reset() : void

@@ -4,7 +4,7 @@
  */
 
 package ash.engine.threadsVersion {
-import ash.core.ProcessorList;
+import ash.engine.collections.HandlerList;
 import ash.engine.api.IComponentProcessor;
 import ash.engine.api.IEngineComponentHandler;
 import ash.engine.api.IEnginePostUpdateHandler;
@@ -14,11 +14,11 @@ import ash.engine.api.IEntityProcessor;
 
 public class ECSEngine {
 
-	private var mEntityProcessorList:ProcessorList;
-	private var mComponentProcessorList:ProcessorList;
-	private var mEnginePreUpdateHandlerList:ProcessorList;
-	private var mEngineUpdateHandlerList:ProcessorList;
-	private var mEnginePostUpdateHandlerList:ProcessorList;
+	private var mEntityProcessorList:HandlerList;
+	private var mComponentProcessorList:HandlerList;
+	private var mEnginePreUpdateHandlerList:HandlerList;
+	private var mEngineUpdateHandlerList:HandlerList;
+	private var mEnginePostUpdateHandlerList:HandlerList;
 
 
 	private var mComponents:Vector.<IEngineComponent>;

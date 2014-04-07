@@ -31,7 +31,7 @@ package ash.tools
 
 		private static function getPool( componentClass : Class ) : Array
 		{
-			return componentClass in pools ? pools[componentClass] : pools[componentClass] = new Array();
+			return componentClass in pools ? pools[componentClass] : pools[componentClass] = [];
 		}
 
 		/**

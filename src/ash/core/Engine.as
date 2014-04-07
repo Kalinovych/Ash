@@ -1,11 +1,6 @@
 package ash.core {
 
-import ash.engine.api.IComponentProcessor;
-import ash.engine.api.IEnginePostUpdateHandler;
-import ash.engine.api.IEnginePreUpdateHandler;
-import ash.engine.api.IEngineProcess;
-import ash.engine.api.IEngineUpdateHandler;
-import ash.engine.api.IEntityProcessor;
+import ash.engine.collections.HandlerList;
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSignManager;
@@ -48,21 +43,20 @@ public class Engine {
 	 * listen for this signal and make the change when the signal is dispatched.
 	 */
 	public var updateComplete:Signal0;
-	
-	
+
+
 	/* ESCEngine */
-	
-	private var mEntityProcessorList:ProcessorList;
-	
-	private var mComponentProcessorList:ProcessorList;
-	
-	private var mEnginePreUpdateHandlerList:ProcessorList;
-	
-	private var mEngineUpdateHandlerList:ProcessorList;
-	
-	private var mEnginePostUpdateHandlerList:ProcessorList;
-	
-	
+
+	private var mEntityProcessorList:HandlerList;
+
+	private var mComponentProcessorList:HandlerList;
+
+	private var mEnginePreUpdateHandlerList:HandlerList;
+
+	private var mEngineUpdateHandlerList:HandlerList;
+
+	private var mEnginePostUpdateHandlerList:HandlerList;
+
 
 	/**
 	 * Constructor
@@ -74,16 +68,16 @@ public class Engine {
 		updateComplete = new Signal0();
 
 		signManager = new BitSignManager( componentCapacityLevel );
-		
-		mEntityProcessorList = new ProcessorList();
-		mComponentProcessorList = new ProcessorList();
-		
-		mEnginePreUpdateHandlerList = new ProcessorList();
-		mEngineUpdateHandlerList = new ProcessorList();
-		mEnginePostUpdateHandlerList = new ProcessorList();
+
+		mEntityProcessorList = new HandlerList();
+		mComponentProcessorList = new HandlerList();
+
+		mEnginePreUpdateHandlerList = new HandlerList();
+		mEngineUpdateHandlerList = new HandlerList();
+		mEnginePostUpdateHandlerList = new HandlerList();
 	}
-	
-	public function addProcess(process:IEngineProcess, priority:int):void {
+
+	/*public function addProcess(process:IEngineProcess, priority:int):void {
 		if (process is IEntityProcessor) mEntityProcessorList.add(process, priority);
 		if (process is IComponentProcessor) mComponentProcessorList.add(process, priority);
 		if (process is IEnginePreUpdateHandler) mEnginePreUpdateHandlerList.add(process, priority);

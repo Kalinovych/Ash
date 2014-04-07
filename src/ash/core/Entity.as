@@ -157,7 +157,7 @@ import flash.utils.Dictionary;
 		 */
 		public function getAll() : Array
 		{
-			var componentArray : Array = new Array();
+			var componentArray : Array = [];
 			for each( var component : * in components )
 			{
 				componentArray.push( component );
