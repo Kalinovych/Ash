@@ -5,7 +5,7 @@
 package ash.core {
 import flash.utils.Dictionary;
 
-internal class ProcessorList {
+public class ProcessorList {
 	public var _head:ProcessorNode;
 	public var _tail:ProcessorNode;
 	public var registry:Dictionary;

@@ -3,15 +3,15 @@
  * @author Alexander Kalinovych
  */
 package ash.engine.api {
-import ash.core.Engine;
+import ash.engine.ECSEngine;
 
 public interface IEngineProcess {
-	function addedToEngine( engine:Engine ):void;
-	
-	function removedFromEngine( engine:Engine ):void;
-	
+	function addedToEngine( engine:ECSEngine ):void;
+
+	function removedFromEngine( engine:ECSEngine ):void;
+
 	//function get parent():IEngineProcess;
-	
+
 	//function set parent(value:IEngineProcess):void;
 }
 }

@@ -90,7 +90,7 @@ public class Engine {
 		if (process is IEngineUpdateHandler) mEngineUpdateHandlerList.add(process, priority);
 		if (process is IEnginePostUpdateHandler) mEnginePostUpdateHandlerList.add(process, priority);
 		
-		process.addedToEngine( this );
+		//process.addedToEngine( this );
 	}
 
 	public function upd( deltaTime:Number ):void {
