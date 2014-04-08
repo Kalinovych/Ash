@@ -3,12 +3,12 @@
  * @author Alexander Kalinovych
  */
 package ash.engine.lists {
-import com.flashrush.utils.lists.core.LinkedNodeListBase;
+import ash.engine.ecse;
 
 import flash.utils.Dictionary;
 
-public class LinkedHashMap extends LinkedNodeListBase {
-	protected var registry:Dictionary = new Dictionary();
+public class LinkedHashMap extends ElementList {
+	ecse var registry:Dictionary = new Dictionary();
 
 	public function LinkedHashMap() {
 	}
@@ -41,23 +41,15 @@ public class LinkedHashMap extends LinkedNodeListBase {
 		}
 		return null;
 	}
-	
-	public function get firstNode():ItemNode {
-		return _first;
-	}
-
-	public function lastNode():ItemNode {
-		return _last;
-	}
 
 	[Inline]
 	protected final function _nodeOf( key:Object ):* {
-		return registry[key];
+		return ecse::registry[key];
 	}
 
 	[Inline]
 	protected final function _valueOf( key:Object ):* {
-		var node:ItemNode = registry[key];
+		var node:ItemNode = ecse::registry[key];
 		return (node ? node.item : null );
 	}
 
@@ -68,23 +60,25 @@ public class LinkedHashMap extends LinkedNodeListBase {
 
 	[Inline]
 	protected final function _registerNode( key:Object, node:ItemNode ):ItemNode {
-		registry[key] = node;
+		ecse::registry[key] = node;
 		return node;
 	}
 
 	[Inline]
 	protected final function _unregisterNodeOf( key:Object ):void {
-		delete registry[key];
+		delete ecse::registry[key];
 	}
 
 	[Inline]
 	protected final function _attachNode( node:ItemNode ):ItemNode {
-		super.addNode( node );
+		node.isAttached = true;
+		return super.addNode( node );
 	}
 
 	[Inline]
 	protected final function _detachNode( node:ItemNode ):ItemNode {
-		super.removeNode( node );
+		node.isAttached = false;
+		return super.removeNode( node );
 	}
 }
 }

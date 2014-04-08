@@ -3,11 +3,12 @@
  * @author Alexander Kalinovych
  */
 package ash.engine.collections {
+import ash.engine.lists.AnyElementIterator;
 import ash.engine.lists.LinkedHashMap;
 
 public class ElementCollection {
-	private var mElements:LinkedHashMap;
-	private var mTypedHandlers:LinkedHashMap;
+	internal var mElements:LinkedHashMap;
+	private var mTypedHandlers:LinkedHashMap/*.<HandlerList>*/;
 	private var mHandlers:HandlerList;
 
 	public function ElementCollection() {
@@ -16,15 +17,16 @@ public class ElementCollection {
 	}
 
 	public function add( key:Object, element:* ):void {
+		// if exists, remove and add to the end
 		if ( mElements.contains( element ) ) {
 			mElements.remove( key );
 		}
 		mElements.put( key, element );
 
-		var processors:HandlerList = _handlersOf( key );
-		if ( processors && processors.length ) {
-			var pNode:HandlerNode = processors._head.next;
-			while ( pNode != processors._tail ) {
+		var handlers:HandlerList = _handlersOf( key );
+		if ( handlers && handlers.length ) {
+			var pNode:HandlerNode = handlers._head.next;
+			while ( pNode != handlers._tail ) {
 				var p:IElementHandler = pNode.handler;
 				p.handleElementAdded( element );
 				pNode = pNode.next;
@@ -47,6 +49,10 @@ public class ElementCollection {
 	public function removeElementHandler( handler:IElementHandler, elementKey:* = null ):void {
 		var handlers:HandlerList = _handlersOf( elementKey );
 		if ( handlers ) handlers.remove( handler );
+	}
+	
+	public function getElementIterator():AnyElementIterator {
+		return new AnyElementIterator( mElements );
 	}
 
 	[Inline]

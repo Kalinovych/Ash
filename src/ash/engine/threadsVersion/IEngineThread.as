@@ -4,7 +4,7 @@
  */
 package ash.engine.threadsVersion {
 public interface IEngineThread {
-	function update( deltaTime:Number ):void;
+	function process():void;
 	
 	function start():void;
 	

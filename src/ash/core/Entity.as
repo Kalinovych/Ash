@@ -28,6 +28,13 @@ import flash.utils.Dictionary;
 	{
 		private static var nameCount : int = 0;
 		
+		private var _id:uint = 0;
+		
+		[Inline]
+		public function get id():uint {
+			return _id;
+		}
+		
 		/**
 		 * Optional, give the entity a name. This can help with debugging and with serialising the entity.
 		 */
@@ -187,5 +194,8 @@ import flash.utils.Dictionary;
 			return _engine;
 		}
 		
+		public function toString():String {
+			return "Entity(name=" + name + ", id=" + _id.toString() + ")";
+		}
 	}
 }

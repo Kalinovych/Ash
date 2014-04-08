@@ -8,7 +8,7 @@ import flash.utils.Dictionary;
 /**
  * @private
  */
-internal class HandlerList {
+public class HandlerList {
 	public var _head:HandlerNode;
 	public var _tail:HandlerNode;
 	public var registry:Dictionary;

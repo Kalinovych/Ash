@@ -1,6 +1,5 @@
 package ash.core {
 
-import ash.engine.collections.HandlerList;
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSignManager;
@@ -45,19 +44,6 @@ public class Engine {
 	public var updateComplete:Signal0;
 
 
-	/* ESCEngine */
-
-	private var mEntityProcessorList:HandlerList;
-
-	private var mComponentProcessorList:HandlerList;
-
-	private var mEnginePreUpdateHandlerList:HandlerList;
-
-	private var mEngineUpdateHandlerList:HandlerList;
-
-	private var mEnginePostUpdateHandlerList:HandlerList;
-
-
 	/**
 	 * Constructor
 	 */
@@ -68,13 +54,6 @@ public class Engine {
 		updateComplete = new Signal0();
 
 		signManager = new BitSignManager( componentCapacityLevel );
-
-		mEntityProcessorList = new HandlerList();
-		mComponentProcessorList = new HandlerList();
-
-		mEnginePreUpdateHandlerList = new HandlerList();
-		mEngineUpdateHandlerList = new HandlerList();
-		mEnginePostUpdateHandlerList = new HandlerList();
 	}
 
 	/*public function addProcess(process:IEngineProcess, priority:int):void {

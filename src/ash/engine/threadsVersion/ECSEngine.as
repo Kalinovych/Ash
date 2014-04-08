@@ -5,12 +5,6 @@
 
 package ash.engine.threadsVersion {
 import ash.engine.collections.HandlerList;
-import ash.engine.api.IComponentProcessor;
-import ash.engine.api.IEngineComponentHandler;
-import ash.engine.api.IEnginePostUpdateHandler;
-import ash.engine.api.IEnginePreUpdateHandler;
-import ash.engine.api.IEngineUpdateHandler;
-import ash.engine.api.IEntityProcessor;
 
 public class ECSEngine {
 

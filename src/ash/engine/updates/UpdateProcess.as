@@ -3,25 +3,24 @@
  * @author Alexander Kalinovych
  */
 package ash.engine.updates {
-import ash.core.Engine;
-import ash.engine.ECSEngine;
+import ash.engine.UEngine;
 import ash.engine.api.*;
 import ash.engine.threadsVersion.IEngineComponent;
 
 public class UpdateProcess implements IEngineProcess, IEngineComponentHandler {
 	
-	private var engine:ECSEngine;
+	private var engine:UEngine;
 	private var updateableList:Vector.<IUpdateable>;
 	
 	public function UpdateProcess() {
 	}
 	
-	public function addedToEngine( engine:ECSEngine ):void {
+	public function addedToEngine( engine:UEngine ):void {
 		// get list of IUpdateable
 		engine.addComponentHandler( this );
 	}
 
-	public function removedFromEngine( engine:ECSEngine ):void {
+	public function removedFromEngine( engine:UEngine ):void {
 		
 	}
 
