@@ -6,6 +6,5 @@ package ash.engine.threadsVersion {
 public interface IProcessThread {
 	function handleAddedProcess(process:*):void;
 	function handleRemovedProcess(process:*):void;
-	
 }
 }

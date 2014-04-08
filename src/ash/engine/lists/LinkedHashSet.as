@@ -54,13 +54,13 @@ public class LinkedHashSet extends ElementList {
 	[Inline]
 	protected final function _attachNode( node:ItemNode ):ItemNode {
 		node.isAttached = true;
-		super.addNode( node );
+		return super.addNode( node );
 	}
 
 	[Inline]
 	protected final function _detachNode( node:ItemNode ):ItemNode {
 		node.isAttached = false;
-		super.removeNode( node );
+		return super.removeNode( node );
 	}
 
 }

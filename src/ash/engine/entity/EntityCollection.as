@@ -4,74 +4,66 @@
  */
 package ash.engine.entity {
 import ash.core.Entity;
-import ash.engine.lists.AnyElementIterator;
+import ash.engine.ecse;
+import ash.engine.lists.ItemNode;
 import ash.engine.lists.LinkedHashMap;
 import ash.engine.lists.LinkedHashSet;
 
+use namespace ecse;
+
 public class EntityCollection {
 	private var mEntities:LinkedHashMap;
-	private var mHandlers:LinkedHashSet;
-	private var mHandlerIterator:AnyElementIterator;
+	private var mObservers:LinkedHashSet;
 
 	public function EntityCollection() {
 		mEntities = new LinkedHashMap();
-		mHandlers = new LinkedHashSet();
-		mHandlerIterator = new AnyElementIterator( mHandlers );
+		mObservers = new LinkedHashSet();
 	}
 
 	public function add( entity:Entity ):Entity {
-		var key:* = entity.id;
-		
-		if ( mEntities.contains( key ) ) {
-			throw new Error( "Entity with id \"" + key + "\" already exists in this collection!" );
+		var id:* = entity.id;
+
+		if ( mEntities.contains( id ) ) {
+			throw new Error( "Entity with id \"" + id + "\" already exists in this collection!" );
 		}
 
-		if ( mHandlerIterator.isIterating ) {
-			throw new Error( "An entity can't be added to the collection while handling other" );
+		mEntities.put( id, entity );
+
+		for (var node:ItemNode = mObservers.ecse::_firstNode; node; node = node.next) {
+			var observer:IEntityObserver = node.item;
+			observer.onEntityAdded( entity );
 		}
 
-		mEntities.put( key, entity );
-
-		// hopes that entity should not be removed while iterating added handlers
-		while ( mHandlerIterator.next() ) {
-			var handler:IEntityHandler = mHandlerIterator.current;
-			handler.handleAddedEntity( entity );
-		}
-		
 		return entity;
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
-		var key:* = entity.id;
+		var id:* = entity.id;
 
-		if ( !mEntities.contains( key ) ) {
-			throw new Error( "Entity with id \"" + key + "\" not fount in this collection");
+		if ( !mEntities.contains( id ) ) {
+			throw new Error( "Entity with id \"" + id + "\" not fount in this collection" );
 		}
 
-		if ( mHandlerIterator.isIterating ) {
-			throw new Error( "An entity can't be removed from the collection while handling other" );
-		}
-
-		mEntities.remove( key );
-
-		while ( mHandlerIterator.next() ) {
-			var handler:IEntityHandler = mHandlerIterator.current;
-			handler.handleRemovedEntity( entity );
-		}
+		mEntities.remove( id );
 		
+		for (var node:ItemNode = mObservers.ecse::_firstNode; node; node = node.next) {
+			var observer:IEntityObserver = node.item;
+			observer.onEntityRemoved( entity );
+		}
+
 		return entity;
 	}
 
 	public function getIterator():EntityIterator {
 		return new EntityIterator( mEntities );
 	}
-	
-	public function addHandler( handler:IEntityHandler ):Boolean {
-		return mHandlers.add( handler );
+
+	public function addObserver( observer:IEntityObserver ):Boolean {
+		return mObservers.add( observer );
 	}
 
-	public function removeHandler( handler:IEntityHandler ):Boolean {
-		return mHandlers.remove( handler );
+	public function removeObserver( observer:IEntityObserver ):Boolean {
+		return mObservers.remove( observer );
 	}
 }
 }

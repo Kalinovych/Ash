@@ -7,32 +7,36 @@ import ash.engine.ecse;
 
 import flash.utils.Dictionary;
 
+use namespace ecse;
+
 public class LinkedHashMap extends ElementList {
+	public var nodePool:Vector.<ItemNode> = new <ItemNode>[];
+	
 	ecse var registry:Dictionary = new Dictionary();
 
 	public function LinkedHashMap() {
 	}
 
-	public function put( key:Object, item:* ):ItemNode {
+	public function put( key:*, item:* ):ItemNode {
 		var node:ItemNode = _nodeOf( key );
 		if ( !node ) {
-			node = _createNode();
-			_registerNode( key, item );
+			node = _createNode( item );
+			_registerNode( key, node );
 			_attachNode( node );
 		}
 		node.item = item;
 		return node;
 	}
 
-	public function contains( key:Object ):Boolean {
+	public function contains( key:* ):Boolean {
 		return (_nodeOf( key ) != null);
 	}
 
-	public function get( key:Object ):* {
+	public function get( key:* ):* {
 		return _valueOf( key );
 	}
 
-	public function remove( key:Object ):* {
+	public function remove( key:* ):* {
 		var node:ItemNode = _nodeOf( key );
 		if ( node ) {
 			_unregisterNodeOf( key );
@@ -41,32 +45,46 @@ public class LinkedHashMap extends ElementList {
 		}
 		return null;
 	}
-
-	[Inline]
-	protected final function _nodeOf( key:Object ):* {
-		return ecse::registry[key];
+	
+	public function removeAll():void {
+		use namespace ecse;
+		for (var key:* in registry) {
+			var node:ItemNode = _nodeOf( key );
+			_unregisterNodeOf( key );
+			_detachNode( node );
+			node.prev = null;
+			node.next = null;
+		}
 	}
 
 	[Inline]
-	protected final function _valueOf( key:Object ):* {
-		var node:ItemNode = ecse::registry[key];
+	protected final function _nodeOf( key:* ):* {
+		return registry[key];
+	}
+
+	[Inline]
+	protected final function _valueOf( key:* ):* {
+		var node:ItemNode = registry[key];
 		return (node ? node.item : null );
 	}
 
 	[Inline]
-	protected final function _createNode():ItemNode {
-		return new ItemNode();
+	protected final function _createNode( item:* ):ItemNode {
+		// TODO: pool
+		var node:ItemNode = ( nodePool.length > 0 ? nodePool.pop() : new ItemNode() );
+		node.item = item;
+		return node
 	}
 
 	[Inline]
-	protected final function _registerNode( key:Object, node:ItemNode ):ItemNode {
-		ecse::registry[key] = node;
+	protected final function _registerNode( key:*, node:ItemNode ):ItemNode {
+		registry[key] = node;
 		return node;
 	}
 
 	[Inline]
-	protected final function _unregisterNodeOf( key:Object ):void {
-		delete ecse::registry[key];
+	protected final function _unregisterNodeOf( key:* ):void {
+		delete registry[key];
 	}
 
 	[Inline]

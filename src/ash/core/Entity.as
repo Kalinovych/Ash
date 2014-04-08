@@ -1,6 +1,7 @@
 package ash.core
 {
-	import ash.signals.Signal2;
+import ash.engine.ecse;
+import ash.signals.Signal2;
 
 import com.flashrush.signatures.BitSign;
 
@@ -27,11 +28,12 @@ import flash.utils.Dictionary;
 	public class Entity
 	{
 		private static var nameCount : int = 0;
+		private static var idIndex:uint = 0;
 		
-		private var _id:uint = 0;
+		private var _id:uint = idIndex++;
 		
 		[Inline]
-		public function get id():uint {
+		public final function get id():uint {
 			return _id;
 		}
 		
@@ -195,7 +197,7 @@ import flash.utils.Dictionary;
 		}
 		
 		public function toString():String {
-			return "Entity(name=" + name + ", id=" + _id.toString() + ")";
+			return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
 		}
 	}
 }
