@@ -28,14 +28,15 @@ public class LinkedIdMap extends ElementList {
 		var node:ItemNode = registry[id];
 		if ( !node ) {
 			//node = ( nodePool.length > 0 ? nodePool.pop() : new ItemNode() );
-			var count:uint = nodePool.length; 
+			/*var count:uint = nodePool.length; 
 			if (count > 0) {
 				--count;
 				node = nodePool[count];
 				nodePool.length = count;
 			} else {
 				node = new ItemNode();
-			}
+			}*/
+			node = new ItemNode();
 		}
 		node.id = id;
 		node.item = item;

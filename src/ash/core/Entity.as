@@ -27,15 +27,20 @@ import flash.utils.Dictionary;
 	 */
 	public class Entity
 	{
-		private static var nameCount : int = 0;
-		private static var idIndex:uint = 0;
+		public static var nameCount : int = 0;
+		public static var idIndex:uint = 0;
 		
 		private var _id:uint = idIndex++;
 		
-		[Inline]
+		//[Inline]
 		public final function get id():uint {
 			return _id;
 		}
+		
+		public function set id(value:uint):void {
+			_id = value;
+		}
+		
 		
 		/**
 		 * Optional, give the entity a name. This can help with debugging and with serialising the entity.
