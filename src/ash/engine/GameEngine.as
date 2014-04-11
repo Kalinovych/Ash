@@ -11,6 +11,8 @@ public class GameEngine extends TEngine {
 	private var mPreUpdater:IEngineTickHandler;
 	private var mUpdater:IEngineTickHandler;
 	private var mPostUpdater:IEngineTickHandler;
+	
+	
 
 	public function GameEngine() {
 	}

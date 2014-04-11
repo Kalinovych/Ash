@@ -6,10 +6,10 @@ package ash.engine {
 import ash.engine.api.IEngineTickHandler;
 import ash.engine.lists.AnyElementIterator;
 import ash.engine.lists.LinkedHashSet;
-import ash.engine.threadsVersion.IProcessThread;
+import ash.engine.threadsVersion.ISystemThread;
 import ash.engine.updates.IUpdateable;
 
-public class UpdateThread implements IEngineTickHandler,IProcessThread {
+public class UpdateThread implements IEngineTickHandler,ISystemThread {
 	private var mUpdateableList:LinkedHashSet;
 	private var mIterator:AnyElementIterator;
 
@@ -31,7 +31,7 @@ public class UpdateThread implements IEngineTickHandler,IProcessThread {
 	/**
 	 * @private
 	 */
-	public function handleAddedProcess( process:* ):void {
+	public function onSystemAdded( process:* ):void {
 		mUpdateableList.add( process );
 	}
 
@@ -39,7 +39,7 @@ public class UpdateThread implements IEngineTickHandler,IProcessThread {
 	/**
 	 * @private
 	 */
-	public function handleRemovedProcess( process:* ):void {
+	public function onSystemRemoved( process:* ):void {
 		mUpdateableList.remove( process );
 	}
 }

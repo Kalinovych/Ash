@@ -13,7 +13,7 @@ public class ThreadConfig {
 		ecse::threads = new LinkedHashMap();
 	}
 
-	public function setProcessThread( process:*, thread:IProcessThread ):void {
+	public function setProcessThread( process:*, thread:ISystemThread ):void {
 		ecse::threads.put( process, thread );
 	}
 	

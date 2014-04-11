@@ -64,12 +64,12 @@ package ash.core
 			removedNodes = new Vector.<Node>();
 		}
 
-		internal function beginStep():void {
+		public function beginStep():void {
 			addedNodes.length = 0;
 			removedNodes.length = 0;
 		}
 
-		internal function add( node : Node ) : void
+		public function add( node : Node ) : void
 		{
 			if( ! head )
 			{
@@ -87,8 +87,8 @@ package ash.core
 			addedNodes.push( node );
 			nodeAdded.dispatch( node );
 		}
-		
-		internal function remove( node : Node ) : void
+
+		public function remove( node : Node ) : void
 		{
 			if ( head == node)
 			{
@@ -113,8 +113,8 @@ package ash.core
 			nodeRemoved.dispatch( node );
 			// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
 		}
-		
-		internal function removeAll() : void
+
+		public function removeAll() : void
 		{
 			while( head )
 			{

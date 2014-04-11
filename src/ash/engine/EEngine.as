@@ -31,7 +31,7 @@ public class EEngine {
 			var observer:IEntityObserver = node.item;
 			observer.onEntityAdded( entity );
 		}
-
+		
 		return entity;
 	}
 
@@ -56,11 +56,11 @@ public class EEngine {
 		mEntities.removeAll();
 	}
 
-	public function addEntityObserver( observer:IEntityObserver ):Boolean {
+	ecse function addEntityObserver( observer:IEntityObserver ):Boolean {
 		return mEntityObservers.add( observer );
 	}
 
-	public function removeEntityObserver( observer:IEntityObserver ):Boolean {
+	ecse function removeEntityObserver( observer:IEntityObserver ):Boolean {
 		return mEntityObservers.remove( observer );
 	}
 }

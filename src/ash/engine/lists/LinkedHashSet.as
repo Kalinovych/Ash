@@ -9,14 +9,17 @@ public class LinkedHashSet extends ElementList {
 	protected var registry:Dictionary = new Dictionary();
 
 	public function LinkedHashSet() {
+		super();
 	}
 
 	public function add( item:* ):Boolean {
-		if ( _nodeOf( item ) ) return false;
+		if ( _contains( item ) ) return false;
 
 		var node:ItemNode = _nodeFor( item );
 		registry[item] = node;
-		_attachNode( node );
+		//_attachNode( node );
+		node.isAttached = true;
+		addNode( node );
 		return true;
 	}
 
@@ -25,7 +28,9 @@ public class LinkedHashSet extends ElementList {
 		if ( node == null ) return false;
 
 		delete registry[item];
-		_detachNode( node );
+		//_detachNode( node );
+		node.isAttached = false;
+		removeNode( node );
 		return true;
 	}
 
@@ -51,7 +56,7 @@ public class LinkedHashSet extends ElementList {
 		return registry[item];
 	}
 
-	[Inline]
+	/*[Inline]
 	protected final function _attachNode( node:ItemNode ):ItemNode {
 		node.isAttached = true;
 		return super.addNode( node );
@@ -61,7 +66,7 @@ public class LinkedHashSet extends ElementList {
 	protected final function _detachNode( node:ItemNode ):ItemNode {
 		node.isAttached = false;
 		return super.removeNode( node );
-	}
+	}*/
 
 }
 }

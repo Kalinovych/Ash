@@ -4,7 +4,7 @@
  */
 package ash.engine {
 import ash.engine.lists.LinkedHashMap;
-import ash.engine.threadsVersion.IProcessThread;
+import ash.engine.threadsVersion.ISystemThread;
 import ash.engine.threadsVersion.ThreadConfig;
 
 public class TEngine extends UEngine {
@@ -22,8 +22,8 @@ public class TEngine extends UEngine {
 		use namespace ecse;
 		for ( var processType:* in mThreads.registry ) {
 			if ( system is processType ) {
-				var thread:IProcessThread = mThreads.get( processType );
-				thread.handleAddedProcess( system );
+				var thread:ISystemThread = mThreads.get( processType );
+				thread.onSystemAdded( system );
 			}
 
 		}

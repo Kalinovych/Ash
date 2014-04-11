@@ -124,7 +124,7 @@ public class Engine {
 	 * @param entity The entity to remove.
 	 */
 	public function removeEntity( entity:Entity ):void {
-		/*entity.componentAdded.remove( componentAdded );
+		entity.componentAdded.remove( componentAdded );
 		entity.componentRemoved.remove( componentRemoved );
 		entity.nameChanged.remove( entityNameChanged );
 
@@ -132,13 +132,13 @@ public class Engine {
 			if ( entityBelongToFamily( entity, family ) ) {
 				family.removeEntity( entity );
 			}
-		}*/
+		}
 
 		delete entityByName[ entity.id ];
 		entityList.remove( entity );
-		//signManager.recycleSign( entity.sign );
-		//entity.sign = null;
-		//entity._engine = null;
+		signManager.recycleSign( entity.sign );
+		entity.sign = null;
+		entity._engine = null;
 	}
 
 	/**
