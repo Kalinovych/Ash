@@ -9,8 +9,10 @@ import ash.engine.lists.ItemNode;
 import ash.engine.lists.LinkedHashSet;
 import ash.engine.lists.LinkedIdMap;
 
+use namespace ecse;
+
 public class EEngine {
-	protected var mEntities:LinkedIdMap;
+	protected var mEntities:LinkedIdMap/*<entityId, Entity>*/;
 	protected var mEntityObservers:LinkedHashSet;
 
 	public function EEngine() {
@@ -31,7 +33,7 @@ public class EEngine {
 			var observer:IEntityObserver = node.item;
 			observer.onEntityAdded( entity );
 		}
-		
+
 		return entity;
 	}
 

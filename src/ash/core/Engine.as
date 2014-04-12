@@ -1,10 +1,14 @@
 package ash.core {
 
+import ash.engine.ecse;
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSignManager;
 
 import flash.utils.Dictionary;
+
+
+use namespace ecse;
 
 /**
  * The Engine class is the central point for creating and managing your game state. Add
@@ -303,7 +307,7 @@ public class Engine {
 
 		// subscribe for handling added/removed components interested in
 		for each( var componentClass:Class in family.componentInterests ) {
-			var familyList:Vector.<Family> = familiesByComponent[componentClass] ||= new Vector.<Family>();
+			var familyList:Vector.<Family> = ( familiesByComponent[componentClass] ||= new <Family>[] );
 			familyList[familyList.length] = family;
 		}
 

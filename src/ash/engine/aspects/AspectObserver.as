@@ -6,7 +6,6 @@ package ash.engine.aspects {
 import ash.core.Entity;
 import ash.core.Node;
 import ash.core.NodeList;
-import ash.engine.components.IComponentObserver;
 import ash.engine.ecse;
 
 import com.flashrush.signatures.BitSign;
@@ -15,7 +14,10 @@ import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class AspectObserver /*implements IComponentObserver, IEntityObserver */ {
+/**
+ * Aspect & AspectObserver merged in one class
+ */
+internal class AspectObserver /*implements IComponentObserver, IEntityObserver */ {
 	private var nodeClass:Class;
 	//private var nodePool:NodePool;
 
@@ -35,7 +37,7 @@ public class AspectObserver /*implements IComponentObserver, IEntityObserver */ 
 
 	/** Components that are not required to match an entity to the family */
 	internal var optionalComponents:Dictionary;
-	
+
 	/** Bit representation of the family's required components for fast matching */
 	internal var sign:BitSign;
 
@@ -44,6 +46,7 @@ public class AspectObserver /*implements IComponentObserver, IEntityObserver */ 
 
 	public function AspectObserver( nodeClass:Class ) {
 		this.nodeClass = nodeClass;
+		AspectUtil.describeAspect( nodeClass, this );
 	}
 
 	public function get nodeList():NodeList {
@@ -52,23 +55,23 @@ public class AspectObserver /*implements IComponentObserver, IEntityObserver */ 
 
 	public function onAspectEntityAdded( entity:Entity ):void {
 		//entity.ecse::addComponentObserver( this );
-		
+
 		// do nothing if an entity already identified in this family
 		if ( nodeByEntity[entity] ) {
 			return;
 		}
-
+		
 		_createNodeOf( entity );
 	}
 
 	public function onAspectEntityRemoved( entity:Entity ):void {
 		//entity.ecse::removeComponentObserver( this );
-		
+
 		if ( nodeByEntity[entity] ) {
 			_removeNodeOf( entity );
 		}
 	}
-	
+
 	public function onComponentAdded( entity:Entity, componentClass:* ):void {
 		// The node of the entity if it belongs to this family.
 		var node:Node = nodeByEntity[entity];

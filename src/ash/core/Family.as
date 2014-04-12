@@ -2,12 +2,16 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
+import ash.engine.ecse;
+
 import com.flashrush.signatures.BitSign;
 
 import flash.system.System;
 import flash.utils.Dictionary;
 import flash.utils.describeType;
 import flash.utils.getDefinitionByName;
+
+use namespace ecse;
 
 /**
  * Family designed to identify entities as defined node and add or remove that node to the NodeList.

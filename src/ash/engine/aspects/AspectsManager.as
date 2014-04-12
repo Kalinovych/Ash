@@ -6,36 +6,36 @@ package ash.engine.aspects {
 import ash.core.Entity;
 import ash.core.NodeList;
 import ash.engine.components.IComponentObserver;
+import ash.engine.ecse;
+import ash.engine.entity.EntityManager;
 import ash.engine.entity.IEntityObserver;
+import ash.engine.lists.ItemNode;
 import ash.engine.lists.LinkedHashMap;
+import ash.engine.lists.LinkedHashSet;
+import ash.engine.lists.LinkedIdMap;
+
+import com.flashrush.signatures.BitSignManager;
+
+import flash.utils.Dictionary;
+
+use namespace ecse;
 
 /**
  * A layer between engine and Aspect Observers.
  * Observe for added/removed entities and notify aspect observers.
- * 
+ *
  */
-public class AspectsManager implements IComponentObserver, IEntityObserver {
+public class AspectsManager implements IEntityObserver, IComponentObserver {
+	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
+	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
-	private var aspectObservers:LinkedHashMap = new LinkedHashMap();
+	private var entityManager:EntityManager;
+	private var signManager:BitSignManager;
 
-	public function AspectsManager() {
-	}
-
-	public function onEntityAdded( entity:Entity ):void {
-		for each( var aspect:AspectObserver in aspectObservers ) {
-			if ( entityHasAspect( entity, aspect ) ) {
-				aspect.onAspectEntityAdded( entity );
-			}
-		}
-	}
-
-	public function onEntityRemoved( entity:Entity ):void {
-	}
-
-	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
-	}
-
-	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
+	public function AspectsManager( entityManager:EntityManager ) {
+		this.entityManager = entityManager;
+		this.signManager = entityManager.mSignManager;
+		entityManager.addObserver( this );
 	}
 
 	public function getNodeList( nodeClass:Class ):NodeList {
@@ -47,34 +47,89 @@ public class AspectsManager implements IComponentObserver, IEntityObserver {
 		//return ( familyMap[nodeClass] || inline_createFamily( nodeClass ) ).nodeList;
 	}
 
-	[Inline]
-	protected final function _createAspectObserver( nodeClass:Class ):AspectObserver {
-		var observer:AspectObserver = new AspectObserver( nodeClass );
-		/*var family:Family = familyMap[nodeClass] = new Family( nodeClass, this );
-		family.sign = signManager.signKeys( family.propertyMap );
-		if ( family.excludedComponents ) {
-			family.exclusionSign = signManager.signKeys( family.excludedComponents );
-		}
-
-		// find all entities matching to the new family
-		for ( var entity:Entity = entityList.head; entity; entity = entity.next ) {
-			if ( entityBelongToFamily( entity, family ) ) {
-				family.addEntity( entity );
+	/**
+	 * @private
+	 */
+	public function onEntityAdded( entity:Entity ):void {
+		for each( var aspect:AspectObserver in aspectObservers ) {
+			if ( _entityMatchAspect( entity, aspect ) ) {
+				aspect.onAspectEntityAdded( entity );
 			}
 		}
+	}
 
-		// subscribe for handling added/removed components interested in
-		for each( var componentClass:Class in family.componentInterests ) {
-			var familyList:Vector.<Family> = familiesByComponent[componentClass] ||= new Vector.<Family>();
-			familyList[familyList.length] = family;
+	/**
+	 * @private
+	 */
+	public function onEntityRemoved( entity:Entity ):void {
+		for each( var aspect:AspectObserver in aspectObservers ) {
+			if ( _entityMatchAspect( entity, aspect ) ) {
+				aspect.onAspectEntityRemoved( entity );
+			}
 		}
+	}
 
-		return family;*/
+	/**
+	 * @private
+	 */
+	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
+		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
+		if ( componentObservers ) {
+			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+				var observer:AspectObserver = node.item;
+				if ( entity.sign.contains( observer.sign ) ) {
+					observer.onComponentAdded( entity, componentType );
+				}
+			}
+		}
+	}
+
+	/**
+	 * @private
+	 */
+	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
+		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
+		if ( componentObservers ) {
+			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+				var observer:AspectObserver = node.item;
+				if ( entity.sign.contains( observer.sign ) ) {
+					observer.onComponentRemoved( entity, componentType );
+				}
+			}
+		}
 	}
 
 	[Inline]
-	protected final function entityHasAspect( entity:Entity, aspect:AspectObserver ):Boolean {
-		//return ( entity.sign.contains( family.sign ) && !( family.exclusionSign && entity.sign.contains( family.exclusionSign ) ) );
+	protected final function _createAspectObserver( nodeClass:Class ):AspectObserver {
+		var aspect:AspectObserver = new AspectObserver( nodeClass );
+		aspect.sign = signManager.signKeys( aspect.propertyMap );
+		if ( aspect.excludedComponents ) {
+			aspect.exclusionSign = signManager.signKeys( aspect.excludedComponents );
+		}
+
+		// find all entities matching this aspect
+		var entityList:LinkedIdMap = entityManager.mEntities;
+		for ( var node:ItemNode = entityList._firstNode; node; node = node.next ) {
+			var entity:Entity = node.item;
+			if ( _entityMatchAspect( entity, aspect ) ) {
+				aspect.onAspectEntityAdded( entity );
+			}
+		}
+
+		// add aspect as observer of each component in the node
+		var interests:Vector.<Class> = aspect.componentInterests;
+		for ( var i:int = 0, len:int = interests.length; i < len; i++ ) {
+			var componentClass:Class = interests[i];
+			var observers:LinkedHashSet/*<AspectObserver>*/ = observersOfComponent[componentClass] ||= new LinkedHashSet();
+			observers.add( aspect );
+		}
+
+		return aspect;
+	}
+
+	[Inline]
+	protected final function _entityMatchAspect( entity:Entity, aspect:AspectObserver ):Boolean {
+		return ( entity.sign.contains( aspect.sign ) && !( aspect.exclusionSign && entity.sign.contains( aspect.exclusionSign ) ) );
 	}
 
 }
