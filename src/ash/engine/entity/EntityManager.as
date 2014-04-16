@@ -18,6 +18,7 @@ public class EntityManager implements IComponentObserver {
 	ecse var mEntities:LinkedIdMap;
 	ecse var mSignManager:BitSignManager;
 	ecse var mEntitySigner:EntitySigner;
+	
 	private var mObservers:LinkedHashSet;
 
 	public function EntityManager() {
@@ -39,7 +40,8 @@ public class EntityManager implements IComponentObserver {
 
 		// notify signer first
 		mEntitySigner.onEntityAdded( entity );
-		// subscribe signer for component observation
+		
+		// manual subscribe signer for component observation
 		entity.addComponentObserver( mEntitySigner );
 
 		// notify observers

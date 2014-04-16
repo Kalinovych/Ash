@@ -29,8 +29,8 @@ public class ComponentManager implements IEntityObserver, IComponentObserver {
 	public function dispose():void {
 		// TODO: implement dispose
 	}
-	
-	public function getEntities( componentType:Class ):LinkedHashSet {
+
+	public function getEntitiesWithComponent( componentType:Class ):LinkedHashSet {
 		return entitiesByComponent[componentType];
 	}
 
