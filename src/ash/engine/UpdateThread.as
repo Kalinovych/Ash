@@ -12,7 +12,8 @@ import ash.engine.updates.IUpdateable;
 public class UpdateThread implements IEngineTickHandler,ISystemThread {
 	private var mUpdateableList:LinkedHashSet;
 	private var mIterator:AnyElementIterator;
-
+	
+	public var deltaTime:Number = 1.0;
 	public var timeScale:Number = 1.0;
 
 	public function UpdateThread() {
@@ -21,7 +22,6 @@ public class UpdateThread implements IEngineTickHandler,ISystemThread {
 	}
 
 	public function tick():void {
-		var deltaTime:Number = 1.0;
 		while ( mIterator.next() ) {
 			var process:IUpdateable = mIterator.current;
 			process.update( deltaTime * timeScale );

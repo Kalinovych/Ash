@@ -4,6 +4,8 @@
  */
 package ash.engine {
 import ash.engine.api.IEngineTickHandler;
+import ash.engine.aspects.AspectsManager;
+import ash.engine.entity.EntityManager;
 import ash.engine.threadsVersion.ThreadConfig;
 import ash.engine.updates.IUpdateable;
 
@@ -12,7 +14,12 @@ public class GameEngine extends TEngine {
 	private var mUpdater:IEngineTickHandler;
 	private var mPostUpdater:IEngineTickHandler;
 
+	protected var _entityManager:EntityManager;
+	protected var _aspectManager:AspectsManager;
+
 	public function GameEngine() {
+		_entityManager = new EntityManager();
+		_aspectManager = new AspectsManager( _entityManager );
 	}
 
 	override protected function configure( engineTickHandlers:Vector.<IEngineTickHandler> ):void {
