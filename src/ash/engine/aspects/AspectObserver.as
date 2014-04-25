@@ -147,7 +147,7 @@ internal class AspectObserver /*implements IComponentObserver, IEntityObserver *
 	private final function _createNodeOf( entity:Entity ):void {
 		// Create new node and assign components from the entity to the node variables
 		//var node:Node = nodePool.get();
-		var node:Node = new Node();
+		var node:Node = new nodeClass();
 		node.entity = entity;
 		for ( var componentClass:* in propertyMap ) {
 			var property:String = propertyMap[componentClass];

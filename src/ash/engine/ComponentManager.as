@@ -6,7 +6,6 @@ package ash.engine {
 import ash.core.Entity;
 import ash.engine.components.*;
 import ash.engine.entity.EntityManager;
-import ash.engine.entity.IEntityObserver;
 import ash.engine.lists.LinkedHashSet;
 
 import flash.utils.Dictionary;
@@ -17,21 +16,21 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IEntityObserver, IComponentObserver {
-	private var entitiesByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
-	private var entityManager:EntityManager;
+public class ComponentManager implements IComponentObserver {
+	protected var entityManager:EntityManager;
+	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
 	public function ComponentManager( entityManager:EntityManager ) {
 		this.entityManager = entityManager;
-		entityManager.addObserver( this );
+	}
+
+	public function getEntitiesWith( componentType:Class ):LinkedHashSet {
+		return entitySetByComponent[componentType];
 	}
 
 	public function dispose():void {
-		// TODO: implement dispose
-	}
-
-	public function getEntitiesWithComponent( componentType:Class ):LinkedHashSet {
-		return entitiesByComponent[componentType];
+		entityManager = null;
+		entitySetByComponent = null;
 	}
 
 	/**
@@ -42,8 +41,9 @@ public class ComponentManager implements IEntityObserver, IComponentObserver {
 
 		var components:* = entity.ecse::components;
 		for ( var componentType:* in components ) {
-			var component:* = components[componentType];
-			onComponentAdded( entity, component, componentType );
+			//var component:* = components[componentType];
+			//onComponentAdded( entity, component, componentType );
+			mapEntityToComponent( componentType, entity );
 		}
 	}
 
@@ -53,8 +53,9 @@ public class ComponentManager implements IEntityObserver, IComponentObserver {
 	public function onEntityRemoved( entity:Entity ):void {
 		var components:* = entity.ecse::components;
 		for ( var componentType:* in components ) {
-			var component:* = components[componentType];
-			onComponentRemoved( entity, component, componentType );
+			//var component:* = components[componentType];
+			//onComponentRemoved( entity, component, componentType );
+			unmapEntityFromComponent( componentType, entity );
 		}
 
 		entity.removeComponentObserver( this );
@@ -64,19 +65,30 @@ public class ComponentManager implements IEntityObserver, IComponentObserver {
 	 * @private
 	 */
 	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
-		var entities:LinkedHashSet = entitiesByComponent[componentType];
-		if ( !entities ) {
-			entities = new LinkedHashSet();
-		}
-		entities.add( entity );
+		mapEntityToComponent( componentType, entity );
 	}
 
 	/**
 	 * @private
 	 */
 	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
-		var entities:LinkedHashSet = entitiesByComponent[componentType];
-		entities.remove( entity );
+		unmapEntityFromComponent( componentType, entity );
+	}
+
+	protected function mapEntityToComponent( componentType:*, entity:Entity ):void {
+		var entities:LinkedHashSet = entitySetByComponent[componentType];
+		if ( !entities ) {
+			entities = new LinkedHashSet();
+			entitySetByComponent[componentType] = entities;
+		}
+		entities.add( entity );
+	}
+
+	protected function unmapEntityFromComponent( componentType:*, entity:Entity ):void {
+		var entities:LinkedHashSet = entitySetByComponent[componentType];
+		if ( entities ) {
+			entities.remove( entity );
+		}
 	}
 
 }

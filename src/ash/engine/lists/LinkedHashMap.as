@@ -57,6 +57,11 @@ public class LinkedHashMap extends ElementList {
 		}
 	}
 
+	override public function dispose():void {
+		registry = null;
+		super.dispose();
+	}
+
 	[Inline]
 	protected final function _nodeOf( key:* ):* {
 		return registry[key];

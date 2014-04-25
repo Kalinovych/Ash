@@ -5,10 +5,9 @@
 package ash.engine.aspects {
 import ash.core.Entity;
 import ash.core.NodeList;
-import ash.engine.components.IComponentObserver;
+import ash.engine.ComponentManager;
 import ash.engine.ecse;
 import ash.engine.entity.EntityManager;
-import ash.engine.entity.IEntityObserver;
 import ash.engine.lists.ItemNode;
 import ash.engine.lists.LinkedHashMap;
 import ash.engine.lists.LinkedHashSet;
@@ -25,32 +24,46 @@ use namespace ecse;
  * Observe for added/removed entities and notify aspect observers.
  *
  */
-public class AspectsManager implements IEntityObserver, IComponentObserver {
+public class AspectsManager extends ComponentManager {
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
-	private var entityManager:EntityManager;
 	private var signManager:BitSignManager;
 
 	public function AspectsManager( entityManager:EntityManager ) {
-		this.entityManager = entityManager;
-		this.signManager = entityManager.mSignManager;
-		entityManager.addObserver( this );
+		super( entityManager );
+		
+		this.signManager = new BitSignManager();
 	}
 
 	public function getNodeList( nodeClass:Class ):NodeList {
 		var observer:AspectObserver = aspectObservers.get( nodeClass );
 		if ( !observer ) {
-			observer = _createAspectObserver( nodeClass );
+			observer = createAspectObserver( nodeClass );
 		}
 		return observer.nodeList;
 		//return ( familyMap[nodeClass] || inline_createFamily( nodeClass ) ).nodeList;
 	}
 
+	override public function dispose():void {
+		aspectObservers.removeAll();
+		aspectObservers.dispose();
+		aspectObservers = null;
+
+		observersOfComponent = null;
+
+		signManager = null;
+		
+		super.dispose();
+	}
+
 	/**
 	 * @private
 	 */
-	public function onEntityAdded( entity:Entity ):void {
+	override public function onEntityAdded( entity:Entity ):void {
+		entity.sign = signManager.signKeys( entity.components );
+
+		//super.onEntityAdded( entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityAdded( entity );
@@ -61,18 +74,28 @@ public class AspectsManager implements IEntityObserver, IComponentObserver {
 	/**
 	 * @private
 	 */
-	public function onEntityRemoved( entity:Entity ):void {
+	override public function onEntityRemoved( entity:Entity ):void {
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityRemoved( entity );
 			}
 		}
+
+		signManager.recycleSign( entity.sign );
+		entity.sign = null;
 	}
 
 	/**
 	 * @private
 	 */
-	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
+	override public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
+		// add a component to the entity sign
+		entity.sign.add( componentType );
+
+		// mark the entity as a componentType instance holder
+		mapEntityToComponent( componentType, entity );
+
+		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
 			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
@@ -87,7 +110,11 @@ public class AspectsManager implements IEntityObserver, IComponentObserver {
 	/**
 	 * @private
 	 */
-	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
+	override public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
+		// remove a component from the entity sign
+		entity.sign.remove( componentType );
+
+		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
 			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
@@ -97,10 +124,12 @@ public class AspectsManager implements IEntityObserver, IComponentObserver {
 				}
 			}
 		}
+
+		// mark the entity no more contains a component of the componentType
+		unmapEntityFromComponent( componentType, entity );
 	}
 
-	[Inline]
-	protected final function _createAspectObserver( nodeClass:Class ):AspectObserver {
+	protected final function createAspectObserver( nodeClass:Class ):AspectObserver {
 		var aspect:AspectObserver = new AspectObserver( nodeClass );
 		aspect.sign = signManager.signKeys( aspect.propertyMap );
 		if ( aspect.excludedComponents ) {
