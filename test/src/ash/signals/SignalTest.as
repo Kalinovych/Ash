@@ -2,7 +2,9 @@ package ash.signals
 {
 	import asunit.asserts.fail;
 	import asunit.framework.IAsync;
-	import org.hamcrest.assertThat;
+
+import org.flexunit.asserts.fail;
+import org.hamcrest.assertThat;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.nullValue;
 

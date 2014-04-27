@@ -4,36 +4,21 @@
  */
 package ash.engine.entity {
 import ash.core.Entity;
-import ash.engine.ComponentManager;
-import ash.engine.components.IComponentObserver;
 import ash.engine.ecse;
 import ash.engine.lists.ItemNode;
 import ash.engine.lists.LinkedHashSet;
 import ash.engine.lists.LinkedIdMap;
 
-import com.flashrush.signatures.BitSignManager;
-
 use namespace ecse;
 
 public class EntityManager {
 	ecse var mEntities:LinkedIdMap;
-	//ecse var mSignManager:BitSignManager;
-	//ecse var mEntitySigner:EntitySigner;
-	ecse var mComponentManager:ComponentManager;
 
 	private var mEntityObservers:LinkedHashSet;
-	
-	public function EntityManager( customComponentManagerClass:Class = null ) {
+
+	public function EntityManager() {
 		mEntities = new LinkedIdMap();
-		//mSignManager = new BitSignManager();
-		//mEntitySigner = new EntitySigner( mSignManager );
 		mEntityObservers = new LinkedHashSet();
-		
-		/*if (customComponentManagerClass) {
-			mComponentManager = new customComponentManagerClass( this );
-		} else {
-			mComponentManager = new ComponentManager( this );
-		}*/
 	}
 
 	public function add( entity:Entity ):Entity {
@@ -45,15 +30,7 @@ public class EntityManager {
 
 		// add an entity to list
 		mEntities.put( id, entity );
-
-		// notify signer first
-		//mEntitySigner.onEntityAdded( entity );
 		
-		mComponentManager.onEntityAdded( entity );
-
-		// manual subscribe signer for component observation
-		//entity.addComponentObserver( mEntitySigner );
-
 		// notify observers
 		for ( var node:ItemNode = mEntityObservers.ecse::_firstNode; node; node = node.next ) {
 			var observer:IEntityObserver = node.item;
@@ -67,7 +44,7 @@ public class EntityManager {
 		return mEntities.get( id );
 	}
 
-	public function removeEntity( entity:Entity ):Entity {
+	public function remove( entity:Entity ):Entity {
 		var id:* = entity.id;
 
 		if ( !mEntities.contains( id ) ) {
@@ -77,20 +54,11 @@ public class EntityManager {
 		// remove an entity from list
 		mEntities.remove( id );
 
-		// remove signer from component observation first,
-		// to allow other observers use the sign before it will be disposed by SignManager 
-		//entity.removeComponentObserver( mEntitySigner );
-
-		mComponentManager.onEntityRemoved( entity );
-
 		// notify observers in backward order (?)
 		for ( var node:ItemNode = mEntityObservers.ecse::_lastNode; node; node = node.prev ) {
 			var observer:IEntityObserver = node.item;
 			observer.onEntityRemoved( entity );
 		}
-
-		// notify signer last
-		//mEntitySigner.onEntityRemoved( entity );
 
 		return entity;
 	}
@@ -105,6 +73,10 @@ public class EntityManager {
 
 	public function removeObserver( observer:IEntityObserver ):Boolean {
 		return mEntityObservers.remove( observer );
+	}
+
+	public function get entityCount():uint {
+		return mEntities.length;
 	}
 }
 }

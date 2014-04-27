@@ -28,11 +28,12 @@ public class AspectsManager extends ComponentManager {
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
+	private var entityManager:EntityManager;
 	private var signManager:BitSignManager;
 
 	public function AspectsManager( entityManager:EntityManager ) {
-		super( entityManager );
-		
+		super();
+		this.entityManager = entityManager;
 		this.signManager = new BitSignManager();
 	}
 
@@ -53,7 +54,7 @@ public class AspectsManager extends ComponentManager {
 		observersOfComponent = null;
 
 		signManager = null;
-		
+
 		super.dispose();
 	}
 
@@ -62,8 +63,7 @@ public class AspectsManager extends ComponentManager {
 	 */
 	override public function onEntityAdded( entity:Entity ):void {
 		entity.sign = signManager.signKeys( entity.components );
-
-		//super.onEntityAdded( entity );
+		super.onEntityAdded( entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityAdded( entity );
@@ -75,6 +75,7 @@ public class AspectsManager extends ComponentManager {
 	 * @private
 	 */
 	override public function onEntityRemoved( entity:Entity ):void {
+		super.onEntityRemoved( entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityRemoved( entity );
@@ -114,6 +115,9 @@ public class AspectsManager extends ComponentManager {
 		// remove a component from the entity sign
 		entity.sign.remove( componentType );
 
+		// mark the entity no more contains a component of the componentType
+		unmapEntityFromComponent( componentType, entity );
+
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
@@ -124,9 +128,6 @@ public class AspectsManager extends ComponentManager {
 				}
 			}
 		}
-
-		// mark the entity no more contains a component of the componentType
-		unmapEntityFromComponent( componentType, entity );
 	}
 
 	protected final function createAspectObserver( nodeClass:Class ):AspectObserver {

@@ -5,7 +5,7 @@
 package ash.engine {
 import ash.core.Entity;
 import ash.engine.components.*;
-import ash.engine.entity.EntityManager;
+import ash.engine.entity.IEntityObserver;
 import ash.engine.lists.LinkedHashSet;
 
 import flash.utils.Dictionary;
@@ -16,12 +16,11 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IComponentObserver {
-	protected var entityManager:EntityManager;
+public class ComponentManager implements IEntityObserver, IComponentObserver {
+
 	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
-	public function ComponentManager( entityManager:EntityManager ) {
-		this.entityManager = entityManager;
+	public function ComponentManager() {
 	}
 
 	public function getEntitiesWith( componentType:Class ):LinkedHashSet {
@@ -29,7 +28,6 @@ public class ComponentManager implements IComponentObserver {
 	}
 
 	public function dispose():void {
-		entityManager = null;
 		entitySetByComponent = null;
 	}
 

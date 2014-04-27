@@ -1,6 +1,7 @@
 package ash.core
 {
-	import org.hamcrest.assertThat;
+import org.flexunit.async.Async;
+import org.hamcrest.assertThat;
 	import org.hamcrest.collection.hasItems;
 	import org.hamcrest.object.equalTo;
 	import org.hamcrest.object.isNull;
