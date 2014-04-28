@@ -1,8 +1,8 @@
 package ash.core {
-import ash.engine.components.IComponentObserver;
-import ash.engine.ecse;
-import ash.engine.lists.ItemNode;
-import ash.engine.lists.LinkedHashSet;
+import ashx.engine.components.IComponentObserver;
+import ashx.engine.ecse;
+import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.LinkedHashSet;
 import ash.signals.Signal2;
 
 import com.flashrush.signatures.BitSign;

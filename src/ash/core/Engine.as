@@ -1,6 +1,6 @@
 package ash.core {
 
-import ash.engine.ecse;
+import ashx.engine.ecse;
 import ash.signals.Signal0;
 
 import com.flashrush.signatures.BitSignManager;
