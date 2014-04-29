@@ -7,22 +7,10 @@ import ashx.engine.ecse;
 
 public class LinkedIdMap extends ElementList {
 	public var nodePool:Vector.<ItemNode> = new <ItemNode>[];
-
 	private var registry:Array = [];
 
 	public function LinkedIdMap() {
 	}
-
-	/*public function put( id:uint, item:* ):ItemNode {
-		var node:ItemNode = _nodeOf( id );
-		if ( !node ) {
-			node = _createNode( item );
-			_registerNode( id, node );
-			_attachNode( node );
-		}
-		node.item = item;
-		return node;
-	}*/
 
 	public function put( id:uint, item:* ):ItemNode {
 		var node:ItemNode = registry[id];
@@ -53,16 +41,6 @@ public class LinkedIdMap extends ElementList {
 	public function get( id:uint ):* {
 		return _valueOf( id );
 	}
-
-	/*public function remove( id:uint ):* {
-		var node:ItemNode = _nodeOf( id );
-		if ( node ) {
-			_unregisterNodeAt( id );
-			_detachNode( node );
-			return node.item;
-		}
-		return null;
-	}*/
 	
 	public function remove( id:uint ):* {
 		var node:ItemNode = registry[id];

@@ -4,10 +4,10 @@
  */
 package ashx.engine.aspects {
 import ash.core.Entity;
-import ash.core.NodeList;
+
 import ashx.engine.ComponentManager;
 import ashx.engine.ecse;
-import ashx.engine.entity.EntityManager;
+import ashx.engine.entity.EntityCollection;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
@@ -29,22 +29,21 @@ public class AspectsManager extends ComponentManager {
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
-	private var entityManager:EntityManager;
+	private var entities:EntityCollection;
 	private var signManager:BitSignManager;
 
-	public function AspectsManager( entityManager:EntityManager ) {
+	public function AspectsManager( entities:EntityCollection ) {
 		super();
-		this.entityManager = entityManager;
+		this.entities = entities;
 		this.signManager = new BitSignManager();
 	}
 
-	public function getNodeList( nodeClass:Class ):EntityNodeList {
+	public function getEntities( nodeClass:Class ):EntityNodeList {
 		var observer:AspectObserver = aspectObservers.get( nodeClass );
 		if ( !observer ) {
 			observer = createAspectObserver( nodeClass );
 		}
 		return observer.nodeList;
-		//return ( familyMap[nodeClass] || inline_createFamily( nodeClass ) ).nodeList;
 	}
 
 	override public function dispose():void {
@@ -139,7 +138,7 @@ public class AspectsManager extends ComponentManager {
 		}
 
 		// find all entities matching this aspect
-		var entityList:LinkedIdMap = entityManager.mEntities;
+		var entityList:LinkedIdMap = entities.mEntities;
 		for ( var node:ItemNode = entityList._firstNode; node; node = node.next ) {
 			var entity:Entity = node.item;
 			if ( _entityMatchAspect( entity, aspect ) ) {

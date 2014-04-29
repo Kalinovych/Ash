@@ -5,19 +5,20 @@
 package ashx.engine.entity {
 import ash.core.Entity;
 import ashx.engine.ecse;
+import ashx.engine.lists.ElementList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashSet;
 import ashx.engine.lists.LinkedIdMap;
 
 use namespace ecse;
 
-public class EntityCollection {
+public class EntityCollection extends ElementList {
 	ecse var mEntities:LinkedIdMap;
-	private var mObservers:LinkedHashSet;
+	private var mHandlers:LinkedHashSet;
 
 	public function EntityCollection() {
 		mEntities = new LinkedIdMap();
-		mObservers = new LinkedHashSet();
+		mHandlers = new LinkedHashSet();
 	}
 
 	public function add( entity:Entity ):Entity {
@@ -27,13 +28,13 @@ public class EntityCollection {
 			throw new Error( "This list already contains an entity with id \"" + id + "\"" );
 		}
 
-		// add an entity to thelist
+		// add an entity to the list
 		mEntities.put( id, entity );
 
-		// notify observers
-		for ( var node:ItemNode = mObservers.ecse::_firstNode; node; node = node.next ) {
-			var observer:IEntityObserver = node.item;
-			observer.onEntityAdded( entity );
+		// notify handlers
+		for ( var node:ItemNode = mHandlers.ecse::_firstNode; node; node = node.next ) {
+			var handler:IEntityHandler = node.item;
+			handler.onEntityAdded( entity );
 		}
 
 		return entity;
@@ -53,10 +54,10 @@ public class EntityCollection {
 		// remove an entity from list
 		mEntities.remove( id );
 
-		// notify observers in backward order (?)
-		for ( var node:ItemNode = mObservers.ecse::_lastNode; node; node = node.prev ) {
-			var observer:IEntityObserver = node.item;
-			observer.onEntityRemoved( entity );
+		// notify handlers in backward order (?)
+		for ( var node:ItemNode = mHandlers.ecse::_lastNode; node; node = node.prev ) {
+			var handler:IEntityHandler = node.item;
+			handler.onEntityRemoved( entity );
 		}
 
 		return entity;
@@ -72,15 +73,15 @@ public class EntityCollection {
 		return new EntityIterator( mEntities );
 	}
 
-	public function addObserver( observer:IEntityObserver ):Boolean {
-		return mObservers.add( observer );
+	public function addHandler( observer:IEntityHandler ):Boolean {
+		return mHandlers.add( observer );
 	}
 
-	public function removeObserver( observer:IEntityObserver ):Boolean {
-		return mObservers.remove( observer );
+	public function removeHandler( observer:IEntityHandler ):Boolean {
+		return mHandlers.remove( observer );
 	}
 
-	public function get entityCount():uint {
+	public function get length():uint {
 		return mEntities.length;
 	}
 }

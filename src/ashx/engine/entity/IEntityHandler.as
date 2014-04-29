@@ -6,8 +6,8 @@ package ashx.engine.entity {
 import ash.core.Entity;
 
 public interface IEntityHandler {
-	function handleAddedEntity( entity:Entity ):void;
+	function onEntityAdded( entity:Entity ):void;
 
-	function handleRemovedEntity( entity:Entity ):void;
+	function onEntityRemoved( entity:Entity ):void;
 }
 }

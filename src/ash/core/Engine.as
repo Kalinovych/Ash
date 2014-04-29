@@ -60,40 +60,6 @@ public class Engine {
 		signManager = new BitSignManager( componentCapacityLevel );
 	}
 
-	/*public function addProcess(process:IEngineProcess, priority:int):void {
-		if (process is IEntityProcessor) mEntityProcessorList.add(process, priority);
-		if (process is IComponentProcessor) mComponentProcessorList.add(process, priority);
-		if (process is IEnginePreUpdateHandler) mEnginePreUpdateHandlerList.add(process, priority);
-		if (process is IEngineUpdateHandler) mEngineUpdateHandlerList.add(process, priority);
-		if (process is IEnginePostUpdateHandler) mEnginePostUpdateHandlerList.add(process, priority);
-		
-		//process.addedToEngine( this );
-	}
-
-	public function upd( deltaTime:Number ):void {
-		var node:ProcessorNode = mEnginePreUpdateHandlerList.head.next;
-		while (node != mEnginePreUpdateHandlerList.tail) {
-			var preUpdateHandler:IEnginePreUpdateHandler = node.processor;
-			preUpdateHandler.preUpdate();
-		}
-		
-		updating = true;
-		
-		node = mEngineUpdateHandlerList.head.next;
-		while (node != mEngineUpdateHandlerList.tail) {
-			var updateHandler:IEngineUpdateHandler = node.processor;
-			updateHandler.update( deltaTime );
-		}
-
-		updating = false;
-
-		node = mEnginePostUpdateHandlerList.head.next;
-		while (node != mEngineUpdateHandlerList.tail) {
-			var postUpdateHandler:IEnginePostUpdateHandler = node.processor;
-			postUpdateHandler.postUpdate();
-		}
-	}
-
 	/**
 	 * Add an entity to the engine.
 	 *
