@@ -13,7 +13,6 @@ use namespace ecse;
 
 public class EntityManager {
 	ecse var mEntities:LinkedIdMap;
-
 	private var mEntityObservers:LinkedHashSet;
 
 	public function EntityManager() {

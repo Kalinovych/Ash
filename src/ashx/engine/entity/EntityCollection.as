@@ -12,7 +12,7 @@ import ashx.engine.lists.LinkedIdMap;
 
 use namespace ecse;
 
-public class EntityCollection extends ElementList {
+public class EntityCollection {
 	ecse var mEntities:LinkedIdMap;
 	private var mHandlers:LinkedHashSet;
 
@@ -39,7 +39,7 @@ public class EntityCollection extends ElementList {
 
 		return entity;
 	}
-
+	
 	public function get( id:uint ):Entity {
 		return mEntities.get( id );
 	}
