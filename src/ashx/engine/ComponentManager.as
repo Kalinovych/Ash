@@ -4,8 +4,11 @@
  */
 package ashx.engine {
 import ash.core.Entity;
+
+import ashx.engine.api.IFamiliesManager;
 import ashx.engine.components.*;
 import ashx.engine.entity.IEntityObserver;
+import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.LinkedHashSet;
 
 import flash.utils.Dictionary;
@@ -16,7 +19,7 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IEntityObserver, IComponentObserver {
+public class ComponentManager implements IFamiliesManager, IEntityObserver, IComponentObserver {
 
 	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
@@ -27,6 +30,10 @@ public class ComponentManager implements IEntityObserver, IComponentObserver {
 		return entitySetByComponent[componentType];
 	}
 
+	public function getEntities( familyIdentifier:Class ):EntityNodeList {
+		return entitySetByComponent[familyIdentifier];
+	}
+	
 	public function dispose():void {
 		entitySetByComponent = null;
 	}

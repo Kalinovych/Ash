@@ -5,14 +5,13 @@
 package ashx.engine.aspects {
 import ash.core.Entity;
 
-import ashx.engine.ComponentManager;
+import ashx.engine.api.IFamiliesManager;
 import ashx.engine.ecse;
-import ashx.engine.entity.EntityCollection;
+import ashx.engine.entity.ECollection;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
 import ashx.engine.lists.LinkedHashSet;
-import ashx.engine.lists.LinkedIdMap;
 
 import com.flashrush.signatures.BitSignManager;
 
@@ -25,28 +24,28 @@ use namespace ecse;
  * Observe for added/removed entities and notify aspect observers.
  *
  */
-public class AspectsManager extends ComponentManager {
+public class AspectsManager implements IFamiliesManager {
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
-	private var entities:EntityCollection;
+	private var entities:ECollection;
 	private var signManager:BitSignManager;
 
-	public function AspectsManager( entities:EntityCollection ) {
+	public function AspectsManager( entities:ECollection ) {
 		super();
 		this.entities = entities;
 		this.signManager = new BitSignManager();
 	}
 
-	public function getEntities( nodeClass:Class ):EntityNodeList {
-		var observer:AspectObserver = aspectObservers.get( nodeClass );
+	public function getEntities( familyIdentifier:Class ):EntityNodeList {
+		var observer:AspectObserver = aspectObservers.get( familyIdentifier );
 		if ( !observer ) {
-			observer = createAspectObserver( nodeClass );
+			observer = createAspectObserver( familyIdentifier );
 		}
 		return observer.nodeList;
 	}
 
-	override public function dispose():void {
+	public function dispose():void {
 		aspectObservers.removeAll();
 		aspectObservers.dispose();
 		aspectObservers = null;
@@ -61,9 +60,9 @@ public class AspectsManager extends ComponentManager {
 	/**
 	 * @private
 	 */
-	override public function onEntityAdded( entity:Entity ):void {
+	public function onEntityAdded( entity:Entity ):void {
 		entity.sign = signManager.signKeys( entity.components );
-		super.onEntityAdded( entity );
+		//super.onEntityAdded( entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityAdded( entity );
@@ -74,8 +73,8 @@ public class AspectsManager extends ComponentManager {
 	/**
 	 * @private
 	 */
-	override public function onEntityRemoved( entity:Entity ):void {
-		super.onEntityRemoved( entity );
+	public function onEntityRemoved( entity:Entity ):void {
+		//super.onEntityRemoved( entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityRemoved( entity );
@@ -89,12 +88,12 @@ public class AspectsManager extends ComponentManager {
 	/**
 	 * @private
 	 */
-	override public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
+	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
 		// add a component to the entity sign
 		entity.sign.add( componentType );
 
 		// mark the entity as a componentType instance holder
-		mapEntityToComponent( componentType, entity );
+		//mapEntityToComponent( componentType, entity );
 
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
@@ -111,12 +110,12 @@ public class AspectsManager extends ComponentManager {
 	/**
 	 * @private
 	 */
-	override public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
+	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
 		// remove a component from the entity sign
 		entity.sign.remove( componentType );
 
 		// mark the entity no more contains a component of the componentType
-		unmapEntityFromComponent( componentType, entity );
+		//unmapEntityFromComponent( componentType, entity );
 
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
@@ -138,8 +137,7 @@ public class AspectsManager extends ComponentManager {
 		}
 
 		// find all entities matching this aspect
-		var entityList:LinkedIdMap = entities.mEntities;
-		for ( var node:ItemNode = entityList._firstNode; node; node = node.next ) {
+		for ( var node:ItemNode = entities._firstNode; node; node = node.next ) {
 			var entity:Entity = node.item;
 			if ( _entityMatchAspect( entity, aspect ) ) {
 				aspect.onAspectEntityAdded( entity );

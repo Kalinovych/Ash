@@ -6,7 +6,6 @@ package ashx.engine.entity {
 import ash.core.Entity;
 
 import ashx.engine.ecse;
-
 import ashx.engine.lists.ElementList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashSet;
@@ -19,9 +18,7 @@ public class ECollection extends ElementList {
 		mHandlers = new LinkedHashSet();
 	}
 
-	public function add( entity:Entity ):Entity {
-		var id:uint = entity.id;
-
+	public function add( id:uint, entity:Entity ):Entity {
 		// add the entity node to the list
 		var eNode:ItemNode = registry[id];
 		if ( !eNode ) {
@@ -50,17 +47,13 @@ public class ECollection extends ElementList {
 		return _valueOf( id );
 	}
 
-	public function remove( entity:Entity ):Entity {
-		return removeById(entity.id);
-	}
-
-	public function removeById( id:uint ):Entity {
+	public function remove( id:uint ):Entity {
 		// remove an entity from list
 		var eNode:ItemNode = registry[id];
 		if ( !eNode ) {
 			return null;
 		}
-		
+
 		var entity:Entity = eNode.item;
 		registry[id] = undefined;
 		eNode.isAttached = false;
@@ -82,7 +75,7 @@ public class ECollection extends ElementList {
 	public function removeAll():void {
 		while ( _first ) {
 			var node:ItemNode = _first;
-			removeById( node.id );
+			remove( node.id );
 			node.prev = null;
 			node.next = null;
 		}
@@ -119,30 +112,5 @@ public class ECollection extends ElementList {
 		node.item = item;
 		return node
 	}*/
-
-	[Inline]
-	protected final function _registerNode( id:uint, node:ItemNode ):ItemNode {
-		node.id = id;
-		registry[id] = node;
-		return node;
-	}
-
-	[Inline]
-	protected final function _unregisterNodeAt( id:uint ):void {
-		//delete registry[id];
-		registry[id] = undefined;
-	}
-
-	[Inline]
-	protected final function _attachNode( node:ItemNode ):ItemNode {
-		node.isAttached = true;
-		return super.addNode( node );
-	}
-
-	[Inline]
-	protected final function _detachNode( node:ItemNode ):ItemNode {
-		node.isAttached = false;
-		return super.removeNode( node );
-	}
 }
 }

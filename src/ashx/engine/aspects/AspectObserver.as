@@ -5,6 +5,8 @@
 package ashx.engine.aspects {
 import ash.core.Entity;
 
+import ashx.engine.components.IComponentObserver;
+
 import ashx.engine.ecse;
 import ashx.engine.entity.EntityNode;
 import ashx.engine.lists.EntityNodeList;
@@ -18,7 +20,7 @@ use namespace ecse;
 /**
  * Aspect & AspectObserver merged in one class
  */
-internal class AspectObserver /*implements IComponentObserver, IEntityObserver */ {
+internal class AspectObserver implements IComponentObserver/*, IEntityObserver */ {
 	private var nodeClass:Class;
 	//private var nodePool:NodePool;
 
@@ -73,7 +75,7 @@ internal class AspectObserver /*implements IComponentObserver, IEntityObserver *
 		}
 	}
 
-	public function onComponentAdded( entity:Entity, componentClass:* ):void {
+	public function onComponentAdded( entity:Entity, component:*, componentClass:* ):void {
 		// The node of the entity if it belongs to this family.
 		var node:EntityNode = nodeByEntity[entity];
 
@@ -107,7 +109,7 @@ internal class AspectObserver /*implements IComponentObserver, IEntityObserver *
 		_createNodeOf( entity );
 	}
 
-	public function onComponentRemoved( entity:Entity, componentClass:* ):void {
+	public function onComponentRemoved( entity:Entity, component:*, componentClass:* ):void {
 		// The node of the entity if it belongs to this family.
 		var node:EntityNode = nodeByEntity[entity];
 
