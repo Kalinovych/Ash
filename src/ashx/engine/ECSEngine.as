@@ -6,22 +6,25 @@
 package ashx.engine {
 import ash.core.Entity;
 
-import ashx.engine.api.IFamiliesManager;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.aspects.AspectFamiliesManager;
-import ashx.engine.components.CpManager;
-import ashx.engine.entity.ECollection;
+import ashx.engine.components.CpHandlersManager;
+import ashx.engine.entity.EntityList;
 import ashx.engine.lists.EntityNodeList;
+import ashx.engine.lists.LinkedHashMap;
 
 use namespace ecse;
 
 public class ECSEngine {
-	ecse var mEntities:ECollection;
-	ecse var mCpManager:CpManager;
-	ecse var mFamiliesManager:IFamiliesManager;
+	ecse var mEntities:EntityList;
+	ecse var mCpManager:CpHandlersManager;
+	ecse var mFamiliesManager:IEntityFamiliesManager;
+
+	ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
 
 	public function ECSEngine() {
-		mEntities = new ECollection();
-		mCpManager = new CpManager( mEntities );
+		mEntities = new EntityList();
+		mCpManager = new CpHandlersManager( mEntities );
 		mFamiliesManager = new AspectFamiliesManager( mEntities, mCpManager );
 	}
 
@@ -52,7 +55,7 @@ public class ECSEngine {
 	}
 
 	public function containsEntity( id:uint ):Boolean {
-		return (mEntities.contains( id ))
+		return mEntities.contains( id );
 	}
 
 	public function getEntity( id:uint ):Entity {

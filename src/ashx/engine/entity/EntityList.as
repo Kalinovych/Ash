@@ -10,24 +10,24 @@ import ashx.engine.lists.ElementList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashSet;
 
-public class ECollection extends ElementList {
-	private var registry:Array = [];
+public class EntityList extends ElementList {
+	private var entityById:Array = [];
 	private var mHandlers:LinkedHashSet;
 
-	public function ECollection() {
+	public function EntityList() {
 		mHandlers = new LinkedHashSet();
 	}
 
 	public function add( id:uint, entity:Entity ):Entity {
 		// add the entity node to the list
-		var eNode:ItemNode = registry[id];
+		var eNode:ItemNode = entityById[id];
 		if ( !eNode ) {
 			eNode = new ItemNode();
 		}
 		eNode.id = id;
 		eNode.item = entity;
 		eNode.isAttached = true;
-		registry[id] = eNode;
+		entityById[id] = eNode;
 		addNode( eNode );
 
 		// notify handlers
@@ -49,13 +49,13 @@ public class ECollection extends ElementList {
 
 	public function remove( id:uint ):Entity {
 		// remove an entity from list
-		var eNode:ItemNode = registry[id];
+		var eNode:ItemNode = entityById[id];
 		if ( !eNode ) {
 			return null;
 		}
 
 		var entity:Entity = eNode.item;
-		registry[id] = undefined;
+		entityById[id] = undefined;
 		eNode.isAttached = false;
 		removeNode( eNode );
 
@@ -79,7 +79,7 @@ public class ECollection extends ElementList {
 			node.prev = null;
 			node.next = null;
 		}
-		registry.length = 0;
+		entityById.length = 0;
 	}
 
 	public function getIterator():EntityIterator {
@@ -96,12 +96,12 @@ public class ECollection extends ElementList {
 
 	[Inline]
 	protected final function _nodeOf( id:uint ):* {
-		return registry[id];
+		return entityById[id];
 	}
 
 	[Inline]
 	protected final function _valueOf( id:uint ):* {
-		var node:ItemNode = registry[id];
+		var node:ItemNode = entityById[id];
 		return (node ? node.item : null );
 	}
 

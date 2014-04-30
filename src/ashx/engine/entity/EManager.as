@@ -5,15 +5,15 @@
 package ashx.engine.entity {
 import ash.core.Entity;
 
-import ashx.engine.api.IFamiliesManager;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.ecse;
 import ashx.engine.lists.EntityNodeList;
 
 use namespace ecse;
 
 public class EManager {
-	ecse var mEntities:ECollection = new ECollection();
-	ecse var mFamiliesManager:IFamiliesManager;
+	ecse var mEntities:EntityList = new EntityList();
+	ecse var mFamiliesManager:IEntityFamiliesManager;
 
 	public function EManager() {
 

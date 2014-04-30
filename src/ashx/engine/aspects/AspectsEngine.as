@@ -6,7 +6,7 @@ package ashx.engine.aspects {
 import ash.core.Entity;
 
 import ashx.engine.ecse;
-import ashx.engine.entity.ECollection;
+import ashx.engine.entity.EntityList;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
@@ -19,16 +19,16 @@ import flash.utils.Dictionary;
 use namespace ecse;
 
 public class AspectsEngine {
-	private var entities:ECollection;
+	private var entities:EntityList;
 	private var signManager:BitSignManager;
 
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 	private var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
-	public function AspectsEngine( entities:ECollection = null ) {
+	public function AspectsEngine( entities:EntityList = null ) {
 		if ( !entities ) {
-			entities = new ECollection();
+			entities = new EntityList();
 		}
 		this.entities = entities;
 		signManager = new BitSignManager();

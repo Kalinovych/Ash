@@ -5,7 +5,7 @@
 package ashx.engine {
 import ash.core.Entity;
 
-import ashx.engine.api.IFamiliesManager;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.components.*;
 import ashx.engine.entity.IEntityObserver;
 import ashx.engine.lists.EntityNodeList;
@@ -19,7 +19,7 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IFamiliesManager, IEntityObserver, IComponentObserver {
+public class ComponentManager implements IEntityFamiliesManager, IEntityObserver, IComponentObserver {
 
 	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 

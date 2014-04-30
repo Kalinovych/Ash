@@ -5,28 +5,28 @@
 package ashx.engine.aspects {
 import ash.core.Entity;
 
-import ashx.engine.api.IEntityFamiliesManager;
-import ashx.engine.components.CpHandlersManager;
 import ashx.engine.ecse;
-import ashx.engine.entity.EntityList;
-import ashx.engine.entity.IEntityHandler;
+
+import ashx.engine.entity.*;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
+import ashx.engine.lists.LinkedHashSet;
 
 import com.flashrush.signatures.BitSignManager;
 
+import flash.utils.Dictionary;
+
 use namespace ecse;
 
-public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHandler {
+public class FamiliesManager implements IEntityFamiliesManager {
 	private var entities:EntityList;
-	private var cpManager:CpHandlersManager;
 	private var signManager:BitSignManager;
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
+	private var observersByComponent:Dictionary = new Dictionary();
 
-	public function AspectFamiliesManager( entities:EntityList, cpManager:CpHandlersManager ) {
-		this.entities = entities;
-		this.cpManager = cpManager;
+	public function FamiliesManager() {
 		signManager = new BitSignManager();
 	}
 
@@ -37,7 +37,7 @@ public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHan
 		}
 		return observer.nodeList;
 	}
-
+	
 	public function onEntityAdded( entity:Entity ):void {
 		entity.sign = signManager.signKeys( entity.components );
 		for each( var aspect:AspectObserver in aspectObservers ) {
@@ -57,7 +57,7 @@ public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHan
 		signManager.recycleSign( entity.sign );
 		entity.sign = null;
 	}
-
+	
 	protected final function createAspectObserver( nodeClass:Class ):AspectObserver {
 		var aspect:AspectObserver = new AspectObserver( nodeClass );
 		aspect.sign = signManager.signKeys( aspect.propertyMap );
@@ -77,15 +77,15 @@ public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHan
 		var interests:Vector.<Class> = aspect.componentInterests;
 		for ( var i:int = 0, len:int = interests.length; i < len; i++ ) {
 			var componentClass:Class = interests[i];
-			/*var observers:LinkedHashSet = observersOfComponent[componentClass] ||= new LinkedHashSet();
-			observers.add( aspect );*/
+			var observers:LinkedHashSet = observersByComponent[componentClass] ||= new LinkedHashSet();
+			observers.add( aspect );
 
-			cpManager.addComponentObserver( componentClass, aspect );
+			//cpManager.addComponentObserver( componentClass, aspect );
 		}
 
 		return aspect;
 	}
-
+	
 	[Inline]
 	protected final function _entityMatchAspect( entity:Entity, aspect:AspectObserver ):Boolean {
 		return ( entity.sign.contains( aspect.sign ) && !( aspect.exclusionSign && entity.sign.contains( aspect.exclusionSign ) ) );

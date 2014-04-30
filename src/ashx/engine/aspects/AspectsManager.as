@@ -5,9 +5,9 @@
 package ashx.engine.aspects {
 import ash.core.Entity;
 
-import ashx.engine.api.IFamiliesManager;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.ecse;
-import ashx.engine.entity.ECollection;
+import ashx.engine.entity.EntityList;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
@@ -24,14 +24,14 @@ use namespace ecse;
  * Observe for added/removed entities and notify aspect observers.
  *
  */
-public class AspectsManager implements IFamiliesManager {
+public class AspectsManager implements IEntityFamiliesManager {
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
 
-	private var entities:ECollection;
+	private var entities:EntityList;
 	private var signManager:BitSignManager;
 
-	public function AspectsManager( entities:ECollection ) {
+	public function AspectsManager( entities:EntityList ) {
 		super();
 		this.entities = entities;
 		this.signManager = new BitSignManager();

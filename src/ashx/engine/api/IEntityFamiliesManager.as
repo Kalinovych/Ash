@@ -5,7 +5,7 @@
 package ashx.engine.api {
 import ashx.engine.lists.EntityNodeList;
 
-public interface IFamiliesManager {
+public interface IEntityFamiliesManager {
 	function getEntities( familyIdentifier:Class ):EntityNodeList;
 }
 }
