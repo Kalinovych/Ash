@@ -3,6 +3,8 @@ package ash.core {
 import ashx.engine.ecse;
 import ash.signals.Signal0;
 
+import ashx.engine.entity.Entity;
+
 import com.flashrush.signatures.BitSignManager;
 
 import flash.utils.Dictionary;

@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.ecse;
 

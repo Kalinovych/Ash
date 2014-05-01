@@ -3,15 +3,15 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
-import ashx.engine.components.IComponentObserver;
+import ashx.engine.entity.Entity;
+import ashx.engine.components.IComponentHandler;
 import ashx.engine.ecse;
 
 import com.flashrush.signatures.BitSignManager;
 
 use namespace ecse;
 
-public class EntitySigner implements IEntityObserver, IComponentObserver {
+public class EntitySigner implements IEntityObserver, IComponentHandler {
 	private var mSignManager:BitSignManager;
 
 	public function EntitySigner(signManager:BitSignManager) {

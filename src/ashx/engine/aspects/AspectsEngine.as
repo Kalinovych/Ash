@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.ecse;
 import ashx.engine.entity.EntityList;
@@ -36,7 +36,7 @@ public class AspectsEngine {
 
 	public function addEntity( entity:Entity ):void {
 		entity.sign = signManager.signKeys( entity.components );
-		entity.addComponentObserver( this );
+		entity.addComponentHandler( this );
 		mapEntityToComponent( componentType, entity );
 		for each( var aspect:AspectObserver in aspectObservers ) {
 			if ( _entityMatchAspect( entity, aspect ) ) {
@@ -94,7 +94,7 @@ public class AspectsEngine {
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
 				var observer:AspectObserver = node.item;
 				if ( entity.sign.contains( observer.sign ) ) {
 					observer.onComponentAdded( entity, componentType );
@@ -116,7 +116,7 @@ public class AspectsEngine {
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
 				var observer:AspectObserver = node.item;
 				if ( entity.sign.contains( observer.sign ) ) {
 					observer.onComponentRemoved( entity, componentType );

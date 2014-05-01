@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 public interface IEntityObserver {
 	function onEntityAdded( entity:Entity ):void;

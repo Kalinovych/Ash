@@ -1,7 +1,7 @@
 package ash.io.enginecodecs
 {
 	import ash.core.Engine;
-	import ash.core.Entity;
+	import ashx.engine.entity.Entity;
 	import ash.io.MockComponent1;
 	import ash.io.MockComponent2;
 

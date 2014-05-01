@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 import ashx.engine.entity.IEntityObserver;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashSet;
@@ -29,7 +29,7 @@ public class EEngine {
 
 		mEntities.put( id, entity );
 
-		for ( var node:ItemNode = mEntityObservers.ecse::_firstNode; node; node = node.next ) {
+		for ( var node:ItemNode = mEntityObservers.ecse::$firstNode; node; node = node.next ) {
 			var observer:IEntityObserver = node.item;
 			observer.onEntityAdded( entity );
 		}
@@ -46,7 +46,7 @@ public class EEngine {
 
 		mEntities.remove( id );
 
-		for ( var node:ItemNode = mEntityObservers.ecse::_firstNode; node; node = node.next ) {
+		for ( var node:ItemNode = mEntityObservers.ecse::$firstNode; node; node = node.next ) {
 			var observer:IEntityObserver = node.item;
 			observer.onEntityRemoved( entity );
 		}

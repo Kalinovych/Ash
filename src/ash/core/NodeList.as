@@ -74,12 +74,12 @@ package ash.core
 			if( ! head )
 			{
 				head = tail = node;
-				node.next = node.previous = null;
+				node.next = node.prev = null;
 			}
 			else
 			{
 				tail.next = node;
-				node.previous = tail;
+				node.prev = tail;
 				node.next = null;
 				tail = node;
 			}
@@ -96,22 +96,22 @@ package ash.core
 			}
 			if ( tail == node)
 			{
-				tail = tail.previous;
+				tail = tail.prev;
 			}
 			
-			if (node.previous)
+			if (node.prev)
 			{
-				node.previous.next = node.next;
+				node.prev.next = node.next;
 			}
 			
 			if (node.next)
 			{
-				node.next.previous = node.previous;
+				node.next.prev = node.prev;
 			}
 			_length--;
 			removedNodes.push( node );
 			nodeRemoved.dispatch( node );
-			// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
+			// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 		}
 
 		public function removeAll() : void
@@ -120,7 +120,7 @@ package ash.core
 			{
 				var node : Node = head;
 				head = node.next;
-				node.previous = null;
+				node.prev = null;
 				node.next = null;
 				nodeRemoved.dispatch( node );
 			}
@@ -141,25 +141,25 @@ package ash.core
 		 */
 		public function swap( node1 : Node, node2 : Node ) : void
 		{
-			if( node1.previous == node2 )
+			if( node1.prev == node2 )
 			{
-				node1.previous = node2.previous;
-				node2.previous = node1;
+				node1.prev = node2.prev;
+				node2.prev = node1;
 				node2.next = node1.next;
 				node1.next  = node2;
 			}
-			else if( node2.previous == node1 )
+			else if( node2.prev == node1 )
 			{
-				node2.previous = node1.previous;
-				node1.previous = node2;
+				node2.prev = node1.prev;
+				node1.prev = node2;
 				node1.next = node2.next;
 				node2.next  = node1;
 			}
 			else
 			{
-				var temp : Node = node1.previous;
-				node1.previous = node2.previous;
-				node2.previous = temp;
+				var temp : Node = node1.prev;
+				node1.prev = node2.prev;
+				node2.prev = temp;
 				temp = node1.next;
 				node1.next = node2.next;
 				node2.next = temp;
@@ -180,21 +180,21 @@ package ash.core
 			{
 				tail = node1;
 			}
-			if( node1.previous )
+			if( node1.prev )
 			{							
-				node1.previous.next = node1;
+				node1.prev.next = node1;
 			}
-			if( node2.previous )
+			if( node2.prev )
 			{
-				node2.previous.next = node2;
+				node2.prev.next = node2;
 			}
 			if( node1.next )
 			{
-				node1.next.previous = node1;
+				node1.next.prev = node1;
 			}
 			if( node2.next )
 			{
-				node2.next.previous = node2;
+				node2.next.prev = node2;
 			}
 		}
 		
@@ -222,7 +222,7 @@ package ash.core
 			for( var node : Node = remains; node; node = remains )
 			{
 				remains = node.next;
-				for( var other : Node = node.previous; other; other = other.previous )
+				for( var other : Node = node.prev; other; other = other.prev )
 				{
 					if( sortFunction( node, other ) >= 0 )
 					{
@@ -232,17 +232,17 @@ package ash.core
 							// remove from place
 							if ( tail == node)
 							{
-								tail = node.previous;
+								tail = node.prev;
 							}
-							node.previous.next = node.next;
+							node.prev.next = node.next;
 							if (node.next)
 							{
-								node.next.previous = node.previous;
+								node.next.prev = node.prev;
 							}
 							// insert after other
 							node.next = other.next;
-							node.previous = other;
-							node.next.previous = node;
+							node.prev = other;
+							node.next.prev = node;
 							other.next = node;
 						}
 						break; // exit the inner for loop
@@ -253,17 +253,17 @@ package ash.core
 					// remove from place
 					if ( tail == node)
 					{
-						tail = node.previous;
+						tail = node.prev;
 					}
-					node.previous.next = node.next;
+					node.prev.next = node.next;
 					if (node.next)
 					{
-						node.next.previous = node.previous;
+						node.next.prev = node.prev;
 					}
 					// insert at head
 					node.next = head;
-					head.previous = node;
-					node.previous = null;
+					head.prev = node;
+					node.prev = null;
 					head = node;
 				}
 			}
@@ -300,7 +300,7 @@ package ash.core
 					end = end.next;
 				}
 				var next : Node = end.next;
-				start.previous = end.next = null;
+				start.prev = end.next = null;
 				lists.push( start );
 				start = next;
 			}
@@ -336,14 +336,14 @@ package ash.core
 				if( sortFunction( head1, head2 ) <= 0 )
 				{
 					node.next = head1;
-					head1.previous = node;
+					head1.prev = node;
 					node = head1;
 					head1 = head1.next;
 				}
 				else
 				{
 					node.next = head2;
-					head2.previous = node;
+					head2.prev = node;
 					node = head2;
 					head2 = head2.next;
 				}
@@ -351,12 +351,12 @@ package ash.core
 			if( head1 )
 			{
 				node.next = head1;
-				head1.previous = node;
+				head1.prev = node;
 			}
 			else
 			{
 				node.next = head2;
-				head2.previous = node;
+				head2.prev = node;
 			}
 			return head;
 		}

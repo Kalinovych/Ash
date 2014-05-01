@@ -10,8 +10,10 @@ public class ItemNode {
 	
 	/** Is node added to a list and not removed */
 	public var isAttached:Boolean = false;
+	
 	/** A node id in the mapped list */
 	public var id:uint;
+	
 	/** For prioritised lists */
 	public var priority:int = 0;
 

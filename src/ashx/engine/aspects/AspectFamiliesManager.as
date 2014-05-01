@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.api.IEntityFamiliesManager;
-import ashx.engine.components.CpHandlersManager;
+import ashx.engine.components.ComponentObserver;
 import ashx.engine.ecse;
 import ashx.engine.entity.EntityList;
 import ashx.engine.entity.IEntityHandler;
@@ -20,13 +20,13 @@ use namespace ecse;
 
 public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHandler {
 	private var entities:EntityList;
-	private var cpManager:CpHandlersManager;
+	private var componentObserver:ComponentObserver;
 	private var signManager:BitSignManager;
 	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
 
-	public function AspectFamiliesManager( entities:EntityList, cpManager:CpHandlersManager ) {
+	public function AspectFamiliesManager( entities:EntityList, componentObserver:ComponentObserver ) {
 		this.entities = entities;
-		this.cpManager = cpManager;
+		this.componentObserver = componentObserver;
 		signManager = new BitSignManager();
 	}
 
@@ -80,7 +80,7 @@ public class AspectFamiliesManager implements IEntityFamiliesManager, IEntityHan
 			/*var observers:LinkedHashSet = observersOfComponent[componentClass] ||= new LinkedHashSet();
 			observers.add( aspect );*/
 
-			cpManager.addComponentObserver( componentClass, aspect );
+			componentObserver.addComponentHandler( componentClass, aspect );
 		}
 
 		return aspect;

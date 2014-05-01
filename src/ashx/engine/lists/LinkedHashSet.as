@@ -17,7 +17,6 @@ public class LinkedHashSet extends ElementList {
 
 		var node:ItemNode = _nodeFor( item );
 		registry[item] = node;
-		//_attachNode( node );
 		node.isAttached = true;
 		addNode( node );
 		return true;
@@ -28,7 +27,6 @@ public class LinkedHashSet extends ElementList {
 		if ( node == null ) return false;
 
 		delete registry[item];
-		//_detachNode( node );
 		node.isAttached = false;
 		removeNode( node );
 		return true;

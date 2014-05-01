@@ -1,5 +1,7 @@
 package ash.core
 {
+import ashx.engine.entity.Entity;
+
 import org.flexunit.async.Async;
 import org.hamcrest.assertThat;
 	import org.hamcrest.collection.hasItems;
@@ -187,7 +189,7 @@ import org.hamcrest.assertThat;
 	}
 }
 import ash.core.Engine;
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 import ash.core.IFamily;
 import ash.core.Node;
 import ash.core.NodeList;

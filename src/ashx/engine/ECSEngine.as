@@ -4,11 +4,11 @@
  */
 
 package ashx.engine {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.aspects.AspectFamiliesManager;
-import ashx.engine.components.CpHandlersManager;
+import ashx.engine.components.ComponentObserver;
 import ashx.engine.entity.EntityList;
 import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.LinkedHashMap;
@@ -16,54 +16,59 @@ import ashx.engine.lists.LinkedHashMap;
 use namespace ecse;
 
 public class ECSEngine {
-	ecse var mEntities:EntityList;
-	ecse var mCpManager:CpHandlersManager;
-	ecse var mFamiliesManager:IEntityFamiliesManager;
+	ecse var _entities:EntityList;
+	ecse var _componentObserver:ComponentObserver;
+	ecse var _families:IEntityFamiliesManager;
 
 	ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
 
 	public function ECSEngine() {
-		mEntities = new EntityList();
-		mCpManager = new CpHandlersManager( mEntities );
-		mFamiliesManager = new AspectFamiliesManager( mEntities, mCpManager );
+		_entities = new EntityList();
+		_componentObserver = new ComponentObserver( _entities );
+		_families = new AspectFamiliesManager( _entities, _componentObserver );
+	}
+
+	public function get entities():EntityList {
+		return _entities;
 	}
 
 	public function addEntity( entity:Entity ):Entity {
 		var id:uint = entity.id;
 
-		if ( mEntities.contains( id ) ) {
+		if ( _entities.contains( id ) ) {
 			throw new Error( "This list already contains an entity with id \"" + id + "\"" );
 		}
 
-		return mEntities.add( id, entity );
+		return _entities.add( id, entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
 		var id:uint = entity.id;
 
-		if ( !mEntities.contains( id ) ) {
+		if ( !_entities.contains( id ) ) {
 			throw new Error( "An entity with id \"" + id + "\" not fount in this manager" );
 		}
 
-		return mEntities.remove( id );
+		return _entities.remove( id );
 	}
 
 	public function removeAllEntities():void {
-		while ( mEntities._firstNode ) {
-			removeEntity( mEntities._firstNode.item );
+		while ( _entities._firstNode ) {
+			removeEntity( _entities._firstNode.item );
 		}
 	}
 
 	public function containsEntity( id:uint ):Boolean {
-		return mEntities.contains( id );
+		return _entities.contains( id );
 	}
 
 	public function getEntity( id:uint ):Entity {
-		return mEntities.get( id );
+		return _entities.get( id );
 	}
 
 	public function getEntities( familyIdentifier:Class = null ):EntityNodeList {
-		mFamiliesManager.getEntities( familyIdentifier );
+		_families.getEntities( familyIdentifier );
 	}
+
 }
 }

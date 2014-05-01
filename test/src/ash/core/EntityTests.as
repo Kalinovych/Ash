@@ -1,6 +1,8 @@
 package ash.core
 {
-	import asunit.framework.IAsync;
+import ashx.engine.entity.Entity;
+
+import asunit.framework.IAsync;
 
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.hasItems;

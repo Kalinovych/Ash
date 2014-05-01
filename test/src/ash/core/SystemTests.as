@@ -186,7 +186,7 @@ package ash.core
 			engine.addSystem( systemC, 0 );
 			engine.removeSystem( systemB );
 			engine.addSystem( systemB, 0 );
-			assertThat( systemC.previous, nullValue() );
+			assertThat( systemC.prev, nullValue() );
 			assertThat( systemB.next, nullValue() );
 		}
      

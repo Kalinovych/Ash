@@ -7,28 +7,18 @@ import ashx.engine.ecse;
 
 import com.flashrush.utils.lists.core.LinkedNodeListBase;
 
-public class ElementList extends LinkedNodeListBase {
+public class ElementList extends ListBase {
 	public function ElementList() {
 	}
-
-	/*[Inline]
-	public final function get firstNode():ItemNode {
-		return _first;
+	
+	[Inline]
+	ecse final function get $firstNode():ItemNode {
+		return _firstNode;
 	}
 
 	[Inline]
-	public final function get lastNode():ItemNode {
-		return _last;
-	}*/
-
-	[Inline]
-	ecse final function get _firstNode():ItemNode {
-		return _first;
-	}
-
-	[Inline]
-	ecse final function get _lastNode():ItemNode {
-		return _last;
+	ecse final function get $lastNode():ItemNode {
+		return _lastNode;
 	}
 }
 }

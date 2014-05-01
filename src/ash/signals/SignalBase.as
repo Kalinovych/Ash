@@ -45,7 +45,7 @@ package ash.signals
 				else
 				{
 					tail.next = toAddHead;
-					toAddHead.previous = tail;
+					toAddHead.prev = tail;
 					tail = toAddTail;
 				}
 				toAddHead = null;
@@ -95,7 +95,7 @@ package ash.signals
 				else
 				{
 					toAddTail.next = node;
-					node.previous = toAddTail;
+					node.prev = toAddTail;
 					toAddTail = node;
 				}
 			}
@@ -108,7 +108,7 @@ package ash.signals
 				else
 				{
 					tail.next = node;
-					node.previous = tail;
+					node.prev = tail;
 					tail = node;
 				}
 			}
@@ -126,7 +126,7 @@ package ash.signals
 				}
 				if ( tail == node)
 				{
-					tail = tail.previous;
+					tail = tail.prev;
 				}
 				if ( toAddHead == node)
 				{
@@ -134,15 +134,15 @@ package ash.signals
 				}
 				if ( toAddTail == node)
 				{
-					toAddTail = toAddTail.previous;
+					toAddTail = toAddTail.prev;
 				}
-				if (node.previous)
+				if (node.prev)
 				{
-					node.previous.next = node.next;
+					node.prev.next = node.next;
 				}
 				if (node.next)
 				{
-					node.next.previous = node.previous;
+					node.next.prev = node.prev;
 				}
 				delete nodes[ listener ];
 				if( dispatching )
@@ -165,7 +165,7 @@ package ash.signals
 				head = head.next;
 				delete nodes[ node.listener ];
 				listenerNodePool.dispose( node );
-				node.previous = null;
+				node.prev = null;
 				node.next = null;
 			}
 			tail = null;

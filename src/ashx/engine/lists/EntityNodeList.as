@@ -76,7 +76,7 @@ public class EntityNodeList {
 			head = head.next;
 		}
 		if ( tail == node ) {
-			tail = tail.previous;
+			tail = tail.prev;
 		}
 
 		if ( node.prev ) {
@@ -84,12 +84,12 @@ public class EntityNodeList {
 		}
 
 		if ( node.next ) {
-			node.next.previous = node.prev;
+			node.next.prev = node.prev;
 		}
 		_length--;
 		removedNodes.push( node );
 		nodeRemoved.dispatch( node );
-		// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
+		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 	}
 
 	public function removeAll():void {
@@ -154,10 +154,10 @@ public class EntityNodeList {
 			node2.prev.next = node2;
 		}
 		if ( node1.next ) {
-			node1.next.previous = node1;
+			node1.next.prev = node1;
 		}
 		if ( node2.next ) {
-			node2.next.previous = node2;
+			node2.next.prev = node2;
 		}
 	}
 
@@ -192,12 +192,12 @@ public class EntityNodeList {
 						}
 						node.prev.next = node.next;
 						if ( node.next ) {
-							node.next.previous = node.prev;
+							node.next.prev = node.prev;
 						}
 						// insert after other
 						node.next = other.next;
 						node.prev = other;
-						node.next.previous = node;
+						node.next.prev = node;
 						other.next = node;
 					}
 					break; // exit the inner for loop
@@ -211,11 +211,11 @@ public class EntityNodeList {
 				}
 				node.prev.next = node.next;
 				if ( node.next ) {
-					node.next.previous = node.prev;
+					node.next.prev = node.prev;
 				}
 				// insert at head
 				node.next = head;
-				head.previous = node;
+				head.prev = node;
 				node.prev = null;
 				head = node;
 			}

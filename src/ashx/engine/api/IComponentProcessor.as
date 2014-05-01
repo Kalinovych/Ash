@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.api {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 public interface IComponentProcessor {
 	function get componentInterests():Array;

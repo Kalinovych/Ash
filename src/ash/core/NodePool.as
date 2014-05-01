@@ -33,8 +33,8 @@ package ash.core
 			if ( tail )
 			{
 				var node : Node = tail;
-				tail = tail.previous;
-				node.previous = null;
+				tail = tail.prev;
+				node.prev = null;
 				return node;
 			}
 			else
@@ -55,7 +55,7 @@ package ash.core
 			node.entity = null;
 			
 			node.next = null;
-			node.previous = tail;
+			node.prev = tail;
 			tail = node;
 		}
 		
@@ -64,7 +64,7 @@ package ash.core
 		 */
 		internal function cache( node : Node ) : void
 		{
-			node.previous = cacheTail;
+			node.prev = cacheTail;
 			cacheTail = node;
 		}
 		
@@ -76,7 +76,7 @@ package ash.core
 			while( cacheTail )
 			{
 				var node : Node = cacheTail;
-				cacheTail = node.previous;
+				cacheTail = node.prev;
 				dispose( node );
 			}
 		}

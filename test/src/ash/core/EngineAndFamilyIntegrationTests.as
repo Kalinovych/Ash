@@ -1,6 +1,8 @@
 package ash.core
 {
-	import asunit.framework.IAsync;
+import ashx.engine.entity.Entity;
+
+import asunit.framework.IAsync;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import org.hamcrest.assertThat;

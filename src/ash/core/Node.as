@@ -1,6 +1,8 @@
 package ash.core
 {
-	/**
+import ashx.engine.entity.Entity;
+
+/**
 	 * The base class for a node.
 	 * 
 	 * <p>A node is a set of different components that are required by a system.
@@ -19,7 +21,7 @@ package ash.core
 		/**
 		 * Used by the NodeList class. The previous node in a node list.
 		 */
-		public var previous : *;
+		public var prev : *;
 		
 		/**
 		 * Used by the NodeList class. The next node in a node list.

@@ -14,8 +14,8 @@ package ash.signals
 			if( tail )
 			{
 				var node : ListenerNode = tail;
-				tail = tail.previous;
-				node.previous = null;
+				tail = tail.prev;
+				node.prev = null;
 				return node;
 			}
 			else
@@ -29,14 +29,14 @@ package ash.signals
 			node.listener = null;
 			node.once = false;
 			node.next = null;
-			node.previous = tail;
+			node.prev = tail;
 			tail = node;
 		}
 		
 		internal function cache( node : ListenerNode ) : void
 		{
 			node.listener = null;
-			node.previous = cacheTail;
+			node.prev = cacheTail;
 			cacheTail = node;
 		}
 		
@@ -45,9 +45,9 @@ package ash.signals
 			while( cacheTail )
 			{
 				var node : ListenerNode = cacheTail;
-				cacheTail = node.previous;
+				cacheTail = node.prev;
 				node.next = null;
-				node.previous = tail;
+				node.prev = tail;
 				tail = node;
 			}
 		}

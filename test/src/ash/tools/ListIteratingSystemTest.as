@@ -1,6 +1,6 @@
 package ash.tools
 {
-	import ash.core.Entity;
+	import ashx.engine.entity.Entity;
 	import ash.core.Engine;
 	import flash.geom.Point;
 	import org.hamcrest.assertThat;

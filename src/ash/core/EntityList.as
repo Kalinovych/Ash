@@ -1,4 +1,6 @@
 package ash.core {
+import ashx.engine.entity.Entity;
+
 /**
  * An internal class for a linked list of entities. Used inside the framework for
  * managing the entities.
@@ -11,11 +13,11 @@ internal class EntityList {
 	internal function add( entity:Entity ):void {
 		if ( !head ) {
 			head = tail = entity;
-			entity.next = entity.previous = null;
+			entity.next = entity.prev = null;
 		}
 		else {
 			tail.next = entity;
-			entity.previous = tail;
+			entity.prev = tail;
 			entity.next = null;
 			tail = entity;
 		}
@@ -28,26 +30,26 @@ internal class EntityList {
 		}
 
 		if ( tail == entity ) {
-			tail = tail.previous;
+			tail = tail.prev;
 		}
 
-		if ( entity.previous ) {
-			entity.previous.next = entity.next;
+		if ( entity.prev ) {
+			entity.prev.next = entity.next;
 		}
 
 		if ( entity.next ) {
-			entity.next.previous = entity.previous;
+			entity.next.prev = entity.prev;
 		}
 		
 		--length;
-		// N.B. Don't set node.next and node.previous to null because that will break the list iteration if node is the current node in the iteration.
+		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 	}
 
 	internal function removeAll():void {
 		while ( head ) {
 			var entity:Entity = head;
 			head = head.next;
-			entity.previous = null;
+			entity.prev = null;
 			entity.next = null;
 		}
 		tail = null;

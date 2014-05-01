@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.components.*;
@@ -19,7 +19,7 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IEntityFamiliesManager, IEntityObserver, IComponentObserver {
+public class ComponentManager implements IEntityFamiliesManager, IEntityObserver, IComponentHandler {
 
 	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
@@ -42,7 +42,7 @@ public class ComponentManager implements IEntityFamiliesManager, IEntityObserver
 	 * @private
 	 */
 	public function onEntityAdded( entity:Entity ):void {
-		entity.addComponentObserver( this );
+		entity.addComponentHandler( this );
 
 		var components:* = entity.ecse::components;
 		for ( var componentType:* in components ) {
@@ -63,7 +63,7 @@ public class ComponentManager implements IEntityFamiliesManager, IEntityObserver
 			unmapEntityFromComponent( componentType, entity );
 		}
 
-		entity.removeComponentObserver( this );
+		entity.removeComponentHandler( this );
 	}
 
 	/**

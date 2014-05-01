@@ -3,79 +3,50 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
+import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
-import ashx.engine.lists.LinkedHashSet;
-import ashx.engine.lists.LinkedIdMap;
+import ashx.engine.lists.EntityNodeList;
 
 use namespace ecse;
 
 public class EntityManager {
-	ecse var mEntities:LinkedIdMap;
-	private var mEntityObservers:LinkedHashSet;
+	ecse var mEntities:EntityList = new EntityList();
+	ecse var mFamilies:IEntityFamiliesManager;
 
 	public function EntityManager() {
-		mEntities = new LinkedIdMap();
-		mEntityObservers = new LinkedHashSet();
+
 	}
 
-	public function add( entity:Entity ):Entity {
-		var id:* = entity.id;
+	public function addEntity( entity:Entity ):Entity {
+		var id:uint = entity.id;
 
 		if ( mEntities.contains( id ) ) {
-			throw new Error( "An entity with id \"" + id + "\" already exists in this manager!" );
+			throw new Error( "This list already contains an entity with id \"" + id + "\"" );
 		}
 
-		// add an entity to list
-		mEntities.put( id, entity );
-		
-		// notify observers
-		for ( var node:ItemNode = mEntityObservers.ecse::_firstNode; node; node = node.next ) {
-			var observer:IEntityObserver = node.item;
-			observer.onEntityAdded( entity );
-		}
-
-		return entity;
+		return mEntities.add( id, entity );
 	}
 
-	public function get( id:uint ):Entity {
-		return mEntities.get( id );
-	}
-
-	public function remove( entity:Entity ):Entity {
-		var id:* = entity.id;
+	public function removeEntity( entity:Entity ):Entity {
+		var id:uint = entity.id;
 
 		if ( !mEntities.contains( id ) ) {
 			throw new Error( "An entity with id \"" + id + "\" not fount in this manager" );
 		}
 
-		// remove an entity from list
-		mEntities.remove( id );
-
-		// notify observers in backward order (?)
-		for ( var node:ItemNode = mEntityObservers.ecse::_lastNode; node; node = node.prev ) {
-			var observer:IEntityObserver = node.item;
-			observer.onEntityRemoved( entity );
-		}
-
-		return entity;
+		return mEntities.remove( id );
 	}
 
-	public function getIterator():EntityIterator {
-		return new EntityIterator( mEntities );
+	public function removeAllEntities():void {
+		mEntities.removeAll();
 	}
 
-	public function addObserver( observer:IEntityObserver ):Boolean {
-		return mEntityObservers.add( observer );
+	public function getEntity( id:uint ):Entity {
+		return mEntities.get( id );
 	}
 
-	public function removeObserver( observer:IEntityObserver ):Boolean {
-		return mEntityObservers.remove( observer );
-	}
-
-	public function get entityCount():uint {
-		return mEntities.length;
+	public function getEntities( familyIdentifier:Class ):EntityNodeList {
+		mFamilies.getEntities( familyIdentifier );
 	}
 }
 }

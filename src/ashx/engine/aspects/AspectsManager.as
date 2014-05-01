@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 import ashx.engine.api.IEntityFamiliesManager;
 import ashx.engine.ecse;
@@ -98,7 +98,7 @@ public class AspectsManager implements IEntityFamiliesManager {
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
 				var observer:AspectObserver = node.item;
 				if ( entity.sign.contains( observer.sign ) ) {
 					observer.onComponentAdded( entity, componentType );
@@ -120,7 +120,7 @@ public class AspectsManager implements IEntityFamiliesManager {
 		// notify aspect observers that are interested in the componentType
 		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
 		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers._firstNode; node; node = node.next ) {
+			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
 				var observer:AspectObserver = node.item;
 				if ( entity.sign.contains( observer.sign ) ) {
 					observer.onComponentRemoved( entity, componentType );

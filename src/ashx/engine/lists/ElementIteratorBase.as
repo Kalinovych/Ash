@@ -6,16 +6,16 @@ package ashx.engine.lists {
 import ashx.engine.ecse;
 
 public class ElementIteratorBase {
-	protected var _elements:ElementList;
+	protected var _list:ElementList;
 	protected var _currentNode:ItemNode;
 	protected var _current:*;
 
-	public function ElementIteratorBase( elements:ElementList ) {
-		_elements = elements;
+	public function ElementIteratorBase( list:ElementList ) {
+		_list = list;
 	}
 
 	public function get length():int {
-		return _elements.length;
+		return _list.length;
 	}
 
 	public function get isIterating():Boolean {
@@ -23,28 +23,33 @@ public class ElementIteratorBase {
 	}
 
 	[Inline]
-	protected final function _next():* {
-		_currentNode = ( _currentNode ? _currentNode.next : _elements.ecse::_firstNode );
+	protected final function $next():* {
+		_currentNode = ( _currentNode ? _currentNode.next : _list.ecse::$firstNode );
 		_current = ( _currentNode ? _currentNode.item : null );
 		return _current;
 	}
 
 	[Inline]
-	protected final function _first():* {
-		_currentNode = _elements.ecse::_firstNode;
+	protected final function $first():* {
+		_currentNode = _list.ecse::$firstNode;
 		_current = ( _currentNode ? _currentNode.item : null );
 		return _current;
 	}
 
 	[Inline]
-	protected final function _last():* {
-		_currentNode = _elements.ecse::_lastNode;
+	protected final function $last():* {
+		_currentNode = _list.ecse::$lastNode;
 		_current = ( _currentNode ? _currentNode.item : null );
 		return _current;
 	}
 
+	/**
+	 * Makes a node as a current node
+	 * @param node
+	 * @return
+	 */
 	[Inline]
-	protected final function _selectElement( node:ItemNode ):* {
+	protected final function $selectNode( node:ItemNode ):* {
 		_currentNode = node;
 		_current = ( _currentNode ? _currentNode.item : null );
 		return _current;

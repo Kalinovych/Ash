@@ -15,15 +15,15 @@ public class AnyElementIterator extends ElementIteratorBase {
 	}
 
 	public function next():* {
-		return _next();
+		return $next();
 	}
 
 	public function first():* {
-		return _first();
+		return $first();
 	}
 
 	public function last():* {
-		return _last();
+		return $last();
 	}
 }
 }

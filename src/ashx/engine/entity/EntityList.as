@@ -3,44 +3,52 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
-
 import ashx.engine.ecse;
-import ashx.engine.lists.ElementList;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashSet;
+import ashx.engine.lists.ListBase;
 
-public class EntityList extends ElementList {
-	private var entityById:Array = [];
-	private var mHandlers:LinkedHashSet;
+use namespace ecse;
+
+public class EntityList extends ListBase {
+	protected var _entityById:Array = [];
+	protected var _handlers:LinkedHashSet;
 
 	public function EntityList() {
-		mHandlers = new LinkedHashSet();
+		_handlers = new LinkedHashSet();
+	}
+
+	public function get first():Entity {
+		return _firstNode;
+	}
+
+	public function get last():Entity {
+		return _lastNode;
 	}
 
 	public function add( id:uint, entity:Entity ):Entity {
-		// add the entity node to the list
-		var eNode:ItemNode = entityById[id];
-		if ( !eNode ) {
-			eNode = new ItemNode();
+		if (_entityById[id]) {
+			remove( id );
 		}
-		eNode.id = id;
-		eNode.item = entity;
-		eNode.isAttached = true;
-		entityById[id] = eNode;
-		addNode( eNode );
+		
+		entity._id = id;
+		entity._alive = true;
+		_entityById[id] = entity;
+		$addNode( entity );
 
 		// notify handlers
-		for ( var node:ItemNode = mHandlers.ecse::_firstNode; node; node = node.next ) {
-			var handler:IEntityHandler = node.item;
-			handler.onEntityAdded( entity );
+		if (_handlers.length) {
+			for ( var node:ItemNode = _handlers.ecse::$firstNode; node; node = node.next ) {
+				var handler:IEntityHandler = node.item;
+				handler.onEntityAdded( entity );
+			}
 		}
 
 		return entity;
 	}
 
 	public function contains( id:uint ):Boolean {
-		return (_nodeOf( id ) != null);
+		return _nodeOf( id );
 	}
 
 	public function get( id:uint ):Entity {
@@ -48,60 +56,60 @@ public class EntityList extends ElementList {
 	}
 
 	public function remove( id:uint ):Entity {
-		// remove an entity from list
-		var eNode:ItemNode = entityById[id];
-		if ( !eNode ) {
+		var entity:Entity = _entityById[id];
+		if (!entity) {
 			return null;
 		}
-
-		var entity:Entity = eNode.item;
-		entityById[id] = undefined;
-		eNode.isAttached = false;
-		removeNode( eNode );
+		
+		entity._alive = false;
+		_entityById[id] = undefined;
+		$removeNode( entity );
 
 		// notify handlers in backward order (?)
 		/*for ( var node:ItemNode = mHandlers.ecse::_lastNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.item;
 			handler.onEntityRemoved( entity );
 		}*/
-		for ( var node:ItemNode = mHandlers.ecse::_firstNode; node; node = node.next ) {
-			var handler:IEntityHandler = node.item;
-			handler.onEntityRemoved( entity );
+		if (_handlers.length) {
+			for ( var node:ItemNode = _handlers.ecse::$firstNode; node; node = node.next ) {
+				var handler:IEntityHandler = node.item;
+				handler.onEntityRemoved( entity );
+			}
 		}
 
 		return entity;
 	}
 
 	public function removeAll():void {
-		while ( _first ) {
-			var node:ItemNode = _first;
+		while ( _firstNode ) {
+			var node:ItemNode = _firstNode;
 			remove( node.id );
 			node.prev = null;
 			node.next = null;
 		}
-		entityById.length = 0;
+		_entityById.length = 0;
 	}
 
-	public function getIterator():EntityIterator {
+	/*public function getIterator():EntityIterator {
 		return new EntityIterator( this );
+	}*/
+
+	ecse function addHandler( handler:IEntityHandler ):Boolean {
+		return _handlers.add( handler );
 	}
 
-	public function addHandler( handler:IEntityHandler ):Boolean {
-		return mHandlers.add( handler );
-	}
-
-	public function removeHandler( handler:IEntityHandler ):Boolean {
-		return mHandlers.remove( handler );
+	ecse function removeHandler( handler:IEntityHandler ):Boolean {
+		return _handlers.remove( handler );
 	}
 
 	[Inline]
 	protected final function _nodeOf( id:uint ):* {
-		return entityById[id];
+		return _entityById[id];
 	}
 
 	[Inline]
 	protected final function _valueOf( id:uint ):* {
-		var node:ItemNode = entityById[id];
+		var node:ItemNode = _entityById[id];
 		return (node ? node.item : null );
 	}
 

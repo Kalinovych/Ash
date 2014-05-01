@@ -3,6 +3,7 @@
  */
 package ash.core {
 import ashx.engine.ecse;
+import ashx.engine.entity.Entity;
 
 import com.flashrush.signatures.BitSign;
 

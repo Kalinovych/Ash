@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
 public class EntityNode {
 	public var entity:Entity;

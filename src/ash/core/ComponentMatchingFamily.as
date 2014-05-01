@@ -1,6 +1,8 @@
 package ash.core
 {
-	import flash.utils.Dictionary;
+import ashx.engine.entity.Entity;
+
+import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 

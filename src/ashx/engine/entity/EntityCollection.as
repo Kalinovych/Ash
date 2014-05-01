@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 import ashx.engine.ecse;
 import ashx.engine.lists.ElementList;
 import ashx.engine.lists.ItemNode;
@@ -32,7 +32,7 @@ public class EntityCollection {
 		mEntities.put( id, entity );
 
 		// notify handlers
-		for ( var node:ItemNode = mHandlers.ecse::_firstNode; node; node = node.next ) {
+		for ( var node:ItemNode = mHandlers.ecse::$firstNode; node; node = node.next ) {
 			var handler:IEntityHandler = node.item;
 			handler.onEntityAdded( entity );
 		}
@@ -55,7 +55,7 @@ public class EntityCollection {
 		mEntities.remove( id );
 
 		// notify handlers in backward order (?)
-		for ( var node:ItemNode = mHandlers.ecse::_lastNode; node; node = node.prev ) {
+		for ( var node:ItemNode = mHandlers.ecse::$lastNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.item;
 			handler.onEntityRemoved( entity );
 		}
@@ -64,13 +64,13 @@ public class EntityCollection {
 	}
 
 	public function removeAll():void {
-		while ( mEntities._firstNode ) {
-			remove( mEntities._firstNode.item );
+		while ( mEntities.$firstNode ) {
+			remove( mEntities.$firstNode.item );
 		}
 	}
 
-	public function getIterator():EntityIterator {
-		return new EntityIterator( mEntities );
+	public function getIterator():EntityNodeListIterator {
+		return new EntityNodeListIterator( mEntities );
 	}
 
 	public function addHandler( observer:IEntityHandler ):Boolean {

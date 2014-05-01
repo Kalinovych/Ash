@@ -1,6 +1,6 @@
 package ash.fsm
 {
-	import ash.core.Entity;
+	import ashx.engine.entity.Entity;
 	import asunit.asserts.fail;
 	import asunit.framework.IAsync;
 	import org.hamcrest.assertThat;

@@ -1,6 +1,8 @@
 package ash.core
 {
-	/**
+import ashx.engine.entity.Entity;
+
+/**
 	 * The interface for classes that are used to manage NodeLists (set as the familyClass property 
 	 * in the Engine object). Most developers don't need to use this since the default implementation
 	 * is used by default and suits most needs.

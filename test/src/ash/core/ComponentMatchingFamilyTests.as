@@ -1,6 +1,8 @@
 package ash.core
 {
-	import flash.geom.Matrix;
+import ashx.engine.entity.Entity;
+
+import flash.geom.Matrix;
 	import flash.geom.Point;
 	import org.hamcrest.assertThat;
 	import org.hamcrest.collection.emptyArray;

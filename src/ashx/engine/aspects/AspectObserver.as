@@ -3,9 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ash.core.Entity;
+import ashx.engine.entity.Entity;
 
-import ashx.engine.components.IComponentObserver;
+import ashx.engine.components.IComponentHandler;
 
 import ashx.engine.ecse;
 import ashx.engine.entity.EntityNode;
@@ -20,7 +20,7 @@ use namespace ecse;
 /**
  * Aspect & AspectObserver merged in one class
  */
-internal class AspectObserver implements IComponentObserver/*, IEntityObserver */ {
+internal class AspectObserver implements IComponentHandler/*, IEntityObserver */ {
 	private var nodeClass:Class;
 	//private var nodePool:NodePool;
 

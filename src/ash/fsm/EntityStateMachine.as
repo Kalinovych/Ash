@@ -1,6 +1,6 @@
 package ash.fsm
 {
-	import ash.core.Entity;
+	import ashx.engine.entity.Entity;
 	import flash.utils.Dictionary;
 
 
