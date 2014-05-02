@@ -5,8 +5,9 @@
 package ashx.engine.lists {
 import ashx.engine.ecse;
 
-public class LinkedIdMap extends ElementList {
-	public var nodePool:Vector.<ItemNode> = new <ItemNode>[];
+use namespace ecse;
+
+public class LinkedIdMap extends ItemList {
 	private var registry:Array = [];
 
 	public function LinkedIdMap() {
@@ -30,7 +31,7 @@ public class LinkedIdMap extends ElementList {
 		node.item = item;
 		node.isAttached = true;
 		registry[id] = node;
-		addNode( node );
+		$addNode( node );
 		return node;
 	}
 	
@@ -47,7 +48,7 @@ public class LinkedIdMap extends ElementList {
 		if ( node ) {
 			registry[id] = undefined;
 			node.isAttached = false;
-			removeNode( node );
+			$removeNode( node );
 			return node.item;
 		}
 		return null;
@@ -59,7 +60,8 @@ public class LinkedIdMap extends ElementList {
 		for ( var id:uint in registry ) {
 			var node:ItemNode = _nodeOf( id );
 			_unregisterNodeAt( id );
-			_detachNode( node );
+			node.isAttached = false;
+			$removeNode( node );
 			node.prev = null;
 			node.next = null;
 		}
@@ -77,14 +79,6 @@ public class LinkedIdMap extends ElementList {
 	}
 
 	[Inline]
-	protected final function _createNode( item:* ):ItemNode {
-		// TODO: pool
-		var node:ItemNode = ( nodePool.length > 0 ? nodePool.pop() : new ItemNode() );
-		node.item = item;
-		return node
-	}
-
-	[Inline]
 	protected final function _registerNode( id:uint, node:ItemNode ):ItemNode {
 		node.id = id;
 		registry[id] = node;
@@ -95,18 +89,6 @@ public class LinkedIdMap extends ElementList {
 	protected final function _unregisterNodeAt( id:uint ):void {
 		//delete registry[id];
 		registry[id] = undefined;
-	}
-
-	[Inline]
-	protected final function _attachNode( node:ItemNode ):ItemNode {
-		node.isAttached = true;
-		return super.addNode( node );
-	}
-
-	[Inline]
-	protected final function _detachNode( node:ItemNode ):ItemNode {
-		node.isAttached = false;
-		return super.removeNode( node );
 	}
 }
 }

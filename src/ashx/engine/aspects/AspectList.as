@@ -2,12 +2,11 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ashx.engine.lists {
+package ashx.engine.aspects {
 import ash.core.Node;
-import ashx.engine.entity.EntityNode;
 import ash.signals.Signal1;
 
-public class EntityNodeList {
+public class AspectList {
 	/**
 	 * The first item in the node list, or null if the list contains no nodes.
 	 */
@@ -33,21 +32,21 @@ public class EntityNodeList {
 	/**
 	 * List of nodes that was added in the current update
 	 */
-	public var addedNodes:Vector.<EntityNode>;
+	public var addedNodes:Vector.<Aspect>;
 
 	/**
 	 * List of nodes that was removed in the current update
 	 */
-	public var removedNodes:Vector.<EntityNode>;
+	public var removedNodes:Vector.<Aspect>;
 
 	private var _length:int = 0;
 
-	public function EntityNodeList() {
-		nodeAdded = new Signal1( EntityNode );
-		nodeRemoved = new Signal1( EntityNode );
+	public function AspectList() {
+		nodeAdded = new Signal1( Aspect );
+		nodeRemoved = new Signal1( Aspect );
 
-		addedNodes = new Vector.<EntityNode>();
-		removedNodes = new Vector.<EntityNode>();
+		addedNodes = new Vector.<Aspect>();
+		removedNodes = new Vector.<Aspect>();
 	}
 
 	public function beginStep():void {
@@ -55,10 +54,12 @@ public class EntityNodeList {
 		removedNodes.length = 0;
 	}
 
-	public function add( node:EntityNode ):void {
+	public function add( node:Aspect ):void {
 		if ( !head ) {
-			head = tail = node;
-			node.next = node.prev = null;
+			head = node; 
+			tail = node;
+			node.prev = null;
+			node.next = null;
 		}
 		else {
 			tail.next = node;
@@ -67,11 +68,11 @@ public class EntityNodeList {
 			tail = node;
 		}
 		_length++;
-		addedNodes.push( node );
+		addedNodes[addedNodes.length] = node;
 		nodeAdded.dispatch( node );
 	}
 
-	public function remove( node:EntityNode ):void {
+	public function remove( node:Aspect ):void {
 		if ( head == node ) {
 			head = head.next;
 		}
@@ -87,14 +88,14 @@ public class EntityNodeList {
 			node.next.prev = node.prev;
 		}
 		_length--;
-		removedNodes.push( node );
+		removedNodes[removedNodes.length] = node;
 		nodeRemoved.dispatch( node );
 		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 	}
 
 	public function removeAll():void {
 		while ( head ) {
-			var node:EntityNode = head;
+			var node:Aspect = head;
 			head = node.next;
 			node.prev = null;
 			node.next = null;
@@ -114,7 +115,7 @@ public class EntityNodeList {
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 	 */
-	public function swap( node1:EntityNode, node2:EntityNode ):void {
+	public function swap( node1:Aspect, node2:Aspect ):void {
 		if ( node1.prev == node2 ) {
 			node1.prev = node2.prev;
 			node2.prev = node1;
@@ -179,10 +180,10 @@ public class EntityNodeList {
 		if ( head == tail ) {
 			return;
 		}
-		var remains:EntityNode = head.next;
-		for ( var node:EntityNode = remains; node; node = remains ) {
+		var remains:Aspect = head.next;
+		for ( var node:Aspect = remains; node; node = remains ) {
 			remains = node.next;
-			for ( var other:EntityNode = node.prev; other; other = other.prev ) {
+			for ( var other:Aspect = node.prev; other; other = other.prev ) {
 				if ( sortFunction( node, other ) >= 0 ) {
 					// move node to after other
 					if ( node != other.next ) {
@@ -239,16 +240,16 @@ public class EntityNodeList {
 		if ( head == tail ) {
 			return;
 		}
-		var lists:Vector.<EntityNode> = new Vector.<EntityNode>;
+		var lists:Vector.<Aspect> = new Vector.<Aspect>;
 		// disassemble the list
-		var start:EntityNode = head;
-		var end:EntityNode;
+		var start:Aspect = head;
+		var end:Aspect;
 		while ( start ) {
 			end = start;
 			while ( end.next && sortFunction( end, end.next ) <= 0 ) {
 				end = end.next;
 			}
-			var next:EntityNode = end.next;
+			var next:Aspect = end.next;
 			start.prev = end.next = null;
 			lists.push( start );
 			start = next;
@@ -264,9 +265,9 @@ public class EntityNodeList {
 		}
 	}
 
-	private function merge( head1:EntityNode, head2:EntityNode, sortFunction:Function ):EntityNode {
-		var node:EntityNode;
-		var head:EntityNode;
+	private function merge( head1:Aspect, head2:Aspect, sortFunction:Function ):Aspect {
+		var node:Aspect;
+		var head:Aspect;
 		if ( sortFunction( head1, head2 ) <= 0 ) {
 			head = node = head1;
 			head1 = head1.next;
@@ -324,7 +325,7 @@ public class EntityNodeList {
 	public function forEach( callback:Function, ...args ):void {
 		if ( head ) {
 			args.unshift( null );
-			for ( var node:EntityNode = head; node; node = node.next ) {
+			for ( var node:Aspect = head; node; node = node.next ) {
 				args[0] = node;
 				callback.apply( null, args );
 			}

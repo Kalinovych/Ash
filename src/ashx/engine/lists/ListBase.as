@@ -33,9 +33,9 @@ public class ListBase {
 			_firstNode = node;
 			_lastNode = node;
 		} else {
-			node.next = null;
-			node.prev = _lastNode;
 			_lastNode.next = node;
+			node.prev = _lastNode;
+			node.next = null;
 			_lastNode = node;
 		}
 		++_length;

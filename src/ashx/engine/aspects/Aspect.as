@@ -2,14 +2,14 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ashx.engine.entity {
+package ashx.engine.aspects {
 import ashx.engine.entity.Entity;
 
-public class EntityNode {
+public class Aspect {
 	public var entity:Entity;
-	
-	public var prev:*; //<EntityNode>
-	
-	public var next:*; //<EntityNode>
+
+	public var prev:*; //<AspectNode>
+
+	public var next:*; //<AspectNode>
 }
 }

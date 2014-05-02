@@ -20,7 +20,7 @@ public class TEngine extends UEngine {
 	
 	public function addSystem( system:* ):void {
 		use namespace ecse;
-		for ( var processType:* in mThreads.registry ) {
+		for ( var processType:* in mThreads.nodeByKey ) {
 			if ( system is processType ) {
 				var thread:ISystemThread = mThreads.get( processType );
 				thread.onSystemAdded( system );

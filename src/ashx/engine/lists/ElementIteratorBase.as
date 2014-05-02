@@ -6,11 +6,11 @@ package ashx.engine.lists {
 import ashx.engine.ecse;
 
 public class ElementIteratorBase {
-	protected var _list:ElementList;
+	protected var _list:ItemList;
 	protected var _currentNode:ItemNode;
 	protected var _current:*;
 
-	public function ElementIteratorBase( list:ElementList ) {
+	public function ElementIteratorBase( list:ItemList ) {
 		_list = list;
 	}
 

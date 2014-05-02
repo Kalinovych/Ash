@@ -76,7 +76,8 @@ public class Entity {
 		return _id;
 	}
 
-	public function get name():String {
+	[Inline]
+	public final function get name():String {
 		return _name;
 	}
 
@@ -87,7 +88,8 @@ public class Entity {
 	/**
 	 *  Determines whether the entity was added and wasn't removed from an engine.
 	 */
-	public function get alive():Boolean {
+	[Inline]
+	public final function get alive():Boolean {
 		return _alive;
 	}
 
@@ -114,13 +116,14 @@ public class Entity {
 			remove( componentClass );
 		}
 		components[ componentClass ] = component;
-		componentAdded.dispatch( this, componentClass );
 
 		// notify observers
 		for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
-			var observer:IComponentHandler = node.item;
-			observer.onComponentAdded( this, component, componentClass );
+			var handler:IComponentHandler = node.item;
+			handler.onComponentAdded( this, component, componentClass );
 		}
+
+		componentAdded.dispatch( this, componentClass );
 
 		return this;
 	}
@@ -135,13 +138,15 @@ public class Entity {
 		var component:* = components[ componentClass ];
 		if ( component ) {
 			delete components[ componentClass ];
-			componentRemoved.dispatch( this, componentClass );
 
 			// notify observers
 			for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
-				var observer:IComponentHandler = node.item;
-				observer.onComponentRemoved( this, component, componentClass );
+				var handler:IComponentHandler = node.item;
+				handler.onComponentRemoved( this, component, componentClass );
 			}
+
+			componentRemoved.dispatch( this, componentClass );
+			
 			return component;
 		}
 		return null;
@@ -153,7 +158,8 @@ public class Entity {
 	 * @param componentClass The class of the component requested.
 	 * @return The component, or null if none was found.
 	 */
-	public function get( componentClass:Class ):* {
+	[Inline]
+	public final function get( componentClass:Class ):* {
 		return components[ componentClass ];
 	}
 
@@ -176,7 +182,8 @@ public class Entity {
 	 * @param componentClass The class of the component sought.
 	 * @return true if the entity has a component of the type, false if not.
 	 */
-	public function has( componentClass:Class ):Boolean {
+	[Inline]
+	public final function has( componentClass:Class ):Boolean {
 		return components[ componentClass ] != null;
 	}
 	

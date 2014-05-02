@@ -3,81 +3,60 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ashx.engine.entity.Entity;
-
-import ashx.engine.api.IEntityFamiliesManager;
+import ashx.engine.api.IAspectManager;
+import ashx.engine.components.IComponentObserver;
 import ashx.engine.ecse;
+import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
-import ashx.engine.lists.EntityNodeList;
+import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedHashMap;
-import ashx.engine.lists.LinkedHashSet;
 
 import com.flashrush.signatures.BitSignManager;
 
-import flash.utils.Dictionary;
-
 use namespace ecse;
 
-/**
- * A layer between engine and Aspect Observers.
- * Observe for added/removed entities and notify aspect observers.
- *
- */
-public class AspectsManager implements IEntityFamiliesManager {
-	private var aspectObservers:LinkedHashMap/*<NodeClass, AspectObserver>*/ = new LinkedHashMap();
-	private var observersOfComponent:Dictionary/*<ComponentClass, LinkedHashSet<AspectObserver>>*/ = new Dictionary();
-
+public class AspectsManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityList;
+	private var componentObserver:IComponentObserver;
 	private var signManager:BitSignManager;
+	private var matchers:LinkedHashMap/*<NodeClass, AspectMatcher>*/ = new LinkedHashMap();
 
-	public function AspectsManager( entities:EntityList ) {
-		super();
+	public function AspectsManager( entities:EntityList, componentObserver:IComponentObserver ) {
 		this.entities = entities;
-		this.signManager = new BitSignManager();
+		this.componentObserver = componentObserver;
+		signManager = new BitSignManager();
+		
+		entities.addHandler( this );
 	}
 
-	public function getEntities( familyIdentifier:Class ):EntityNodeList {
-		var observer:AspectObserver = aspectObservers.get( familyIdentifier );
-		if ( !observer ) {
-			observer = createAspectObserver( familyIdentifier );
+	public function getAspects( familyIdentifier:Class ):AspectList {
+		var matcher:AspectMatcher = matchers.get( familyIdentifier );
+		if ( !matcher ) {
+			matcher = createMatcher( familyIdentifier );
+			matchers.set( familyIdentifier, matcher );
 		}
-		return observer.nodeList;
+		return matcher.nodeList;
 	}
-
-	public function dispose():void {
-		aspectObservers.removeAll();
-		aspectObservers.dispose();
-		aspectObservers = null;
-
-		observersOfComponent = null;
-
-		signManager = null;
-
-		super.dispose();
-	}
-
-	/**
-	 * @private
-	 */
+	
+	/** @private **/
 	public function onEntityAdded( entity:Entity ):void {
+		trace("[AspectsManager.onEntityAdded]›", entity);
 		entity.sign = signManager.signKeys( entity.components );
-		//super.onEntityAdded( entity );
-		for each( var aspect:AspectObserver in aspectObservers ) {
-			if ( _entityMatchAspect( entity, aspect ) ) {
-				aspect.onAspectEntityAdded( entity );
+		for ( var node:ItemNode = matchers.$firstNode; node; node = node.next ) {
+			var matcher:AspectMatcher = node.item;
+			if ( _entityMatchAspect( entity, matcher ) ) {
+				matcher.addMatchedEntity( entity );
 			}
 		}
 	}
-
-	/**
-	 * @private
-	 */
+	
+	/** @private **/
 	public function onEntityRemoved( entity:Entity ):void {
-		//super.onEntityRemoved( entity );
-		for each( var aspect:AspectObserver in aspectObservers ) {
-			if ( _entityMatchAspect( entity, aspect ) ) {
-				aspect.onAspectEntityRemoved( entity );
+		for ( var node:ItemNode = matchers.$firstNode; node; node = node.next ) {
+			var matcher:AspectMatcher = node.item;
+			if ( _entityMatchAspect( entity, matcher ) ) {
+				matcher.removeMatchedEntity( entity );
 			}
 		}
 
@@ -85,80 +64,34 @@ public class AspectsManager implements IEntityFamiliesManager {
 		entity.sign = null;
 	}
 
-	/**
-	 * @private
-	 */
-	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
-		// add a component to the entity sign
-		entity.sign.add( componentType );
-
-		// mark the entity as a componentType instance holder
-		//mapEntityToComponent( componentType, entity );
-
-		// notify aspect observers that are interested in the componentType
-		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
-		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
-				var observer:AspectObserver = node.item;
-				if ( entity.sign.contains( observer.sign ) ) {
-					observer.onComponentAdded( entity, componentType );
-				}
-			}
-		}
-	}
-
-	/**
-	 * @private
-	 */
-	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
-		// remove a component from the entity sign
-		entity.sign.remove( componentType );
-
-		// mark the entity no more contains a component of the componentType
-		//unmapEntityFromComponent( componentType, entity );
-
-		// notify aspect observers that are interested in the componentType
-		var componentObservers:LinkedHashSet = observersOfComponent[componentType];
-		if ( componentObservers ) {
-			for ( var node:ItemNode = componentObservers.$firstNode; node; node = node.next ) {
-				var observer:AspectObserver = node.item;
-				if ( entity.sign.contains( observer.sign ) ) {
-					observer.onComponentRemoved( entity, componentType );
-				}
-			}
-		}
-	}
-
-	protected final function createAspectObserver( nodeClass:Class ):AspectObserver {
-		var aspect:AspectObserver = new AspectObserver( nodeClass );
-		aspect.sign = signManager.signKeys( aspect.propertyMap );
-		if ( aspect.excludedComponents ) {
-			aspect.exclusionSign = signManager.signKeys( aspect.excludedComponents );
+	/** @private **/
+	protected final function createMatcher( nodeClass:Class ):AspectMatcher {
+		var matcher:AspectMatcher = new AspectMatcher( nodeClass );
+		matcher.sign = signManager.signKeys( matcher.propertyMap );
+		if ( matcher.excludedComponents ) {
+			matcher.exclusionSign = signManager.signKeys( matcher.excludedComponents );
 		}
 
-		// find all entities matching this aspect
-		for ( var node:ItemNode = entities._firstNode; node; node = node.next ) {
-			var entity:Entity = node.item;
-			if ( _entityMatchAspect( entity, aspect ) ) {
-				aspect.onAspectEntityAdded( entity );
+		// check all entities that are already in the list
+		for ( var entity:Entity = entities.first; entity; entity = entity.next ) {
+			if ( _entityMatchAspect( entity, matcher ) ) {
+				matcher.addMatchedEntity( entity );
 			}
 		}
 
-		// add aspect as observer of each component in the node
-		var interests:Vector.<Class> = aspect.componentInterests;
+		// add matcher as observer of each component in the node
+		var interests:Vector.<Class> = matcher.componentInterests;
 		for ( var i:int = 0, len:int = interests.length; i < len; i++ ) {
 			var componentClass:Class = interests[i];
-			var observers:LinkedHashSet/*<AspectObserver>*/ = observersOfComponent[componentClass] ||= new LinkedHashSet();
-			observers.add( aspect );
+			componentObserver.addHandler( componentClass, matcher );
 		}
 
-		return aspect;
+		return matcher;
 	}
 
 	[Inline]
-	protected final function _entityMatchAspect( entity:Entity, aspect:AspectObserver ):Boolean {
+	protected final function _entityMatchAspect( entity:Entity, aspect:AspectMatcher ):Boolean {
 		return ( entity.sign.contains( aspect.sign ) && !( aspect.exclusionSign && entity.sign.contains( aspect.exclusionSign ) ) );
 	}
-
 }
 }

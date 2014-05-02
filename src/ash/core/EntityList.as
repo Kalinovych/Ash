@@ -1,10 +1,14 @@
 package ash.core {
+import ashx.engine.ecse;
 import ashx.engine.entity.Entity;
 
 /**
  * An internal class for a linked list of entities. Used inside the framework for
  * managing the entities.
  */
+	
+use namespace ecse;
+
 internal class EntityList {
 	internal var head:Entity;
 	internal var tail:Entity;

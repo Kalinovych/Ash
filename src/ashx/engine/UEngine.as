@@ -5,7 +5,7 @@
 package ashx.engine {
 import ashx.engine.api.IEngineTickHandler;
 
-public class UEngine extends EEngine {
+public class UEngine {
 	private var mTickHandlers:Vector.<IEngineTickHandler>;
 
 	public function UEngine() {

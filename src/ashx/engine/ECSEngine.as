@@ -4,28 +4,28 @@
  */
 
 package ashx.engine {
-import ashx.engine.entity.Entity;
-
-import ashx.engine.api.IEntityFamiliesManager;
-import ashx.engine.aspects.AspectFamiliesManager;
+import ashx.engine.api.IAspectManager;
+import ashx.engine.aspects.AspectList;
+import ashx.engine.aspects.AspectsManager;
 import ashx.engine.components.ComponentObserver;
+import ashx.engine.components.IComponentObserver;
+import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
-import ashx.engine.lists.EntityNodeList;
 import ashx.engine.lists.LinkedHashMap;
 
 use namespace ecse;
 
 public class ECSEngine {
 	ecse var _entities:EntityList;
-	ecse var _componentObserver:ComponentObserver;
-	ecse var _families:IEntityFamiliesManager;
+	ecse var _componentObserver:IComponentObserver;
+	ecse var _families:IAspectManager;
 
 	ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
 
 	public function ECSEngine() {
 		_entities = new EntityList();
 		_componentObserver = new ComponentObserver( _entities );
-		_families = new AspectFamiliesManager( _entities, _componentObserver );
+		_families = new AspectsManager( _entities, _componentObserver );
 	}
 
 	public function get entities():EntityList {
@@ -66,8 +66,8 @@ public class ECSEngine {
 		return _entities.get( id );
 	}
 
-	public function getEntities( familyIdentifier:Class = null ):EntityNodeList {
-		_families.getEntities( familyIdentifier );
+	public function getEntities( familyIdentifier:Class = null ):AspectList {
+		_families.getAspects( familyIdentifier );
 	}
 
 }

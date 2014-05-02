@@ -35,7 +35,7 @@ public class AspectUtil {
 	private static var excludedComponentsByNode:Dictionary = new Dictionary();
 	private static var optionalComponentsByNode:Dictionary = new Dictionary();
 
-	public static function describeAspect( nodeClass:Class, aspect:AspectObserver ):void {
+	public static function describeAspect( nodeClass:Class, aspect:AspectMatcher ):void {
 		var propertyMap:Dictionary = propertyMapByNode[nodeClass];
 		var componentInterests:Vector.<Class> = componentInterestsByNode[nodeClass];
 		var excludedComponents:Dictionary = excludedComponentsByNode[nodeClass];
@@ -58,7 +58,7 @@ public class AspectUtil {
 			for ( var i:int = 0, len:int = propList.length; i < len; i++ ) {
 				var property:Object = propList[i];
 				var propertyName:String = property.name;
-				if ( propertyName == "entity" || propertyName == "previous" || propertyName == "next" ) {
+				if ( propertyName == "entity" || propertyName == "prev" || propertyName == "next" ) {
 					continue;
 				}
 

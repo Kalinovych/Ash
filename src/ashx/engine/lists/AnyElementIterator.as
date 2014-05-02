@@ -5,7 +5,7 @@
 package ashx.engine.lists {
 public class AnyElementIterator extends ElementIteratorBase {
 
-	public function AnyElementIterator( elements:ElementList ) {
+	public function AnyElementIterator( elements:ItemList ) {
 		super( elements );
 	}
 

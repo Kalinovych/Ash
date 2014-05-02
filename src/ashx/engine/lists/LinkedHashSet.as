@@ -3,68 +3,62 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.lists {
+import ashx.engine.ecse;
+
 import flash.utils.Dictionary;
 
-public class LinkedHashSet extends ElementList {
-	protected var registry:Dictionary = new Dictionary();
+use namespace ecse;
+
+public class LinkedHashSet extends ItemList {
+	ecse var nodeByItem:Dictionary = new Dictionary();
 
 	public function LinkedHashSet() {
 		super();
 	}
 
 	public function add( item:* ):Boolean {
-		if ( _contains( item ) ) return false;
+		if ( $contains( item ) ) return false;
 
-		var node:ItemNode = _nodeFor( item );
-		registry[item] = node;
+		var node:ItemNode = $createNode( item );
+		nodeByItem[item] = node;
 		node.isAttached = true;
-		addNode( node );
+		$addNode( node );
 		return true;
 	}
 
 	public function remove( item:* ):Boolean {
-		var node:ItemNode = _nodeOf( item );
+		var node:ItemNode = $nodeOf( item );
 		if ( node == null ) return false;
 
-		delete registry[item];
+		delete nodeByItem[item];
 		node.isAttached = false;
-		removeNode( node );
+		$removeNode( node );
+		$disposeNode( node, false );
 		return true;
 	}
 
+	public function removeAll():void {
+		while ( _firstNode ) {
+			var node:ItemNode = _firstNode;
+			_firstNode = node.next;
+			node.isAttached = false;
+			$disposeNode( node, true );
+		}
+		nodeByItem = new Dictionary();
+	}
+
 	public function contains( item:* ):Boolean {
-		return _contains( item );
+		return $contains( item );
 	}
 
 	[Inline]
-	protected final function _contains( element:* ):Boolean {
-		return ( registry[element] != null );
+	protected final function $contains( element:* ):Boolean {
+		return ( nodeByItem[element] != null );
 	}
 
 	[Inline]
-	protected final function _nodeFor( item:* ):ItemNode {
-		// TODO: pool
-		var node:ItemNode = new ItemNode();
-		node.item = item;
-		return node;
+	protected final function $nodeOf( item:* ):ItemNode {
+		return nodeByItem[item];
 	}
-
-	[Inline]
-	protected final function _nodeOf( item:* ):ItemNode {
-		return registry[item];
-	}
-
-	/*[Inline]
-	protected final function _attachNode( node:ItemNode ):ItemNode {
-		node.isAttached = true;
-		return super.addNode( node );
-	}
-
-	[Inline]
-	protected final function _detachNode( node:ItemNode ):ItemNode {
-		node.isAttached = false;
-		return super.removeNode( node );
-	}*/
-
 }
 }

@@ -3,12 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine {
-import ashx.engine.entity.Entity;
-
-import ashx.engine.api.IEntityFamiliesManager;
+import ashx.engine.api.IAspectManager;
+import ashx.engine.aspects.AspectList;
 import ashx.engine.components.*;
-import ashx.engine.entity.IEntityObserver;
-import ashx.engine.lists.EntityNodeList;
+import ashx.engine.entity.Entity;
 import ashx.engine.lists.LinkedHashSet;
 
 import flash.utils.Dictionary;
@@ -19,7 +17,7 @@ use namespace ecse;
  * Groups entities by a component type
  * and allows to engine to retrieve an entities that is holds required component
  */
-public class ComponentManager implements IEntityFamiliesManager, IEntityObserver, IComponentHandler {
+public class ComponentManager implements IAspectManager, IEntityObserver, IComponentHandler {
 
 	protected var entitySetByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
@@ -30,7 +28,7 @@ public class ComponentManager implements IEntityFamiliesManager, IEntityObserver
 		return entitySetByComponent[componentType];
 	}
 
-	public function getEntities( familyIdentifier:Class ):EntityNodeList {
+	public function getAspects( familyIdentifier:Class ):AspectList {
 		return entitySetByComponent[familyIdentifier];
 	}
 	

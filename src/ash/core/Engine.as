@@ -75,13 +75,12 @@ public class Engine {
 
 		entity.sign = signManager.signKeys( entity.components );
 
-		entity._engine = this;
 		entityList.add( entity );
 		entityByName[ entity.id ] = entity;
 
 		entity.componentAdded.add( componentAdded );
 		entity.componentRemoved.add( componentRemoved );
-		entity.nameChanged.add( entityNameChanged );
+		//entity.nameChanged.add( entityNameChanged );
 
 		for each( var family:Family in familyMap ) {
 			if ( entityBelongToFamily( entity, family ) ) {
@@ -98,7 +97,7 @@ public class Engine {
 	public function removeEntity( entity:Entity ):void {
 		entity.componentAdded.remove( componentAdded );
 		entity.componentRemoved.remove( componentRemoved );
-		entity.nameChanged.remove( entityNameChanged );
+		//entity.nameChanged.remove( entityNameChanged );
 
 		for each( var family:Family in familyMap ) {
 			if ( entityBelongToFamily( entity, family ) ) {
@@ -110,7 +109,6 @@ public class Engine {
 		entityList.remove( entity );
 		signManager.recycleSign( entity.sign );
 		entity.sign = null;
-		entity._engine = null;
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class ThreadConfig {
 	}
 
 	public function setProcessThread( process:*, thread:ISystemThread ):void {
-		ecse::threads.put( process, thread );
+		ecse::threads.set( process, thread );
 	}
 	
 }

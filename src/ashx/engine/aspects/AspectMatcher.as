@@ -3,13 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.aspects {
-import ashx.engine.entity.Entity;
-
 import ashx.engine.components.IComponentHandler;
-
 import ashx.engine.ecse;
-import ashx.engine.entity.EntityNode;
-import ashx.engine.lists.EntityNodeList;
+import ashx.engine.entity.Entity;
 
 import com.flashrush.signatures.BitSign;
 
@@ -20,11 +16,11 @@ use namespace ecse;
 /**
  * Aspect & AspectObserver merged in one class
  */
-internal class AspectObserver implements IComponentHandler/*, IEntityObserver */ {
+internal class AspectMatcher implements IComponentHandler/*, IEntityObserver */ {
 	private var nodeClass:Class;
 	//private var nodePool:NodePool;
 
-	private var _nodeList:EntityNodeList = new EntityNodeList();
+	private var _nodeList:AspectList = new AspectList();
 
 	/** Map of this family nodes by entity */
 	internal var nodeByEntity:Dictionary = new Dictionary();
@@ -47,16 +43,16 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	/** Bit representation of the family's excluded components for fast matching */
 	internal var exclusionSign:BitSign;
 
-	public function AspectObserver( nodeClass:Class ) {
+	public function AspectMatcher( nodeClass:Class ) {
 		this.nodeClass = nodeClass;
 		AspectUtil.describeAspect( nodeClass, this );
 	}
 
-	public function get nodeList():EntityNodeList {
+	public function get nodeList():AspectList {
 		return _nodeList;
 	}
 
-	public function onAspectEntityAdded( entity:Entity ):void {
+	public function addMatchedEntity( entity:Entity ):void {
 		//entity.ecse::addComponentObserver( this );
 
 		// do nothing if an entity already identified in this family
@@ -64,27 +60,27 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 			return;
 		}
 
-		_createNodeOf( entity );
+		$createNodeOf( entity );
 	}
 
-	public function onAspectEntityRemoved( entity:Entity ):void {
+	public function removeMatchedEntity( entity:Entity ):void {
 		//entity.ecse::removeComponentObserver( this );
 
 		if ( nodeByEntity[entity] ) {
-			_removeNodeOf( entity );
+			$removeNodeOf( entity );
 		}
 	}
 
 	public function onComponentAdded( entity:Entity, component:*, componentClass:* ):void {
 		// The node of the entity if it belongs to this family.
-		var node:EntityNode = nodeByEntity[entity];
+		var node:Aspect = nodeByEntity[entity];
 
 		/* Excluded component check */
 
 		// Check is new component excludes the entity from this family
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			if ( node ) {
-				_removeNodeOf( entity );
+				$removeNodeOf( entity );
 			}
 			return;
 		}
@@ -106,12 +102,12 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 			return;
 		}
 
-		_createNodeOf( entity );
+		$createNodeOf( entity );
 	}
 
 	public function onComponentRemoved( entity:Entity, component:*, componentClass:* ):void {
 		// The node of the entity if it belongs to this family.
-		var node:EntityNode = nodeByEntity[entity];
+		var node:Aspect = nodeByEntity[entity];
 
 		/* Excluded component check */
 
@@ -119,7 +115,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			// no more unacceptable components?
 			if ( !entity.sign.contains( exclusionSign ) ) {
-				onAspectEntityAdded( entity );
+				addMatchedEntity( entity );
 			}
 			return;
 		}
@@ -137,7 +133,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		/* Required component check */
 
 		if ( node && propertyMap[componentClass] ) {
-			_removeNodeOf( entity );
+			$removeNodeOf( entity );
 		}
 	}
 
@@ -147,10 +143,10 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	 * @param entity
 	 */
 	[Inline]
-	private final function _createNodeOf( entity:Entity ):void {
+	private final function $createNodeOf( entity:Entity ):void {
 		// Create new node and assign components from the entity to the node variables
 		//var node:Node = nodePool.get();
-		var node:EntityNode = new nodeClass();
+		var node:Aspect = new nodeClass();
 		node.entity = entity;
 		for ( var componentClass:* in propertyMap ) {
 			var property:String = propertyMap[componentClass];
@@ -169,10 +165,9 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	}
 
 	[Inline]
-	private final function _removeNodeOf( entity:Entity ):void {
-		var node:EntityNode = nodeByEntity[entity];
+	private final function $removeNodeOf( entity:Entity ):void {
+		var node:Aspect = nodeByEntity[entity];
 		delete nodeByEntity[entity];
-
 		nodeList.remove( node );
 
 		/*if ( engine.updating ) {

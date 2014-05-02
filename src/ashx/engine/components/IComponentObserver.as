@@ -3,11 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.components {
-import ash.core.Entity;
-
 public interface IComponentObserver {
-	function onComponentAdded( entity:Entity, component:*, componentType:* ):void;
-	
-	function onComponentRemoved( entity:Entity, component:*, componentType:* ):void;
+	function addHandler( componentType:Class, handler:IComponentHandler ):void;
+
+	function removeHandler( componentType:Class, handler:IComponentHandler ):void;
 }
 }

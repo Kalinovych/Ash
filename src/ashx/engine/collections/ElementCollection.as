@@ -21,7 +21,7 @@ public class ElementCollection {
 		if ( mElements.contains( element ) ) {
 			mElements.remove( key );
 		}
-		mElements.put( key, element );
+		mElements.set( key, element );
 
 		var handlers:HandlerList = _handlersOf( key );
 		if ( handlers && handlers.length ) {
@@ -61,7 +61,7 @@ public class ElementCollection {
 			return mHandlers ||= new HandlerList();
 		}
 		var list:HandlerList = new HandlerList();
-		mTypedHandlers.put( key, list );
+		mTypedHandlers.set( key, list );
 		return list;
 	}
 

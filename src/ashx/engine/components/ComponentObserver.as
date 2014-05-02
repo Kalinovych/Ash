@@ -3,9 +3,8 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.components {
-import ashx.engine.entity.Entity;
-
 import ashx.engine.ecse;
+import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
 import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemNode;
@@ -15,7 +14,10 @@ import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class ComponentObserver implements IEntityHandler, IComponentHandler {
+/**
+ * Global observer of components
+ */
+public class ComponentObserver implements IComponentObserver, IEntityHandler, IComponentHandler {
 	private var entities:EntityList;
 	private var handlersByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
@@ -24,7 +26,7 @@ public class ComponentObserver implements IEntityHandler, IComponentHandler {
 		entities.addHandler( this );
 	}
 
-	public function addComponentHandler( componentType:Class, handler:IComponentHandler ):void {
+	public function addHandler( componentType:Class, handler:IComponentHandler ):void {
 		var handlerList:LinkedHashSet = handlersByComponent[componentType];
 		if ( !handlerList ) {
 			handlerList = new LinkedHashSet();
@@ -33,7 +35,7 @@ public class ComponentObserver implements IEntityHandler, IComponentHandler {
 		handlerList.add( handler );
 	}
 
-	public function removeComponentObserver( componentType:Class, handler:IComponentHandler ):void {
+	public function removeHandler( componentType:Class, handler:IComponentHandler ):void {
 		var handlerList:LinkedHashSet = handlersByComponent[componentType];
 		if ( handlerList ) {
 			handlerList.remove( handler );
@@ -60,7 +62,7 @@ public class ComponentObserver implements IEntityHandler, IComponentHandler {
 
 	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
 		var handlerList:LinkedHashSet = handlersByComponent[componentType];
-		if ( handlerList && handlerList.length ) {
+		if ( handlerList ) {
 			for ( var node:ItemNode = handlerList.$firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;
 				handler.onComponentAdded( entity, component, componentType );
