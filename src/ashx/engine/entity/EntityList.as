@@ -11,11 +11,17 @@ import ashx.engine.lists.ListBase;
 use namespace ecse;
 
 public class EntityList extends ListBase {
-	protected var _entityById:Array;
+	protected var _entityById:Vector.<Entity>;
+	protected var _capacity:uint;
+	protected var _growthValue:uint;
+	protected var _lastId:uint = 0;
+
 	protected var _handlers:LinkedHashSet;
 
-	public function EntityList() {
-		_entityById = [];
+	public function EntityList( length:uint = 0, growthValue:uint = 1 ) {
+		_entityById = new Vector.<Entity>( length );
+		_capacity = length;
+		_growthValue = growthValue || 1;
 		_handlers = new LinkedHashSet();
 	}
 
@@ -27,9 +33,20 @@ public class EntityList extends ListBase {
 		return _lastNode;
 	}
 
-	public function add( id:uint, entity:Entity ):Entity {
-		if ( _entityById[id] ) {
-			return null;
+	public function add( entity:Entity ):Entity {
+		_lastId++;
+		addAt( _lastId, entity );
+	}
+
+	ecse function addAt( id:uint, entity:Entity ):Entity {
+		if ( id < _capacity && _entityById[id] ) {
+			throw new ArgumentError( "Entity with id=" + id.toString() + " already in exists in the list!" );
+		}
+
+		if ( id >= _capacity ) {
+			_lastId = id;
+			_capacity = id + _growthValue;
+			_entityById.length = _capacity;
 		}
 
 		entity._id = id;

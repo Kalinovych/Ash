@@ -56,12 +56,12 @@ public class ListBase {
 			_firstNode = node;
 			_lastNode = node;
 		} else {
-			node.prev = null;
-			node.next = _firstNode;
 			_firstNode.prev = node;
+			node.next = _firstNode;
+			node.prev = null;
 			_firstNode = node;
 		}
-		--_length;
+		++_length;
 
 		return node;
 	}
@@ -86,7 +86,7 @@ public class ListBase {
 		nodeToAdd.next = nodeInList;
 		nodeToAdd.prev.next = nodeToAdd;
 		nodeToAdd.next.prev = nodeToAdd;
-		--_length;
+		++_length;
 
 		return nodeToAdd;
 	}
@@ -111,7 +111,7 @@ public class ListBase {
 		nodeToAdd.next = nodeInList.next;
 		nodeToAdd.prev.next = nodeToAdd;
 		nodeToAdd.next.prev = nodeToAdd;
-		--_length;
+		++_length;
 
 		return nodeToAdd;
 	}
@@ -174,12 +174,38 @@ public class ListBase {
 
 	[Inline]
 	protected final function $removeFirstNode():* {
-		return (_firstNode ? $removeNode( _firstNode ) : null);
+		if ( _firstNode ) {
+			var node:* = _firstNode;
+			if ( _firstNode.next ) {
+				_firstNode.next.prev = null;
+				_firstNode = _firstNode.next;
+				node.next = null;
+			} else {
+				_lastNode = null;
+			}
+			--_length;
+			return node;
+		}
+		return null;
+		//return (_firstNode ? $removeNode( _firstNode ) : null);
 	}
 
 	[Inline]
 	protected final function $removeLastNode():* {
-		return (_lastNode ? $removeNode( _lastNode ) : null);
+		if ( _lastNode ) {
+			var node:* = _lastNode;
+			if ( _lastNode.prev ) {
+				_lastNode.prev.next = null;
+				_lastNode = _lastNode.prev;
+				node.prev = null;
+			} else {
+				_firstNode = null;
+			}
+			--_length;
+			return node;
+		}
+		return null;
+		//return (_lastNode ? $removeNode( _lastNode ) : null);
 	}
 
 	[Inline]
@@ -420,12 +446,12 @@ public class ListBase {
 	[Inline]
 	protected final function $forEach( callback:Function, args:Array = null ):void {
 		if ( _firstNode ) {
-			if (args) {
+			if ( args ) {
 				args.unshift( null );
 			} else {
 				args = [null];
 			}
-			
+
 			for ( var node:* = _firstNode; node; node = node.next ) {
 				args[0] = node;
 				callback.apply( null, args );

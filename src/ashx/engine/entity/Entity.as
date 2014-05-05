@@ -31,9 +31,7 @@ use namespace ecse;
  * position component. Systems operate on entities based on the components they have.</p>
  */
 public class Entity {
-	public static var idIndex:uint = 0;
-
-	ecse var _id:uint = idIndex++;
+	ecse var _id:uint = 0;
 
 	/**
 	 * Optional, give the entity a name. This can help with debugging and with serialising the entity.

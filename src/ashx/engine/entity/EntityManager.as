@@ -36,14 +36,7 @@ public class EntityManager {
 	}
 
 	public function add( entity:Entity ):Entity {
-		trace("[EntityManager.add]›", entity);
-		var id:uint = entity.id;
-
-		if ( mEntities.contains( id ) ) {
-			throw new Error( "This list already contains an entity with id \"" + id + "\"" );
-		}
-
-		return mEntities.add( id, entity );
+		return mEntities.add( entity );
 	}
 
 	public function remove( entity:Entity ):Entity {
@@ -64,7 +57,7 @@ public class EntityManager {
 		return mEntities.get( id );
 	}
 
-	public function getAspectList( familyIdentifier:Class ):AspectList {
+	public function getAspects( familyIdentifier:Class ):AspectList {
 		return mAspects.getAspects( familyIdentifier );
 	}
 
