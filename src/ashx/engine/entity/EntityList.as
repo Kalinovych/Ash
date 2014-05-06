@@ -35,7 +35,7 @@ public class EntityList extends ListBase {
 
 	public function add( entity:Entity ):Entity {
 		_lastId++;
-		addAt( _lastId, entity );
+		return addAt( _lastId, entity );
 	}
 
 	ecse function addAt( id:uint, entity:Entity ):Entity {
