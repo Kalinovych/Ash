@@ -5,7 +5,7 @@
 package ashx.engine.entity {
 import ashx.engine.ecse;
 import ashx.engine.lists.ItemNode;
-import ashx.engine.lists.LinkedHashSet;
+import ashx.engine.lists.LinkedSet;
 import ashx.engine.lists.ListBase;
 
 use namespace ecse;
@@ -14,15 +14,14 @@ public class EntityList extends ListBase {
 	protected var _entityById:Vector.<Entity>;
 	protected var _capacity:uint;
 	protected var _growthValue:uint;
-	protected var _lastId:uint = 0;
 
-	protected var _handlers:LinkedHashSet;
+	protected var _handlers:LinkedSet;
 
 	public function EntityList( length:uint = 0, growthValue:uint = 1 ) {
 		_entityById = new Vector.<Entity>( length );
 		_capacity = length;
 		_growthValue = growthValue || 1;
-		_handlers = new LinkedHashSet();
+		_handlers = new LinkedSet();
 	}
 
 	public function get first():Entity {
@@ -34,17 +33,35 @@ public class EntityList extends ListBase {
 	}
 
 	public function add( entity:Entity ):Entity {
-		_lastId++;
-		return addAt( _lastId, entity );
-	}
-
-	ecse function addAt( id:uint, entity:Entity ):Entity {
+		var id:uint = entity._id;
 		if ( id < _capacity && _entityById[id] ) {
 			throw new ArgumentError( "Entity with id=" + id.toString() + " already in exists in the list!" );
 		}
 
 		if ( id >= _capacity ) {
-			_lastId = id;
+			_capacity = id + _growthValue;
+			_entityById.length = _capacity;
+		}
+
+		entity._alive = true;
+		_entityById[id] = entity;
+		$addNode( entity );
+
+		// notify handlers
+		for ( var node:ItemNode = _handlers.$firstNode; node; node = node.next ) {
+			var handler:IEntityHandler = node.item;
+			handler.onEntityAdded( entity );
+		}
+
+		return entity;
+	}
+
+	/*ecse function addAt( id:uint, entity:Entity ):Entity {
+		if ( id < _capacity && _entityById[id] ) {
+			throw new ArgumentError( "Entity with id=" + id.toString() + " already in exists in the list!" );
+		}
+
+		if ( id >= _capacity ) {
 			_capacity = id + _growthValue;
 			_entityById.length = _capacity;
 		}
@@ -61,7 +78,7 @@ public class EntityList extends ListBase {
 		}
 
 		return entity;
-	}
+	}*/
 
 	public function contains( id:uint ):Boolean {
 		return _entityById[id];
@@ -71,7 +88,11 @@ public class EntityList extends ListBase {
 		return _entityById[id];
 	}
 
-	public function remove( id:uint ):Entity {
+	public function remove( entity:Entity ):Entity {
+		return removeById( entity._id );
+	}
+
+	public function removeById( id:uint ):Entity {
 		var entity:Entity = _entityById[id];
 		if ( !entity ) {
 			return null;
@@ -97,7 +118,7 @@ public class EntityList extends ListBase {
 	public function removeAll():void {
 		while ( _firstNode ) {
 			var node:ItemNode = _firstNode;
-			remove( node.id );
+			removeById( node.id );
 			node.prev = null;
 			node.next = null;
 		}
@@ -108,11 +129,11 @@ public class EntityList extends ListBase {
 		return new EntityIterator( this );
 	}*/
 
-	ecse function addHandler( handler:IEntityHandler ):Boolean {
+	ecse function registerHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.add( handler );
 	}
 
-	ecse function removeHandler( handler:IEntityHandler ):Boolean {
+	ecse function unregisterHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.remove( handler );
 	}
 }

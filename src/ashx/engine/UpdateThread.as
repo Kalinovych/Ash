@@ -5,19 +5,19 @@
 package ashx.engine {
 import ashx.engine.api.IEngineTickHandler;
 import ashx.engine.lists.AnyElementIterator;
-import ashx.engine.lists.LinkedHashSet;
+import ashx.engine.lists.LinkedSet;
 import ashx.engine.threadsVersion.ISystemThread;
 import ashx.engine.updates.IUpdateable;
 
 public class UpdateThread implements IEngineTickHandler,ISystemThread {
-	private var mUpdateableList:LinkedHashSet;
+	private var mUpdateableList:LinkedSet;
 	private var mIterator:AnyElementIterator;
 	
 	public var deltaTime:Number = 1.0;
 	public var timeScale:Number = 1.0;
 
 	public function UpdateThread() {
-		mUpdateableList = new LinkedHashSet();
+		mUpdateableList = new LinkedSet();
 		mIterator = new AnyElementIterator( mUpdateableList );
 	}
 

@@ -4,7 +4,7 @@
  */
 package ashx.engine {
 import ashx.engine.api.IEngineTickHandler;
-import ashx.engine.aspects.AspectsManager;
+import ashx.engine.aspects.AspectManager;
 import ashx.engine.entity.EntityManager;
 import ashx.engine.threadsVersion.ThreadConfig;
 import ashx.engine.updates.IUpdateable;
@@ -15,11 +15,11 @@ public class GameEngine extends TEngine {
 	private var mPostUpdater:IEngineTickHandler;
 
 	protected var _entityManager:EntityManager;
-	protected var _aspectManager:AspectsManager;
+	protected var _aspectManager:AspectManager;
 
 	public function GameEngine() {
 		_entityManager = new EntityManager();
-		_aspectManager = new AspectsManager( _entityManager );
+		_aspectManager = new AspectManager( _entityManager );
 	}
 
 	override protected function configure( engineTickHandlers:Vector.<IEngineTickHandler> ):void {

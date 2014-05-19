@@ -3,12 +3,12 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine {
-import ashx.engine.lists.LinkedHashMap;
+import ashx.engine.lists.LinkedMap;
 import ashx.engine.threadsVersion.ISystemThread;
 import ashx.engine.threadsVersion.ThreadConfig;
 
 public class TEngine extends UEngine {
-	ecse var mThreads:LinkedHashMap;
+	ecse var mThreads:LinkedMap;
 
 	public function TEngine() {
 		super();

@@ -9,10 +9,10 @@ import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class LinkedHashMap extends ItemList {
+public class LinkedMap extends ItemList {
 	ecse var nodeByKey:Dictionary = new Dictionary();
 
-	public function LinkedHashMap() {
+	public function LinkedMap() {
 	}
 
 	public function set( key:*, item:* ):ItemNode {

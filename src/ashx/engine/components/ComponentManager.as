@@ -8,7 +8,7 @@ import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
 import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemNode;
-import ashx.engine.lists.LinkedHashSet;
+import ashx.engine.lists.LinkedSet;
 
 import flash.utils.Dictionary;
 
@@ -17,31 +17,32 @@ use namespace ecse;
 /**
  * Global observer of components
  */
-public class ComponentObserver implements IComponentObserver, IEntityHandler, IComponentHandler {
+public class ComponentManager implements IComponentManager, IEntityHandler, IComponentHandler {
 	private var entities:EntityList;
 	private var handlersByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
-	public function ComponentObserver( entities:EntityList ) {
+	public function ComponentManager( entities:EntityList ) {
 		this.entities = entities;
-		entities.addHandler( this );
+		entities.registerHandler( this );
 	}
 
 	public function addHandler( componentType:Class, handler:IComponentHandler ):void {
-		var handlerList:LinkedHashSet = handlersByComponent[componentType];
+		var handlerList:LinkedSet = handlersByComponent[componentType];
 		if ( !handlerList ) {
-			handlerList = new LinkedHashSet();
+			handlerList = new LinkedSet();
 			handlersByComponent[componentType] = handlerList;
 		}
 		handlerList.add( handler );
 	}
 
 	public function removeHandler( componentType:Class, handler:IComponentHandler ):void {
-		var handlerList:LinkedHashSet = handlersByComponent[componentType];
+		var handlerList:LinkedSet = handlersByComponent[componentType];
 		if ( handlerList ) {
 			handlerList.remove( handler );
 		}
 	}
 
+	/** @private */
 	public function onEntityAdded( entity:Entity ):void {
 		entity.addComponentHandler( this );
 
@@ -51,6 +52,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		}
 	}
 
+	/** @private */
 	public function onEntityRemoved( entity:Entity ):void {
 		var components:* = entity.ecse::components;
 		for ( var componentType:* in components ) {
@@ -60,8 +62,9 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		entity.removeComponentHandler( this );
 	}
 
+	/** @private */
 	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
-		var handlerList:LinkedHashSet = handlersByComponent[componentType];
+		var handlerList:LinkedSet = handlersByComponent[componentType];
 		if ( handlerList ) {
 			for ( var node:ItemNode = handlerList.$firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;
@@ -70,8 +73,9 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		}
 	}
 
+	/** @private */
 	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
-		var handlerList:LinkedHashSet = handlersByComponent[componentType];
+		var handlerList:LinkedSet = handlersByComponent[componentType];
 		if ( handlerList ) {
 			for ( var node:ItemNode = handlerList.$firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;

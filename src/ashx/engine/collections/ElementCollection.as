@@ -4,16 +4,16 @@
  */
 package ashx.engine.collections {
 import ashx.engine.lists.AnyElementIterator;
-import ashx.engine.lists.LinkedHashMap;
+import ashx.engine.lists.LinkedMap;
 
 public class ElementCollection {
-	internal var mElements:LinkedHashMap;
-	private var mTypedHandlers:LinkedHashMap/*.<HandlerList>*/;
+	internal var mElements:LinkedMap;
+	private var mTypedHandlers:LinkedMap/*.<HandlerList>*/;
 	private var mHandlers:HandlerList;
 
 	public function ElementCollection() {
-		mElements = new LinkedHashMap();
-		mTypedHandlers = new LinkedHashMap();
+		mElements = new LinkedMap();
+		mTypedHandlers = new LinkedMap();
 	}
 
 	public function add( key:Object, element:* ):void {

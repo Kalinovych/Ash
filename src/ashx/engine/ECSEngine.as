@@ -6,40 +6,47 @@
 package ashx.engine {
 import ashx.engine.api.IAspectManager;
 import ashx.engine.aspects.AspectList;
-import ashx.engine.aspects.AspectsManager;
-import ashx.engine.components.ComponentObserver;
-import ashx.engine.components.IComponentObserver;
+import ashx.engine.aspects.AspectManager;
+import ashx.engine.components.ComponentManager;
+import ashx.engine.components.IComponentManager;
 import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
-import ashx.engine.lists.LinkedHashMap;
 
 use namespace ecse;
 
 public class ECSEngine {
-	ecse var _entities:EntityList;
-	ecse var _componentObserver:IComponentObserver;
-	ecse var _families:IAspectManager;
+	protected var _entities:EntityList;
+	protected var _components:ComponentManager;
+	protected var _aspects:AspectManager;
+	protected var _systems:*;
 
-	ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
+	//ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
 
 	public function ECSEngine() {
 		_entities = new EntityList();
-		_componentObserver = new ComponentObserver( _entities );
-		_families = new AspectsManager( _entities, _componentObserver );
+		_components = new ComponentManager( _entities );
+		_aspects = new AspectManager( _entities, _components );
 	}
 
 	public function get entities():EntityList {
 		return _entities;
 	}
 
-	public function addEntity( entity:Entity ):Entity {
-		var id:uint = entity.id;
+	public function get componentManager():IComponentManager {
+		return _components;
+	}
 
+	public function get aspectManager():IAspectManager {
+		return _aspects;
+	}
+
+	public function addEntity( entity:Entity ):Entity {
+		var id:uint = entity._id;
 		if ( _entities.contains( id ) ) {
 			throw new Error( "This list already contains an entity with id \"" + id + "\"" );
 		}
 
-		return _entities.add( id, entity );
+		return _entities.add( entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
@@ -49,13 +56,11 @@ public class ECSEngine {
 			throw new Error( "An entity with id \"" + id + "\" not fount in this manager" );
 		}
 
-		return _entities.remove( id );
+		return _entities.remove( entity );
 	}
 
 	public function removeAllEntities():void {
-		while ( _entities._firstNode ) {
-			removeEntity( _entities._firstNode.item );
-		}
+		_entities.removeAll();
 	}
 
 	public function containsEntity( id:uint ):Boolean {
@@ -67,7 +72,7 @@ public class ECSEngine {
 	}
 
 	public function getEntities( familyIdentifier:Class = null ):AspectList {
-		_families.getAspects( familyIdentifier );
+		_aspects.getAspects( familyIdentifier );
 	}
 
 }

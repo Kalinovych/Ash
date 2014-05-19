@@ -4,7 +4,7 @@ import ash.signals.Signal2;
 import ashx.engine.components.IComponentHandler;
 import ashx.engine.ecse;
 import ashx.engine.lists.ItemNode;
-import ashx.engine.lists.LinkedHashSet;
+import ashx.engine.lists.LinkedSet;
 
 import com.flashrush.signatures.BitSign;
 
@@ -31,7 +31,9 @@ use namespace ecse;
  * position component. Systems operate on entities based on the components they have.</p>
  */
 public class Entity {
-	ecse var _id:uint = 0;
+	private static var idIndex:uint = 0;
+	
+	ecse var _id:uint;
 
 	/**
 	 * Optional, give the entity a name. This can help with debugging and with serialising the entity.
@@ -46,7 +48,7 @@ public class Entity {
 	 */
 	public var componentRemoved:Signal2;
 
-	protected var componentHandlers:LinkedHashSet;
+	protected var componentHandlers:LinkedSet;
 
 	ecse var components:Dictionary;
 	ecse var sign:BitSign;
@@ -62,10 +64,13 @@ public class Entity {
 	 * @param name The name for the entity. If left blank, a default name is assigned with the form _entityN where N is an integer.
 	 */
 	public function Entity( name:String = null ) {
+		idIndex++;
+		_id = idIndex;
+		
 		componentAdded = new Signal2( Entity, Class );
 		componentRemoved = new Signal2( Entity, Class );
 		components = new Dictionary();
-		componentHandlers = new LinkedHashSet();
+		componentHandlers = new LinkedSet();
 		_name = name;
 	}
 

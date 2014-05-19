@@ -9,10 +9,10 @@ import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class LinkedHashSet extends ItemList {
+public class LinkedSet extends ItemList {
 	ecse var nodeByItem:Dictionary = new Dictionary();
 
-	public function LinkedHashSet() {
+	public function LinkedSet() {
 		super();
 	}
 

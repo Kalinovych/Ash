@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.components {
-public interface IComponentObserver {
+public interface IComponentManager {
 	function addHandler( componentType:Class, handler:IComponentHandler ):void;
 
 	function removeHandler( componentType:Class, handler:IComponentHandler ):void;

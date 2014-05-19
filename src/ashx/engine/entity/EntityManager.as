@@ -3,11 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ashx.engine.api.IAspectManager;
 import ashx.engine.aspects.AspectList;
-import ashx.engine.aspects.AspectsManager;
-import ashx.engine.components.ComponentObserver;
-import ashx.engine.components.IComponentObserver;
+import ashx.engine.aspects.AspectManager;
+import ashx.engine.components.ComponentManager;
 import ashx.engine.ecse;
 import ashx.engine.lists.ItemList;
 
@@ -15,24 +13,16 @@ use namespace ecse;
 
 //public class EnJinn {
 public class EntityManager {
-	ecse var mEntities:EntityList;
-	ecse var mComponentObserver:IComponentObserver;
-	ecse var mAspects:IAspectManager;
+	pro var mEntities:EntityList;
+	ecse var mComponents:ComponentManager;
+	ecse var mAspects:AspectManager;
 
 	public function EntityManager() {
 		ItemList.nodeFactory.allocate( 10000 );
-		
+
 		mEntities = new EntityList();
-		initComponentManager();
-		initAspectManager();
-	}
-
-	protected function initComponentManager():void {
-		mComponentObserver = new ComponentObserver( mEntities );
-	}
-
-	protected function initAspectManager():void {
-		mAspects = new AspectsManager( mEntities, mComponentObserver );
+		mComponents = new ComponentManager( mEntities );
+		mAspects = new AspectManager( mEntities, mComponents );
 	}
 
 	public function add( entity:Entity ):Entity {
@@ -40,13 +30,7 @@ public class EntityManager {
 	}
 
 	public function remove( entity:Entity ):Entity {
-		var id:uint = entity.id;
-
-		if ( !mEntities.contains( id ) ) {
-			throw new Error( "An entity with id \"" + id + "\" not fount in this manager" );
-		}
-
-		return mEntities.remove( id );
+		return mEntities.remove( entity );
 	}
 
 	public function removeAll():void {
@@ -64,7 +48,7 @@ public class EntityManager {
 	public function dispose():void {
 		mEntities.removeAll();
 		mEntities = null;
-		mComponentObserver = null;
+		mComponents = null;
 		mAspects = null;
 	}
 }
