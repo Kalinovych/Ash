@@ -11,6 +11,7 @@ import ashx.engine.components.ComponentManager;
 import ashx.engine.components.IComponentManager;
 import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityList;
+import ashx.engine.systems.SystemManager;
 
 use namespace ecse;
 
@@ -18,14 +19,13 @@ public class ECSEngine {
 	protected var _entities:EntityList;
 	protected var _components:ComponentManager;
 	protected var _aspects:AspectManager;
-	protected var _systems:*;
-
-	//ecse var mEntityFamilies:LinkedHashMap/*<EntityNodeList>*/;
+	protected var _systems:SystemManager;
 
 	public function ECSEngine() {
 		_entities = new EntityList();
 		_components = new ComponentManager( _entities );
 		_aspects = new AspectManager( _entities, _components );
+		_systems = new SystemManager();
 	}
 
 	public function get entities():EntityList {
@@ -74,6 +74,13 @@ public class ECSEngine {
 	public function getEntities( familyIdentifier:Class = null ):AspectList {
 		_aspects.getAspects( familyIdentifier );
 	}
+	
+	public function addSystem( system:*, order:int ):ECSEngine {
+		_systems.add( system, order );
+	}
 
+	public function removeSystem( system:* ):void {
+		_systems.remove( system );
+	}
 }
 }

@@ -19,7 +19,7 @@ public class ItemNode {
 	ecse var id:uint;
 	
 	/** For prioritised lists */
-	ecse var priority:int = 0;
+	ecse var order:int = 0;
 	
 	internal var prevInFactory:ItemNode;
 	
