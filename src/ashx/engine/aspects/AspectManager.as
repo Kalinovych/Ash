@@ -7,7 +7,7 @@ import ashx.engine.api.IAspectManager;
 import ashx.engine.components.IComponentManager;
 import ashx.engine.ecse;
 import ashx.engine.entity.Entity;
-import ashx.engine.entity.EntityList;
+import ashx.engine.entity.EntityManager;
 import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedMap;
@@ -17,12 +17,12 @@ import com.flashrush.signatures.BitSignManager;
 use namespace ecse;
 
 public class AspectManager implements IAspectManager, IEntityHandler {
-	private var entities:EntityList;
+	private var entities:EntityManager;
 	private var componentManager:IComponentManager;
 	private var signManager:BitSignManager;
 	private var matchers:LinkedMap/*<NodeClass, AspectMatcher>*/ = new LinkedMap();
 
-	public function AspectManager( entities:EntityList, componentManager:IComponentManager ) {
+	public function AspectManager( entities:EntityManager, componentManager:IComponentManager ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
 		signManager = new BitSignManager();
@@ -34,7 +34,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		var matcher:AspectMatcher = matchers.get( familyIdentifier );
 		if ( !matcher ) {
 			matcher = createMatcher( familyIdentifier );
-			matchers.set( familyIdentifier, matcher );
+			matchers.put( familyIdentifier, matcher );
 		}
 		return matcher.nodeList;
 	}

@@ -5,7 +5,7 @@
 package ashx.engine.components {
 import ashx.engine.ecse;
 import ashx.engine.entity.Entity;
-import ashx.engine.entity.EntityList;
+import ashx.engine.entity.EntityManager;
 import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedSet;
@@ -18,10 +18,10 @@ use namespace ecse;
  * Global observer of components
  */
 public class ComponentManager implements IComponentManager, IEntityHandler, IComponentHandler {
-	private var entities:EntityList;
+	private var entities:EntityManager;
 	private var handlersByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
 
-	public function ComponentManager( entities:EntityList ) {
+	public function ComponentManager( entities:EntityManager ) {
 		this.entities = entities;
 		entities.registerHandler( this );
 	}

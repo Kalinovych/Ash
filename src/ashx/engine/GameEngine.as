@@ -3,35 +3,31 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine {
-import ashx.engine.api.IEngineTickHandler;
 import ashx.engine.aspects.AspectManager;
+import ashx.engine.components.ComponentManager;
 import ashx.engine.entity.EntityManager;
-import ashx.engine.threadsVersion.ThreadConfig;
-import ashx.engine.updates.IUpdateable;
+import ashx.engine.threads.RenderThread;
+import ashx.engine.threads.UpdateThread;
 
-public class GameEngine extends TEngine {
-	private var mPreUpdater:IEngineTickHandler;
-	private var mUpdater:IEngineTickHandler;
-	private var mPostUpdater:IEngineTickHandler;
-
+public class GameEngine {
 	protected var _entityManager:EntityManager;
+	protected var _componentManager:ComponentManager;
 	protected var _aspectManager:AspectManager;
+
+	protected var updateThread:UpdateThread;
+	protected var renderThread:RenderThread;
 
 	public function GameEngine() {
 		_entityManager = new EntityManager();
-		_aspectManager = new AspectManager( _entityManager );
+		_componentManager = new ComponentManager( _entityManager );
+		_aspectManager = new AspectManager( _entityManager, _componentManager );
+
+		initThreads();
 	}
 
-	override protected function configure( engineTickHandlers:Vector.<IEngineTickHandler> ):void {
-		engineTickHandlers[0] = mPreUpdater;
-		engineTickHandlers[1] = mUpdater;
-		engineTickHandlers[2] = mPostUpdater;
-	}
-
-	override public function configureThreads( config:ThreadConfig ):void {
-		//config.setProcessThread(IEnginePreUpdateHandler,  newPreUpdateThread() );
-		config.setProcessThread( IUpdateable, new UpdateThread() );
-		//config.setProcessThread( IEnginePostUpdateHandler,  new PostUpdateThread() );
+	protected function initThreads():void {
+		updateThread = new UpdateThread();
+		renderThread = new RenderThread();
 	}
 
 	public function update( deltaTime:Number ):void {

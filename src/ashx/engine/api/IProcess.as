@@ -3,7 +3,6 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.api {
-public interface IEngineUpdateHandler {
-	function update( deltaTime:Number ):void;
+public interface IProcess {
 }
 }

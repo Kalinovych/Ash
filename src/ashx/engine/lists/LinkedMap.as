@@ -15,7 +15,7 @@ public class LinkedMap extends ItemList {
 	public function LinkedMap() {
 	}
 
-	public function set( key:*, item:* ):ItemNode {
+	public function put( key:*, item:* ):ItemNode {
 		var node:ItemNode = $nodeOf( key );
 		if ( !node ) {
 			node = $createNode( item );

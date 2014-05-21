@@ -32,28 +32,26 @@ use namespace ecse;
  */
 public class Entity {
 	private static var idIndex:uint = 0;
-	
+
 	ecse var _id:uint;
 
 	/**
 	 * Optional, give the entity a name. This can help with debugging and with serialising the entity.
 	 */
 	private var _name:String;
-	/**
-	 * This signal is dispatched when a component is added to the entity.
-	 */
-	public var componentAdded:Signal2;
-	/**
-	 * This signal is dispatched when a component is removed from the entity.
-	 */
-	public var componentRemoved:Signal2;
-
-	protected var componentHandlers:LinkedSet;
 
 	ecse var components:Dictionary;
+	private var _componentCount:uint = 0;
+
 	ecse var sign:BitSign;
 
 	ecse var _alive:Boolean = false;
+
+	protected var componentHandlers:LinkedSet;
+	protected var _componentAdded:Signal2;
+	protected var _componentRemoved:Signal2;
+
+	/* list links */
 
 	ecse var prev:Entity;
 	ecse var next:Entity;
@@ -66,9 +64,9 @@ public class Entity {
 	public function Entity( name:String = null ) {
 		idIndex++;
 		_id = idIndex;
-		
-		componentAdded = new Signal2( Entity, Class );
-		componentRemoved = new Signal2( Entity, Class );
+
+		_componentAdded = new Signal2( Entity, Class );
+		_componentRemoved = new Signal2( Entity, Class );
 		components = new Dictionary();
 		componentHandlers = new LinkedSet();
 		_name = name;
@@ -88,12 +86,26 @@ public class Entity {
 		_name = value;
 	}
 
+	public function get componentCount():uint {
+		return _componentCount;
+	}
+
 	/**
 	 *  Determines whether the entity was added and wasn't removed from an engine.
 	 */
 	[Inline]
 	public final function get alive():Boolean {
 		return _alive;
+	}
+
+	[Inline]
+	public final function get componentAdded():Signal2 {
+		return _componentAdded;
+	}
+
+	[Inline]
+	public final function get componentRemoved():Signal2 {
+		return _componentRemoved;
 	}
 
 	/**
@@ -119,6 +131,7 @@ public class Entity {
 			remove( componentClass );
 		}
 		components[ componentClass ] = component;
+		_componentCount++;
 
 		// notify observers
 		for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
@@ -126,7 +139,7 @@ public class Entity {
 			handler.onComponentAdded( this, component, componentClass );
 		}
 
-		componentAdded.dispatch( this, componentClass );
+		_componentAdded.dispatch( this, componentClass );
 
 		return this;
 	}
@@ -141,6 +154,7 @@ public class Entity {
 		var component:* = components[ componentClass ];
 		if ( component ) {
 			delete components[ componentClass ];
+			_componentCount--;
 
 			// notify observers
 			for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
@@ -148,11 +162,17 @@ public class Entity {
 				handler.onComponentRemoved( this, component, componentClass );
 			}
 
-			componentRemoved.dispatch( this, componentClass );
-			
+			_componentRemoved.dispatch( this, componentClass );
+
 			return component;
 		}
 		return null;
+	}
+
+	public function removeAll():void {
+		for ( var componentId:Class in components ) {
+			remove( componentId );
+		}
 	}
 
 	/**
@@ -171,12 +191,14 @@ public class Entity {
 	 *
 	 * @return An array containing all the components that are on the entity.
 	 */
-	public function getAll():Array {
-		var componentArray:Array = [];
+	public function getAll( result:Array = null ):Array {
+		result ||= [];
+		var i:int = result.length;
 		for each( var component:* in components ) {
-			componentArray[componentArray.length] = component;
+			result[i] = component;
+			i++;
 		}
-		return componentArray;
+		return result;
 	}
 
 	/**
@@ -189,7 +211,7 @@ public class Entity {
 	public final function has( componentClass:Class ):Boolean {
 		return components[ componentClass ] != null;
 	}
-	
+
 	public function toString():String {
 		return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
 	}

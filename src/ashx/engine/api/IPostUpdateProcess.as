@@ -4,7 +4,7 @@
  */
 package ashx.engine.api {
 
-public interface IEnginePostUpdateHandler {
+public interface IPostUpdateProcess extends IProcess {
 	function postUpdate():void;
 }
 }

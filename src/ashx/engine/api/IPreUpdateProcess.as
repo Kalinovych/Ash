@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.api {
-public interface IEnginePreUpdateHandler {
+public interface IPreUpdateProcess extends IProcess {
 	function preUpdate():void;
 }
 }
