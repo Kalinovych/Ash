@@ -24,7 +24,7 @@ public class SystemManager implements IThreadManager, ISystemManager {
 	}
 
 	public function remove( system:* ):void {
-		_list.removeSystem( system );
+		_list.remove( system );
 	}
 
 	public function update( deltaTime:Number ):void {

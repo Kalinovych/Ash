@@ -28,7 +28,7 @@ public class SystemList extends ItemList {
 	
 	public function add( system:ESystem, order:int ):void {
 		if ( nodeBySystem[system] ) {
-			removeSystem( system );
+			remove( system );
 		}
 
 		var node:ItemNode = $createNode( system );
@@ -50,7 +50,7 @@ public class SystemList extends ItemList {
 		}
 	}
 
-	public function removeSystem( system:ESystem ):void {
+	public function remove( system:ESystem ):void {
 		var node:ItemNode = nodeBySystem[system];
 		if ( node ) {
 			delete nodeBySystem[system];

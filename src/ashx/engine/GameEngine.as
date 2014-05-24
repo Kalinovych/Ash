@@ -31,9 +31,7 @@ public class GameEngine {
 	}
 
 	public function update( deltaTime:Number ):void {
-		mPreUpdater.tick();
-		mUpdater.tick();
-		mPostUpdater.tick();
+		
 	}
 }
 }

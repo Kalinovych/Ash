@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.threads {
-import ashx.engine.systems.threads.*;
 import ashx.engine.api.IRenderProcess;
 
 public class RenderThread extends AbstractThread {
+	
 	public function render():void {
 		$forEach( $callRender );
 	}
@@ -14,5 +14,6 @@ public class RenderThread extends AbstractThread {
 	protected final function $callRender( process:IRenderProcess ):void {
 		process.render();
 	}
+	
 }
 }
