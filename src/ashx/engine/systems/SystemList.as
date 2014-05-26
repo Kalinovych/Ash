@@ -18,11 +18,11 @@ public class SystemList extends ItemList {
 		super();
 	}
 
-	public function get first():ItemNode {
+	public function get firstNode():ItemNode {
 		return _firstNode;
 	}
 
-	public function get last():ItemNode {
+	public function get lastNode():ItemNode {
 		return _lastNode;
 	}
 	

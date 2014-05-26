@@ -19,7 +19,7 @@ use namespace ecse;
  */
 public class ComponentManager implements IComponentManager, IEntityHandler, IComponentHandler {
 	private var entities:EntityManager;
-	private var handlersByComponent:Dictionary/*<LinkedHashSet>*/ = new Dictionary();
+	private var handlersByComponent:Dictionary/*<LinkedSet>*/ = new Dictionary();
 
 	public function ComponentManager( entities:EntityManager ) {
 		this.entities = entities;
@@ -44,9 +44,10 @@ public class ComponentManager implements IComponentManager, IEntityHandler, ICom
 
 	/** @private */
 	public function onEntityAdded( entity:Entity ):void {
-		entity.addComponentHandler( this );
-
-		var components:* = entity.ecse::components;
+		//entity.addComponentHandler( this );
+		entity.componentHandler = this;
+		
+		var components:* = entity.components;
 		for ( var componentType:* in components ) {
 			onComponentAdded( entity, components[componentType], componentType );
 		}
@@ -54,12 +55,13 @@ public class ComponentManager implements IComponentManager, IEntityHandler, ICom
 
 	/** @private */
 	public function onEntityRemoved( entity:Entity ):void {
-		var components:* = entity.ecse::components;
+		var components:* = entity.components;
 		for ( var componentType:* in components ) {
 			onComponentRemoved( entity, components[componentType], componentType );
 		}
-
-		entity.removeComponentHandler( this );
+		
+		entity.componentHandler = null;
+		//entity.removeComponentHandler( this );
 	}
 
 	/** @private */

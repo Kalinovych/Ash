@@ -3,7 +3,6 @@ import ash.signals.Signal2;
 
 import ashx.engine.components.IComponentHandler;
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedSet;
 
 import com.flashrush.signatures.BitSign;
@@ -31,25 +30,24 @@ use namespace ecse;
  * position component. Systems operate on entities based on the components they have.</p>
  */
 public class Entity {
-	private static var idIndex:uint = 0;
+	ecse static var idIndex:uint = 0;
 
 	ecse var _id:uint;
-
-	/**
-	 * Optional, give the entity a name. This can help with debugging and with serialising the entity.
-	 */
 	private var _name:String;
 
 	ecse var components:Dictionary;
-	private var _componentCount:uint = 0;
+
+	ecse var _componentCount:uint = 0;
 
 	ecse var sign:BitSign;
 
 	ecse var _alive:Boolean = false;
 
-	protected var componentHandlers:LinkedSet;
-	protected var _componentAdded:Signal2;
-	protected var _componentRemoved:Signal2;
+	ecse var componentHandler:IComponentHandler;
+
+	//protected var componentHandlers:LinkedSet;
+	//protected var _componentAdded:Signal2;
+	//protected var _componentRemoved:Signal2;
 
 	/* list links */
 
@@ -65,10 +63,10 @@ public class Entity {
 		idIndex++;
 		_id = idIndex;
 
-		_componentAdded = new Signal2( Entity, Class );
-		_componentRemoved = new Signal2( Entity, Class );
+		//_componentAdded = new Signal2( Entity, Class );
+		//_componentRemoved = new Signal2( Entity, Class );
 		components = new Dictionary();
-		componentHandlers = new LinkedSet();
+		//componentHandlers = new LinkedSet();
 		_name = name;
 	}
 
@@ -98,7 +96,7 @@ public class Entity {
 		return _alive;
 	}
 
-	[Inline]
+	/*[Inline]
 	public final function get componentAdded():Signal2 {
 		return _componentAdded;
 	}
@@ -106,7 +104,7 @@ public class Entity {
 	[Inline]
 	public final function get componentRemoved():Signal2 {
 		return _componentRemoved;
-	}
+	}*/
 
 	/**
 	 * Add a component to the entity.
@@ -133,13 +131,17 @@ public class Entity {
 		components[ componentClass ] = component;
 		_componentCount++;
 
-		// notify observers
+		if ( componentHandler ) {
+			componentHandler.onComponentAdded( this, component, componentClass );
+		}
+
+		/*// notify observers
 		for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
 			var handler:IComponentHandler = node.item;
 			handler.onComponentAdded( this, component, componentClass );
 		}
 
-		_componentAdded.dispatch( this, componentClass );
+		_componentAdded.dispatch( this, componentClass );*/
 
 		return this;
 	}
@@ -156,13 +158,17 @@ public class Entity {
 			delete components[ componentClass ];
 			_componentCount--;
 
-			// notify observers
-			for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
+			if ( componentHandler ) {
+				componentHandler.onComponentRemoved( this, component, componentClass );
+			}
+
+			/*// notify observers
+			for ( var node:ItemNode = componentHandlers.$firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;
 				handler.onComponentRemoved( this, component, componentClass );
 			}
 
-			_componentRemoved.dispatch( this, componentClass );
+			_componentRemoved.dispatch( this, componentClass );*/
 
 			return component;
 		}
@@ -214,14 +220,6 @@ public class Entity {
 
 	public function toString():String {
 		return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
-	}
-
-	ecse function addComponentHandler( handler:IComponentHandler ):void {
-		componentHandlers.add( handler );
-	}
-
-	ecse function removeComponentHandler( handler:IComponentHandler ):void {
-		componentHandlers.remove( handler );
 	}
 
 }

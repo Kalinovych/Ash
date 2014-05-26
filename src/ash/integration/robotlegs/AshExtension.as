@@ -2,7 +2,10 @@ package ash.integration.robotlegs
 {
 	import ash.core.Engine;
 	import ash.integration.swiftsuspenders.SwiftSuspendersEngine;
-	import robotlegs.bender.framework.api.IContext;
+
+import com.genome2d.context.IContext;
+
+import robotlegs.bender.framework.api.IContext;
 	import robotlegs.bender.framework.api.IExtension;
 	import robotlegs.bender.framework.impl.UID;
 

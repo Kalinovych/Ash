@@ -3,42 +3,68 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.systems {
+import ashx.engine.ecse;
 import ashx.engine.lists.ItemNode;
 import ashx.engine.threads.IProcessThread;
 import ashx.engine.threads.IThreadManager;
 
 import flash.utils.Dictionary;
 
+use namespace ecse;
+
 public class SystemManager implements IThreadManager, ISystemManager {
-	protected var _list:SystemList;
+	protected var _systems:SystemList;
+	protected var _systemsByProcess:Dictionary = new Dictionary();
 
 	/** thread by process type */
 	protected var threadMap:Dictionary = new Dictionary();
 
 	public function SystemManager() {
-		_list = new SystemList();
+		_systems = new SystemList();
 	}
 
 	public function add( system:*, order:int ):void {
-		_list.add( system, order );
+		_systems.add( system, order );
+
+		for ( var processType:Class in _systemsByProcess ) {
+			var list:SystemList = _systemsByProcess[processType];
+			list.add( system, order );
+		}
 	}
 
 	public function remove( system:* ):void {
-		_list.remove( system );
+		_systems.remove( system );
+		
+		for ( var processType:Class in _systemsByProcess ) {
+			var list:SystemList = _systemsByProcess[processType];
+			list.remove( system );
+		}
+	}
+
+	ecse function getProcessSystems( processType:Class ):SystemList {
+		var list:SystemList = _systemsByProcess[processType];
+		if ( !list ) {
+			list = new SystemList();
+			_systemsByProcess[processType] = list;
+			for ( var node:ItemNode = _systems.firstNode; node; node = node.next ) {
+				list.add( node.item, node.order );
+			}
+		}
+		return list;
 	}
 
 	public function update( deltaTime:Number ):void {
-		for ( var slot:ItemNode = _list.first; slot; slot = slot.next ) {
+		for ( var slot:ItemNode = _systems.firstNode; slot; slot = slot.next ) {
 			slot.item.udpate( deltaTime );
 		}
 	}
 
-	public function registerProcessThread( process:Class, handler:IProcessThread ):void {
-		threadMap[process] = handler;
+	public function registerProcessThread( processType:Class, handler:IProcessThread ):void {
+		threadMap[processType] = handler;
 	}
 
-	public function unregisterProcessThread( process:Class ):void {
-		delete threadMap[process];
+	public function unregisterProcessThread( processType:Class ):void {
+		delete threadMap[processType];
 	}
 }
 }

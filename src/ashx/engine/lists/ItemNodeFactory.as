@@ -7,7 +7,7 @@ import ashx.engine.ecse;
 
 use namespace ecse;
 
-internal class ItemNodeFactory {
+public class ItemNodeFactory {
 	private var last:ItemNode;
 	private var _createdCount:uint = 0;
 	private var _availableCount:uint = 0;

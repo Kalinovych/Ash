@@ -16,21 +16,21 @@ public class LinkedSet extends ItemList {
 		super();
 	}
 
-	public function add( item:* ):Boolean {
-		if ( $contains( item ) ) return false;
+	public function add( data:* ):Boolean {
+		if ( $contains( data ) ) return false;
 
-		var node:ItemNode = $createNode( item );
-		nodeByItem[item] = node;
+		var node:ItemNode = $createNode( data );
+		nodeByItem[data] = node;
 		node.isAttached = true;
 		$addNode( node );
 		return true;
 	}
 
-	public function remove( item:* ):Boolean {
-		var node:ItemNode = $nodeOf( item );
+	public function remove( data:* ):Boolean {
+		var node:ItemNode = $nodeOf( data );
 		if ( node == null ) return false;
 
-		delete nodeByItem[item];
+		delete nodeByItem[data];
 		node.isAttached = false;
 		$removeNode( node );
 		$disposeNode( node, false );
@@ -47,18 +47,18 @@ public class LinkedSet extends ItemList {
 		nodeByItem = new Dictionary();
 	}
 
-	public function contains( item:* ):Boolean {
-		return $contains( item );
+	public function contains( data:* ):Boolean {
+		return $contains( data );
 	}
 
 	[Inline]
-	protected final function $contains( element:* ):Boolean {
-		return ( nodeByItem[element] != null );
+	protected final function $contains( data:* ):Boolean {
+		return ( nodeByItem[data] != null );
 	}
 
 	[Inline]
-	protected final function $nodeOf( item:* ):ItemNode {
-		return nodeByItem[item];
+	protected final function $nodeOf( data:* ):ItemNode {
+		return nodeByItem[data];
 	}
 }
 }
