@@ -9,7 +9,7 @@ import ashx.engine.ecse;
 import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityManager;
 import ashx.engine.entity.IEntityHandler;
-import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.Node;
 import ashx.engine.lists.LinkedMap;
 
 import com.flashrush.signatures.BitSignManager;
@@ -43,8 +43,8 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	public function onEntityAdded( entity:Entity ):void {
 		trace("[AspectsManager.onEntityAdded]›", entity);
 		entity.sign = signManager.signKeys( entity.components );
-		for ( var node:ItemNode = matchers.$firstNode; node; node = node.next ) {
-			var matcher:AspectMatcher = node.item;
+		for ( var node:Node = matchers.$firstNode; node; node = node.next ) {
+			var matcher:AspectMatcher = node.content;
 			if ( $entityMatchAspect( entity, matcher ) ) {
 				matcher.addMatchedEntity( entity );
 			}
@@ -53,8 +53,8 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	
 	/** @private **/
 	public function onEntityRemoved( entity:Entity ):void {
-		for ( var node:ItemNode = matchers.$firstNode; node; node = node.next ) {
-			var matcher:AspectMatcher = node.item;
+		for ( var node:Node = matchers.$firstNode; node; node = node.next ) {
+			var matcher:AspectMatcher = node.content;
 			if ( $entityMatchAspect( entity, matcher ) ) {
 				matcher.removeMatchedEntity( entity );
 			}

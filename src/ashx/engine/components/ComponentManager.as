@@ -7,8 +7,8 @@ import ashx.engine.ecse;
 import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityManager;
 import ashx.engine.entity.IEntityHandler;
-import ashx.engine.lists.ItemNode;
 import ashx.engine.lists.LinkedSet;
+import ashx.engine.lists.Node;
 
 import flash.utils.Dictionary;
 
@@ -44,8 +44,8 @@ public class ComponentManager implements IComponentManager, IEntityHandler, ICom
 
 	/** @private */
 	public function onEntityAdded( entity:Entity ):void {
-		//entity.addComponentHandler( this );
-		entity.componentHandler = this;
+		entity.addComponentHandler( this );
+		//entity.componentHandler = this;
 		
 		var components:* = entity.components;
 		for ( var componentType:* in components ) {
@@ -60,28 +60,28 @@ public class ComponentManager implements IComponentManager, IEntityHandler, ICom
 			onComponentRemoved( entity, components[componentType], componentType );
 		}
 		
-		entity.componentHandler = null;
-		//entity.removeComponentHandler( this );
+		//entity.componentHandler = null;
+		entity.removeComponentHandler( this );
 	}
 
 	/** @private */
-	public function onComponentAdded( entity:Entity, component:*, componentType:* ):void {
-		var handlerList:LinkedSet = handlersByComponent[componentType];
+	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
-			for ( var node:ItemNode = handlerList.$firstNode; node; node = node.next ) {
-				var handler:IComponentHandler = node.item;
-				handler.onComponentAdded( entity, component, componentType );
+			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
+				var handler:IComponentHandler = node.content;
+				handler.onComponentAdded( entity, componentType, component );
 			}
 		}
 	}
 
 	/** @private */
-	public function onComponentRemoved( entity:Entity, component:*, componentType:* ):void {
-		var handlerList:LinkedSet = handlersByComponent[componentType];
+	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
-			for ( var node:ItemNode = handlerList.$firstNode; node; node = node.next ) {
-				var handler:IComponentHandler = node.item;
-				handler.onComponentRemoved( entity, component, componentType );
+			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
+				var handler:IComponentHandler = node.content;
+				handler.onComponentRemoved( entity, componentType, component );
 			}
 		}
 	}

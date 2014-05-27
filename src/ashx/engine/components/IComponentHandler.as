@@ -6,8 +6,8 @@ package ashx.engine.components {
 import ashx.engine.entity.Entity;
 
 public interface IComponentHandler {
-	function onComponentAdded( entity:Entity, component:*, componentType:* ):void;
+	function onComponentAdded( entity:Entity, componentType:Class, component:* ):void;
 
-	function onComponentRemoved( entity:Entity, component:*, componentType:* ):void;
+	function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void;
 }
 }

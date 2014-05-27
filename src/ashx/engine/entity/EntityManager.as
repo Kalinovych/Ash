@@ -4,7 +4,7 @@
  */
 package ashx.engine.entity {
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.Node;
 import ashx.engine.lists.LinkedSet;
 import ashx.engine.lists.ListBase;
 
@@ -49,8 +49,8 @@ public class EntityManager extends ListBase {
 		_entityCount++;
 
 		// notify handlers
-		for ( var node:ItemNode = _handlers.$firstNode; node; node = node.next ) {
-			var handler:IEntityHandler = node.item;
+		for ( var node:Node = _handlers.$firstNode; node; node = node.next ) {
+			var handler:IEntityHandler = node.content;
 			handler.onEntityAdded( entity );
 		}
 
@@ -85,8 +85,8 @@ public class EntityManager extends ListBase {
 			var handler:IEntityHandler = node.item;
 			handler.onEntityRemoved( entity );
 		}*/
-		for ( var node:ItemNode = _handlers.$firstNode; node; node = node.next ) {
-			var handler:IEntityHandler = node.item;
+		for ( var node:Node = _handlers.$firstNode; node; node = node.next ) {
+			var handler:IEntityHandler = node.content;
 			handler.onEntityRemoved( entity );
 		}
 

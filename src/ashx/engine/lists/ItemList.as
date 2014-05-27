@@ -12,29 +12,29 @@ public class ItemList extends ListBase {
 	}
 	
 	[Inline]
-	ecse final function get $firstNode():ItemNode {
+	ecse final function get $firstNode():Node {
 		return _firstNode;
 	}
 
 	[Inline]
-	ecse final function get $lastNode():ItemNode {
+	ecse final function get $lastNode():Node {
 		return _lastNode;
 	}
 
 	[Inline]
-	protected final function $createNode( item:* = null ):ItemNode {
-		var node:ItemNode = nodeFactory.get();
-		node.item = item;
+	protected final function $createNode( item:* = null ):Node {
+		var node:Node = nodeFactory.get();
+		node.content = item;
 		return node;
 	}
 
 	[Inline]
-	protected final function $disposeNode( node:ItemNode, nullLinks:Boolean ):void {
+	protected final function $disposeNode( node:Node, nullLinks:Boolean ):void {
 		if (nullLinks) {
 			node.prev = null;
 			node.next = null;
 		}
-		node.item = null;
+		node.content = null;
 		nodeFactory.recycle( node );
 	}
 }

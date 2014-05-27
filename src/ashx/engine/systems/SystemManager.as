@@ -4,7 +4,7 @@
  */
 package ashx.engine.systems {
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.Node;
 import ashx.engine.threads.IProcessThread;
 import ashx.engine.threads.IThreadManager;
 
@@ -46,16 +46,16 @@ public class SystemManager implements IThreadManager, ISystemManager {
 		if ( !list ) {
 			list = new SystemList();
 			_systemsByProcess[processType] = list;
-			for ( var node:ItemNode = _systems.firstNode; node; node = node.next ) {
-				list.add( node.item, node.order );
+			for ( var node:Node = _systems.firstNode; node; node = node.next ) {
+				list.add( node.content, node.order );
 			}
 		}
 		return list;
 	}
 
 	public function update( deltaTime:Number ):void {
-		for ( var slot:ItemNode = _systems.firstNode; slot; slot = slot.next ) {
-			slot.item.udpate( deltaTime );
+		for ( var slot:Node = _systems.firstNode; slot; slot = slot.next ) {
+			slot.content.udpate( deltaTime );
 		}
 	}
 

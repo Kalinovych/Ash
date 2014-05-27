@@ -13,8 +13,8 @@ public class LinkedIdMap extends ItemList {
 	public function LinkedIdMap() {
 	}
 
-	public function put( id:uint, item:* ):ItemNode {
-		var node:ItemNode = registry[id];
+	public function put( id:uint, item:* ):Node {
+		var node:Node = registry[id];
 		if ( !node ) {
 			//node = ( nodePool.length > 0 ? nodePool.pop() : new ItemNode() );
 			/*var count:uint = nodePool.length; 
@@ -25,10 +25,10 @@ public class LinkedIdMap extends ItemList {
 			} else {
 				node = new ItemNode();
 			}*/
-			node = new ItemNode();
+			node = new Node();
 		}
 		node.id = id;
-		node.item = item;
+		node.content = item;
 		node.isAttached = true;
 		registry[id] = node;
 		$addNode( node );
@@ -44,12 +44,12 @@ public class LinkedIdMap extends ItemList {
 	}
 	
 	public function remove( id:uint ):* {
-		var node:ItemNode = registry[id];
+		var node:Node = registry[id];
 		if ( node ) {
 			registry[id] = undefined;
 			node.isAttached = false;
 			$removeNode( node );
-			return node.item;
+			return node.content;
 		}
 		return null;
 	}
@@ -58,7 +58,7 @@ public class LinkedIdMap extends ItemList {
 		use namespace ecse;
 
 		for ( var id:uint in registry ) {
-			var node:ItemNode = _nodeOf( id );
+			var node:Node = _nodeOf( id );
 			_unregisterNodeAt( id );
 			node.isAttached = false;
 			$removeNode( node );
@@ -74,12 +74,12 @@ public class LinkedIdMap extends ItemList {
 
 	[Inline]
 	protected final function _valueOf( id:uint ):* {
-		var node:ItemNode = registry[id];
-		return (node ? node.item : null );
+		var node:Node = registry[id];
+		return (node ? node.content : null );
 	}
 
 	[Inline]
-	protected final function _registerNode( id:uint, node:ItemNode ):ItemNode {
+	protected final function _registerNode( id:uint, node:Node ):Node {
 		node.id = id;
 		registry[id] = node;
 		return node;

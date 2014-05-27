@@ -5,6 +5,7 @@
 package ashx.engine {
 import ashx.engine.aspects.AspectManager;
 import ashx.engine.components.ComponentManager;
+import ashx.engine.entity.Entity;
 import ashx.engine.entity.EntityManager;
 import ashx.engine.systems.SystemManager;
 import ashx.engine.threads.RenderThread;
@@ -31,6 +32,38 @@ public class GameEngine {
 	protected function initThreads():void {
 		updateThread = new UpdateThread();
 		renderThread = new RenderThread();
+	}
+
+	public function createEntity():Entity {
+		return new Entity();
+	}
+
+	public function addEntity( entity:Entity ):Entity {
+		return _entityManager.add( entity );
+	}
+
+	public function hasEntity( id:uint ):Boolean {
+		return _entityManager.contains( id );
+	}
+
+	public function getEntity( id:uint ):Entity {
+		return _entityManager.get( id );
+	}
+
+	public function removeEntity( entity:Entity ):Entity {
+		return _entityManager.remove( entity );
+	}
+
+	public function removeAllEntities():void {
+		_entityManager.removeAll();
+	}
+
+	public function addSystem( system:*, order:int ):void {
+		_systemManager.add( system, order );
+	}
+
+	public function removeSystem( system:* ):void {
+		_systemManager.remove( system );
 	}
 
 	public function update( deltaTime:Number ):void {

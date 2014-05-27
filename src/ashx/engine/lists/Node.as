@@ -7,24 +7,24 @@ import ashx.engine.ecse;
 
 use namespace ecse;
 
-public class ItemNode {
-	public var item:*;
-	public var prev:ItemNode;
-	public var next:ItemNode;
-	
+public class Node {
+	public var content:*;
+	public var prev:Node;
+	public var next:Node;
+
 	/** Is node added to a list and not removed */
 	ecse var isAttached:Boolean = false;
-	
+
 	/** A node id in the mapped list */
 	ecse var id:uint;
-	
-	/** For prioritised lists */
+
+	/** For ordered lists */
 	ecse var order:int = 0;
-	
-	internal var prevInFactory:ItemNode;
-	
-	public function ItemNode( item:* = null ) {
-		this.item = item;
+
+	internal var prevInFactory:Node;
+
+	public function Node( content:* = null ) {
+		this.content = content;
 	}
 }
 }

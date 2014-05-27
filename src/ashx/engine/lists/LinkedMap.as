@@ -15,15 +15,15 @@ public class LinkedMap extends ItemList {
 	public function LinkedMap() {
 	}
 
-	public function put( key:*, item:* ):ItemNode {
-		var node:ItemNode = $nodeOf( key );
+	public function put( key:*, item:* ):Node {
+		var node:Node = $nodeOf( key );
 		if ( !node ) {
 			node = $createNode( item );
 			nodeByKey[key] = node;
 			node.isAttached = true;
 			$addNode( node );
 		}
-		node.item = item;
+		node.content = item;
 		return node;
 	}
 
@@ -36,19 +36,19 @@ public class LinkedMap extends ItemList {
 	}
 
 	public function remove( key:* ):* {
-		var node:ItemNode = $nodeOf( key );
+		var node:Node = $nodeOf( key );
 		if ( node ) {
 			delete nodeByKey[key];
 			node.isAttached = false;
 			$removeNode( node );
-			return node.item;
+			return node.content;
 		}
 		return null;
 	}
 
 	public function removeAll():void {
 		while ( _firstNode ) {
-			var node:ItemNode = _firstNode;
+			var node:Node = _firstNode;
 			_firstNode = node.next;
 			node.isAttached = false;
 			$disposeNode( node, true );
@@ -68,8 +68,8 @@ public class LinkedMap extends ItemList {
 
 	[Inline]
 	protected final function $valueOf( key:* ):* {
-		var node:ItemNode = nodeByKey[key];
-		return (node ? node.item : null );
+		var node:Node = nodeByKey[key];
+		return (node ? node.content : null );
 	}
 }
 }

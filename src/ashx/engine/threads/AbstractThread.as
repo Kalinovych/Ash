@@ -5,7 +5,7 @@
 package ashx.engine.threads {
 import ashx.engine.api.IProcess;
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.Node;
 import ashx.engine.lists.LinkedSet;
 
 use namespace ecse;
@@ -15,8 +15,8 @@ public class AbstractThread implements IProcessThread {
 
 	[Inline]
 	protected final function $forEach( callback:Function ):void {
-		for ( var node:ItemNode = processList.$firstNode; node; node = node.next ) {
-			callback( node.item );
+		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
+			callback( node.content );
 		}
 	}
 

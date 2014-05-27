@@ -3,10 +3,6 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.lists {
-import ashx.engine.ecse;
-
-use namespace ecse;
-
 public class ListBase {
 	protected var _firstNode:* = null;
 	protected var _lastNode:* = null;
@@ -161,11 +157,11 @@ public class ListBase {
 			_lastNode = _lastNode.prev;
 		}
 
-		if ( node.next != null ) {
+		if ( node.next ) {
 			node.next.prev = node.prev;
 		}
 
-		if ( node.prev != null ) {
+		if ( node.prev ) {
 			node.prev.next = node.next;
 		}
 		--_length;
@@ -176,9 +172,9 @@ public class ListBase {
 	protected final function $removeFirstNode():* {
 		if ( _firstNode ) {
 			var node:* = _firstNode;
-			if ( _firstNode.next ) {
-				_firstNode.next.prev = null;
-				_firstNode = _firstNode.next;
+			_firstNode = _firstNode.next;
+			if ( _firstNode ) {
+				_firstNode.prev = null;
 				node.next = null;
 			} else {
 				_lastNode = null;
@@ -194,9 +190,9 @@ public class ListBase {
 	protected final function $removeLastNode():* {
 		if ( _lastNode ) {
 			var node:* = _lastNode;
-			if ( _lastNode.prev ) {
-				_lastNode.prev.next = null;
-				_lastNode = _lastNode.prev;
+			_lastNode = _lastNode.prev;
+			if ( _lastNode ) {
+				_lastNode.next = null;
 				node.prev = null;
 			} else {
 				_firstNode = null;
@@ -213,11 +209,9 @@ public class ListBase {
 		while ( _firstNode ) {
 			var node:* = _firstNode;
 			_firstNode = _firstNode.next;
-
 			node.prev = null;
 			node.next = null;
 		}
-		_firstNode = null;
 		_lastNode = null;
 		_length = 0;
 	}

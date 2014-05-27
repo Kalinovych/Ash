@@ -8,7 +8,7 @@ import ashx.engine.ecse;
 use namespace ecse;
 
 public class ItemNodeFactory {
-	private var last:ItemNode;
+	private var last:Node;
 	private var _createdCount:uint = 0;
 	private var _availableCount:uint = 0;
 
@@ -21,7 +21,7 @@ public class ItemNodeFactory {
 	public function allocate( count:uint ):void {
 		while ( count ) {
 			--count;
-			var node:ItemNode = new ItemNode();
+			var node:Node = new Node();
 			node.prevInFactory = last;
 			last = node;
 			++_createdCount;
@@ -29,20 +29,20 @@ public class ItemNodeFactory {
 		}
 	}
 
-	public function get():ItemNode {
-		var node:ItemNode = last;
+	public function get():Node {
+		var node:Node = last;
 		if ( node ) {
 			last = node.prevInFactory;
 			node.prevInFactory = null;
 			--_availableCount;
 		} else {
-			node = new ItemNode();
+			node = new Node();
 			++_createdCount;
 		}
 		return node;
 	}
 
-	public function recycle( node:ItemNode ):void {
+	public function recycle( node:Node ):void {
 		node.prevInFactory = last;
 		last = node;
 		++_availableCount;
@@ -50,7 +50,7 @@ public class ItemNodeFactory {
 
 	public function clearPool():void {
 		while ( last ) {
-			var prev:ItemNode = last.prevInFactory;
+			var prev:Node = last.prevInFactory;
 			last.prevInFactory = null;
 			last = prev;
 		}

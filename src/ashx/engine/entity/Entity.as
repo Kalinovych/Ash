@@ -1,9 +1,8 @@
 package ashx.engine.entity {
-import ash.signals.Signal2;
-
 import ashx.engine.components.IComponentHandler;
 import ashx.engine.ecse;
 import ashx.engine.lists.LinkedSet;
+import ashx.engine.lists.Node;
 
 import com.flashrush.signatures.BitSign;
 
@@ -33,21 +32,18 @@ public class Entity {
 	ecse static var idIndex:uint = 0;
 
 	ecse var _id:uint;
-	private var _name:String;
-
-	ecse var components:Dictionary;
-
-	ecse var _componentCount:uint = 0;
-
-	ecse var sign:BitSign;
 
 	ecse var _alive:Boolean = false;
 
-	ecse var componentHandler:IComponentHandler;
+	ecse var components:Dictionary = new Dictionary();
 
-	//protected var componentHandlers:LinkedSet;
-	//protected var _componentAdded:Signal2;
-	//protected var _componentRemoved:Signal2;
+	ecse var _componentCount:uint = 0;
+
+	ecse var componentHandlers:LinkedSet = new LinkedSet();
+
+	ecse var sign:BitSign;
+
+	public var name:String;
 
 	/* list links */
 
@@ -59,29 +55,14 @@ public class Entity {
 	 *
 	 * @param name The name for the entity. If left blank, a default name is assigned with the form _entityN where N is an integer.
 	 */
-	public function Entity( name:String = null ) {
+	public function Entity() {
 		idIndex++;
 		_id = idIndex;
-
-		//_componentAdded = new Signal2( Entity, Class );
-		//_componentRemoved = new Signal2( Entity, Class );
-		components = new Dictionary();
-		//componentHandlers = new LinkedSet();
-		_name = name;
 	}
 
 	[Inline]
 	public final function get id():uint {
 		return _id;
-	}
-
-	[Inline]
-	public final function get name():String {
-		return _name;
-	}
-
-	public function set name( value:String ):void {
-		_name = value;
 	}
 
 	public function get componentCount():uint {
@@ -96,21 +77,11 @@ public class Entity {
 		return _alive;
 	}
 
-	/*[Inline]
-	public final function get componentAdded():Signal2 {
-		return _componentAdded;
-	}
-
-	[Inline]
-	public final function get componentRemoved():Signal2 {
-		return _componentRemoved;
-	}*/
-
 	/**
 	 * Add a component to the entity.
 	 *
 	 * @param component The component object to add.
-	 * @param componentClass The class of the component. This is only necessary if the component
+	 * @param type The class of the component. This is only necessary if the component
 	 * extends another component class and you want the framework to treat the component as of
 	 * the base class type. If not set, the class type is determined directly from the component.
 	 *
@@ -121,27 +92,27 @@ public class Entity {
 	 *     .add( new Position( 100, 200 )
 	 *     .add( new Display( new PlayerClip() );</code>
 	 */
-	public function add( component:Object, componentClass:Class = null ):Entity {
-		if ( !componentClass ) {
-			componentClass = Class( component.constructor );
+	public function add( component:Object, type:Class = null ):Entity {
+		if ( !type ) {
+			type = component.constructor;
 		}
-		if ( components[ componentClass ] ) {
-			remove( componentClass );
+
+		// if already contains a component of the type, remove it first
+		if ( components[ type ] ) {
+			remove( type );
 		}
-		components[ componentClass ] = component;
+
+		// add
+		components[ type ] = component;
 		_componentCount++;
 
-		if ( componentHandler ) {
-			componentHandler.onComponentAdded( this, component, componentClass );
+		// notify handlers
+		var node:Node = componentHandlers.$firstNode;
+		while ( node ) {
+			var handler:IComponentHandler = node.content;
+			handler.onComponentAdded( this, type, component );
+			node = node.next;
 		}
-
-		/*// notify observers
-		for ( var node:ItemNode = componentHandlers.ecse::$firstNode; node; node = node.next ) {
-			var handler:IComponentHandler = node.item;
-			handler.onComponentAdded( this, component, componentClass );
-		}
-
-		_componentAdded.dispatch( this, componentClass );*/
 
 		return this;
 	}
@@ -149,26 +120,22 @@ public class Entity {
 	/**
 	 * Remove a component from the entity.
 	 *
-	 * @param componentClass The class of the component to be removed.
+	 * @param type The class of the component to be removed.
 	 * @return the component, or null if the component doesn't exist in the entity
 	 */
-	public function remove( componentClass:Class ):* {
-		var component:* = components[ componentClass ];
+	public function remove( type:Class ):* {
+		var component:* = components[ type ];
 		if ( component ) {
-			delete components[ componentClass ];
+			delete components[ type ];
 			_componentCount--;
 
-			if ( componentHandler ) {
-				componentHandler.onComponentRemoved( this, component, componentClass );
+			// notify handlers
+			var node:Node = componentHandlers.$firstNode;
+			while ( node ) {
+				var handler:IComponentHandler = node.content;
+				handler.onComponentRemoved( this, type, component );
+				node = node.next;
 			}
-
-			/*// notify observers
-			for ( var node:ItemNode = componentHandlers.$firstNode; node; node = node.next ) {
-				var handler:IComponentHandler = node.item;
-				handler.onComponentRemoved( this, component, componentClass );
-			}
-
-			_componentRemoved.dispatch( this, componentClass );*/
 
 			return component;
 		}
@@ -219,8 +186,17 @@ public class Entity {
 	}
 
 	public function toString():String {
+		//return "Entity(id=" + id.toString() + ")";
 		return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
 	}
 
+
+	ecse function addComponentHandler( handler:IComponentHandler ):void {
+		componentHandlers.add( handler );
+	}
+
+	ecse function removeComponentHandler( handler:IComponentHandler ):void {
+		componentHandlers.remove( handler );
+	}
 }
 }

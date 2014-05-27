@@ -71,14 +71,14 @@ internal class AspectMatcher implements IComponentHandler/*, IEntityObserver */ 
 		}
 	}
 
-	public function onComponentAdded( entity:Entity, component:*, componentClass:* ):void {
+	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		// The node of the entity if it belongs to this family.
 		var node:Aspect = nodeByEntity[entity];
 
 		/* Excluded component check */
 
 		// Check is new component excludes the entity from this family
-		if ( excludedComponents && excludedComponents[componentClass] ) {
+		if ( excludedComponents && excludedComponents[component] ) {
 			if ( node ) {
 				$removeNodeOf( entity );
 			}
@@ -89,30 +89,30 @@ internal class AspectMatcher implements IComponentHandler/*, IEntityObserver */ 
 
 		// An optional component can't affect entity matching to the family.
 		// If a component is optional just put the reference to the node property 
-		if ( node && optionalComponents && optionalComponents[componentClass] ) {
-			var property:String = optionalComponents[componentClass];
-			node[property] = entity.get( componentClass );
+		if ( node && optionalComponents && optionalComponents[component] ) {
+			var property:String = optionalComponents[component];
+			node[property] = entity.get( component );
 			return;
 		}
 
 		/* Required component check */
 
 		// do nothing if the entity already identified as member of this family or a component isn't required by this family
-		if ( node || !propertyMap[componentClass] ) {
+		if ( node || !propertyMap[component] ) {
 			return;
 		}
 
 		$createNodeOf( entity );
 	}
 
-	public function onComponentRemoved( entity:Entity, component:*, componentClass:* ):void {
+	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		// The node of the entity if it belongs to this family.
 		var node:Aspect = nodeByEntity[entity];
 
 		/* Excluded component check */
 
 		// Check is removed component makes the entity as a member of this family
-		if ( excludedComponents && excludedComponents[componentClass] ) {
+		if ( excludedComponents && excludedComponents[component] ) {
 			// no more unacceptable components?
 			if ( !entity.sign.contains( exclusionSign ) ) {
 				addMatchedEntity( entity );
@@ -124,15 +124,15 @@ internal class AspectMatcher implements IComponentHandler/*, IEntityObserver */ 
 
 		// Removed optional component can't decline the entity from matching to a family,
 		// so just set the node property to null
-		if ( node && optionalComponents && optionalComponents[componentClass] ) {
-			var property:String = optionalComponents[componentClass];
+		if ( node && optionalComponents && optionalComponents[component] ) {
+			var property:String = optionalComponents[component];
 			node[property] = null;
 			return;
 		}
 
 		/* Required component check */
 
-		if ( node && propertyMap[componentClass] ) {
+		if ( node && propertyMap[component] ) {
 			$removeNodeOf( entity );
 		}
 	}

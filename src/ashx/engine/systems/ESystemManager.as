@@ -4,28 +4,24 @@
  */
 package ashx.engine.systems {
 import ashx.engine.ecse;
+import ashx.engine.entity.IEntityHandler;
 import ashx.engine.lists.ItemList;
+import ashx.engine.lists.LinkedSet;
+import ashx.engine.lists.ListBase;
 import ashx.engine.lists.Node;
 
 import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class SystemList extends ItemList {
+public class ESystemManager extends ItemList {
 	protected var nodeBySystem:Dictionary = new Dictionary();
+	protected var _handlers:LinkedSet;
 	
-	public function SystemList() {
+	public function ESystemManager() {
 		super();
 	}
 
-	public function get firstNode():Node {
-		return _firstNode;
-	}
-
-	public function get lastNode():Node {
-		return _lastNode;
-	}
-	
 	public function add( system:ESystem, order:int = 0 ):void {
 		if ( nodeBySystem[system] ) {
 			remove( system );
@@ -34,8 +30,8 @@ public class SystemList extends ItemList {
 		var node:Node = $createNode( system );
 		node.order = order;
 		nodeBySystem[system] = node;
-		
-		// add with the order
+
+		// add with order
 		var nodeBefore:Node = _lastNode;
 		if ( nodeBefore == null || nodeBefore.order <= order ) {
 			$addNode( node );
@@ -58,6 +54,17 @@ public class SystemList extends ItemList {
 			$removeNode( node );
 		}
 	}
-	
+
+	public function get( systemType:Class ):* {
+		
+	}
+
+	/*ecse function registerHandler( handler:ISystemHandler ):Boolean {
+		return _handlers.add( handler );
+	}
+
+	ecse function unregisterHandler( handler:ISystemHandler ):Boolean {
+		return _handlers.remove( handler );
+	}*/
 }
 }

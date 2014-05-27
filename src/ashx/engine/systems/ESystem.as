@@ -4,6 +4,7 @@
  */
 package ashx.engine.systems {
 public class ESystem {
+
 	public function ESystem() {
 	}
 
@@ -14,7 +15,7 @@ public class ESystem {
 	public function removedFromEngine():void {
 
 	}
-	
+
 	public function start():void {
 
 	}

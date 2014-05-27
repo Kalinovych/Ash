@@ -5,15 +5,15 @@
 package ashx.engine.threads {
 import ashx.engine.api.IUpdateProcess;
 import ashx.engine.ecse;
-import ashx.engine.lists.ItemNode;
+import ashx.engine.lists.Node;
 
 use namespace ecse;
 
 public class UpdateThread extends AbstractThread {
 
 	public function update( deltaTime:Number ):void {
-		for ( var node:ItemNode = processList.$firstNode; node; node = node.next ) {
-			var process:IUpdateProcess = node.item;
+		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
+			var process:IUpdateProcess = node.content;
 			process.update( deltaTime );
 		}
 	}

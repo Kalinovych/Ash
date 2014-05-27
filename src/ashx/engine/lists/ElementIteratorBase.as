@@ -7,7 +7,7 @@ import ashx.engine.ecse;
 
 public class ElementIteratorBase {
 	protected var _list:ItemList;
-	protected var _currentNode:ItemNode;
+	protected var _currentNode:Node;
 	protected var _current:*;
 
 	public function ElementIteratorBase( list:ItemList ) {
@@ -25,21 +25,21 @@ public class ElementIteratorBase {
 	[Inline]
 	protected final function $next():* {
 		_currentNode = ( _currentNode ? _currentNode.next : _list.ecse::$firstNode );
-		_current = ( _currentNode ? _currentNode.item : null );
+		_current = ( _currentNode ? _currentNode.content : null );
 		return _current;
 	}
 
 	[Inline]
 	protected final function $first():* {
 		_currentNode = _list.ecse::$firstNode;
-		_current = ( _currentNode ? _currentNode.item : null );
+		_current = ( _currentNode ? _currentNode.content : null );
 		return _current;
 	}
 
 	[Inline]
 	protected final function $last():* {
 		_currentNode = _list.ecse::$lastNode;
-		_current = ( _currentNode ? _currentNode.item : null );
+		_current = ( _currentNode ? _currentNode.content : null );
 		return _current;
 	}
 
@@ -49,9 +49,9 @@ public class ElementIteratorBase {
 	 * @return
 	 */
 	[Inline]
-	protected final function $selectNode( node:ItemNode ):* {
+	protected final function $selectNode( node:Node ):* {
 		_currentNode = node;
-		_current = ( _currentNode ? _currentNode.item : null );
+		_current = ( _currentNode ? _currentNode.content : null );
 		return _current;
 	}
 }
