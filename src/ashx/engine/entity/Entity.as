@@ -1,8 +1,8 @@
 package ashx.engine.entity {
-import ashx.engine.components.IComponentHandler;
-import ashx.engine.ecse;
-import ashx.engine.lists.LinkedSet;
-import ashx.engine.lists.Node;
+import ashx.engine.api.ecse;
+import ashx.engine.components.api.IComponentHandler;
+import ashx.lists.LinkedSet;
+import ashx.lists.Node;
 
 import com.flashrush.signatures.BitSign;
 

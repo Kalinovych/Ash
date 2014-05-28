@@ -3,17 +3,18 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.systems {
-import ashx.engine.ecse;
-import ashx.engine.lists.ItemList;
-import ashx.engine.lists.Node;
+import ashx.engine.api.ecse;
+import ashx.engine.systems.api.ISystem;
+import ashx.lists.Node;
+import ashx.lists.NodeList;
 
 import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class SystemList extends ItemList {
+public class SystemList extends NodeList {
 	protected var nodeBySystem:Dictionary = new Dictionary();
-	
+
 	public function SystemList() {
 		super();
 	}
@@ -25,8 +26,8 @@ public class SystemList extends ItemList {
 	public function get lastNode():Node {
 		return _lastNode;
 	}
-	
-	public function add( system:ESystem, order:int = 0 ):void {
+
+	public function add( system:ISystem, order:int = 0 ):void {
 		if ( nodeBySystem[system] ) {
 			remove( system );
 		}
@@ -34,7 +35,7 @@ public class SystemList extends ItemList {
 		var node:Node = $createNode( system );
 		node.order = order;
 		nodeBySystem[system] = node;
-		
+
 		// add with the order
 		var nodeBefore:Node = _lastNode;
 		if ( nodeBefore == null || nodeBefore.order <= order ) {
@@ -51,13 +52,13 @@ public class SystemList extends ItemList {
 		}
 	}
 
-	public function remove( system:ESystem ):void {
+	public function remove( system:ISystem ):void {
 		var node:Node = nodeBySystem[system];
 		if ( node ) {
 			delete nodeBySystem[system];
 			$removeNode( node );
 		}
 	}
-	
+
 }
 }

@@ -2,7 +2,7 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
-import ashx.engine.ecse;
+import ashx.engine.api.ecse;
 import ashx.engine.entity.Entity;
 
 import com.flashrush.signatures.BitSign;

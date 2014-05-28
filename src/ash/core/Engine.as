@@ -1,6 +1,6 @@
 package ash.core {
 
-import ashx.engine.ecse;
+import ashx.engine.api.ecse;
 import ash.signals.Signal0;
 
 import ashx.engine.entity.Entity;

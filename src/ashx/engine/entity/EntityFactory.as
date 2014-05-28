@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ashx.engine.ecse;
+import ashx.engine.api.ecse;
 
 import flash.errors.IllegalOperationError;
 

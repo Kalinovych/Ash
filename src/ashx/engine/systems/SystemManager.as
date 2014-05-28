@@ -3,68 +3,97 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.systems {
-import ashx.engine.ecse;
-import ashx.engine.lists.Node;
-import ashx.engine.threads.IProcessThread;
-import ashx.engine.threads.IThreadManager;
+import ashx.engine.api.ecse;
+import ashx.engine.systems.api.ISystem;
+import ashx.engine.systems.api.ISystemHandler;
+import ashx.engine.systems.api.ISystemManager;
+import ashx.lists.LinkedSet;
+import ashx.lists.Node;
+import ashx.lists.NodeList;
 
 import flash.utils.Dictionary;
 
 use namespace ecse;
 
-public class SystemManager implements IThreadManager, ISystemManager {
-	protected var _systems:SystemList;
-	protected var _systemsByProcess:Dictionary = new Dictionary();
-
-	/** thread by process type */
-	protected var threadMap:Dictionary = new Dictionary();
+public class SystemManager extends NodeList implements ISystemManager {
+	protected var nodeBySystemType:Dictionary = new Dictionary();
+	protected var handlers:LinkedSet = new LinkedSet();
 
 	public function SystemManager() {
-		_systems = new SystemList();
+		super();
 	}
 
-	public function add( system:*, order:int ):void {
-		_systems.add( system, order );
-
-		for ( var processType:Class in _systemsByProcess ) {
-			var list:SystemList = _systemsByProcess[processType];
-			list.add( system, order );
+	public function add( system:ISystem, order:int = 0 ):void {
+		var type:Class = system.constructor;
+		if ( nodeBySystemType[type] ) {
+			remove( type );
 		}
-	}
 
-	public function remove( system:* ):void {
-		_systems.remove( system );
-		
-		for ( var processType:Class in _systemsByProcess ) {
-			var list:SystemList = _systemsByProcess[processType];
-			list.remove( system );
-		}
-	}
+		var node:Node = $createNode( system );
+		node.order = order;
+		nodeBySystemType[type] = node;
 
-	ecse function getProcessSystems( processType:Class ):SystemList {
-		var list:SystemList = _systemsByProcess[processType];
-		if ( !list ) {
-			list = new SystemList();
-			_systemsByProcess[processType] = list;
-			for ( var node:Node = _systems.firstNode; node; node = node.next ) {
-				list.add( node.content, node.order );
+		// add with order
+		var nodeBefore:Node = _lastNode;
+		if ( nodeBefore == null || nodeBefore.order <= order ) {
+			$addNode( node );
+		} else {
+			while ( nodeBefore && nodeBefore.order > order ) {
+				nodeBefore = nodeBefore.prev;
+			}
+			if ( nodeBefore ) {
+				$addNodeAfter( node, nodeBefore );
+			} else {
+				$addNodeFirst( node );
 			}
 		}
-		return list;
-	}
 
-	public function update( deltaTime:Number ):void {
-		for ( var slot:Node = _systems.firstNode; slot; slot = slot.next ) {
-			slot.content.udpate( deltaTime );
+		// notify observers
+		var handlerNode:Node = handlers.$firstNode;
+		while ( handlerNode ) {
+			var handler:ISystemHandler = handlerNode.content;
+			handler.onSystemAdded( system );
+			handlerNode = handlerNode.next;
 		}
 	}
 
-	public function registerProcessThread( processType:Class, handler:IProcessThread ):void {
-		threadMap[processType] = handler;
+	public function get( systemType:Class ):* {
+		var node:Node = nodeBySystemType[systemType];
+		return ( node ? node.content : null );
 	}
 
-	public function unregisterProcessThread( processType:Class ):void {
-		delete threadMap[processType];
+	public function remove( system:* ):* {
+		var type:Class = ( system is Class ? system : system.constructor );
+		var node:Node = nodeBySystemType[type];
+		if ( !node ) {
+			return null;
+		}
+
+		delete nodeBySystemType[type];
+		$removeNode( node );
+
+		var handlerNode:Node = handlers.$firstNode;
+		while ( handlerNode ) {
+			var handler:ISystemHandler = handlerNode.content;
+			handler.onSystemRemoved( system );
+			handlerNode = handlerNode.next;
+		}
+
+		return node.content;
+	}
+
+	public function removeAll():void {
+		while ( $firstNode ) {
+			remove( $firstNode.content );
+		}
+	}
+
+	public function registerHandler( handler:ISystemHandler ):void {
+		handlers.add( handler );
+	}
+
+	public function unregisterHandler( handler:ISystemHandler ):void {
+		handlers.remove( handler );
 	}
 }
 }

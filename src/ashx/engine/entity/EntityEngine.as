@@ -3,25 +3,25 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ashx.engine.aspects.AspectList;
-import ashx.engine.aspects.AspectManager;
-import ashx.engine.components.ComponentManager;
-import ashx.engine.ecse;
-import ashx.engine.lists.ItemList;
+import ashx.engine.api.ecse;
+import ashx.extensions.aspects.AspectList;
+import ashx.extensions.aspects.AspectManager;
+import ashx.framework.components.ComponentObserver;
+import ashx.lists.NodeList;
 
 use namespace ecse;
 
 //public class EnJinn {
 public class EntityEngine {
 	ecse var mEntities:EntityManager;
-	ecse var mComponents:ComponentManager;
+	ecse var mComponents:ComponentObserver;
 	ecse var mAspects:AspectManager;
 
 	public function EntityEngine() {
-		ItemList.nodeFactory.allocate( 10000 );
+		NodeList.nodeFactory.allocate( 10000 );
 
 		mEntities = new EntityManager();
-		mComponents = new ComponentManager( mEntities );
+		mComponents = new ComponentObserver( mEntities );
 		mAspects = new AspectManager( mEntities, mComponents );
 	}
 

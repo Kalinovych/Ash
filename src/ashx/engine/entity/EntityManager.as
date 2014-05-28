@@ -3,14 +3,16 @@
  * @author Alexander Kalinovych
  */
 package ashx.engine.entity {
-import ashx.engine.ecse;
-import ashx.engine.lists.Node;
-import ashx.engine.lists.LinkedSet;
-import ashx.engine.lists.ListBase;
+import ashx.engine.api.ecse;
+import ashx.engine.entity.api.IEntityHandler;
+import ashx.engine.entity.api.IEntityManager;
+import ashx.lists.LinkedSet;
+import ashx.lists.ListBase;
+import ashx.lists.Node;
 
 use namespace ecse;
 
-public class EntityManager extends ListBase {
+public class EntityManager extends ListBase implements IEntityManager {
 	protected var _entityById:Vector.<Entity>;
 	protected var _capacity:uint;
 	protected var _growthValue:uint;
@@ -32,10 +34,14 @@ public class EntityManager extends ListBase {
 		return _lastNode;
 	}
 
+	public function get entityCount():uint {
+		return _length;
+	}
+
 	public function add( entity:Entity ):Entity {
 		var id:uint = entity._id;
 		if ( id < _capacity && _entityById[id] ) {
-			throw new ArgumentError( "Entity with id=" + id.toString() + " already exists in the list!" );
+			return entity;
 		}
 
 		if ( id >= _capacity ) {
@@ -57,7 +63,7 @@ public class EntityManager extends ListBase {
 		return entity;
 	}
 
-	public function contains( id:uint ):Boolean {
+	public function has( id:uint ):Boolean {
 		return _entityById[id];
 	}
 
@@ -102,12 +108,12 @@ public class EntityManager extends ListBase {
 		}
 		_entityById.length = 0;
 	}
-	
-	ecse function registerHandler( handler:IEntityHandler ):Boolean {
+
+	public function registerHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.add( handler );
 	}
 
-	ecse function unregisterHandler( handler:IEntityHandler ):Boolean {
+	public function unregisterHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.remove( handler );
 	}
 }

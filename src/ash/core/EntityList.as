@@ -1,5 +1,5 @@
 package ash.core {
-import ashx.engine.ecse;
+import ashx.engine.api.ecse;
 import ashx.engine.entity.Entity;
 
 /**
