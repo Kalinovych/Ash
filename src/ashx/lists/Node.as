@@ -12,14 +12,14 @@ public class Node {
 	public var prev:Node;
 	public var next:Node;
 
-	/** Is node added to a list and not removed */
-	ecse var isAttached:Boolean = false;
-
 	/** A node id in the mapped list */
 	ecse var id:uint;
 
 	/** For ordered lists */
 	ecse var order:int = 0;
+
+	/** Is node added to a list and not removed */
+	ecse var isAttached:Boolean = false;
 
 	internal var prevInFactory:Node;
 

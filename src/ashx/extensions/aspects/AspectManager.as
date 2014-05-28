@@ -39,7 +39,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 			observer = createObserver( aspectClass );
 			aspectObservers.put( aspectClass, observer );
 		}
-		return observer.nodeList;
+		return observer.aspects;
 	}
 
 	/** @private **/

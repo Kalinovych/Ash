@@ -30,24 +30,8 @@ public class SystemManager extends NodeList implements ISystemManager {
 		}
 
 		var node:Node = $createNode( system );
-		node.order = order;
 		nodeBySystemType[type] = node;
-
-		// add with order
-		var nodeBefore:Node = _lastNode;
-		if ( nodeBefore == null || nodeBefore.order <= order ) {
-			$addNode( node );
-		} else {
-			while ( nodeBefore && nodeBefore.order > order ) {
-				nodeBefore = nodeBefore.prev;
-			}
-			if ( nodeBefore ) {
-				$addNodeAfter( node, nodeBefore );
-			} else {
-				$addNodeFirst( node );
-			}
-		}
-
+		$addNodeOrdered( node, order );
 		// notify observers
 		var handlerNode:Node = handlers.$firstNode;
 		while ( handlerNode ) {
@@ -64,22 +48,25 @@ public class SystemManager extends NodeList implements ISystemManager {
 
 	public function remove( system:* ):* {
 		var type:Class = ( system is Class ? system : system.constructor );
-		var node:Node = nodeBySystemType[type];
-		if ( !node ) {
+		var systemNode:Node = nodeBySystemType[type];
+		if ( !systemNode ) {
 			return null;
 		}
-
+		
+		system = systemNode.content;
 		delete nodeBySystemType[type];
-		$removeNode( node );
-
+		$removeNode( systemNode );
+		systemNode.content = null;
+		
+		// notify observers
 		var handlerNode:Node = handlers.$firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.content;
 			handler.onSystemRemoved( system );
 			handlerNode = handlerNode.next;
 		}
-
-		return node.content;
+		
+		return system;
 	}
 
 	public function removeAll():void {

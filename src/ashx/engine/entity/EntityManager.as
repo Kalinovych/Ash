@@ -19,7 +19,7 @@ public class EntityManager extends ListBase implements IEntityManager {
 	protected var _entityCount:uint;
 	protected var _handlers:LinkedSet;
 
-	public function EntityManager( length:uint = 0, growthValue:uint = 1 ) {
+	public function EntityManager( length:uint = 1000, growthValue:uint = 1 ) {
 		_entityById = new Vector.<Entity>( length );
 		_capacity = length;
 		_growthValue = growthValue || 1;

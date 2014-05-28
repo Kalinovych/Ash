@@ -67,7 +67,7 @@ public class ListBase {
 	[Inline]
 	protected final function $addNodeBefore( nodeToAdd:*, nodeInList:* = null ):* {
 		// if list is empty or the node need to add before head or nodeInList is not set, add node as first
-		if ( _firstNode == null || nodeInList == null || nodeInList == _firstNode ) {
+		if ( _firstNode == null || nodeInList == null/* || nodeInList == _firstNode*/ ) {
 			return $addNodeFirst( nodeToAdd );
 		}
 
@@ -75,8 +75,8 @@ public class ListBase {
 
 		nodeToAdd.prev = nodeInList.prev;
 		nodeToAdd.next = nodeInList;
-		nodeToAdd.prev.next = nodeToAdd;
-		nodeToAdd.next.prev = nodeToAdd;
+		nodeInList.prev = nodeToAdd;
+		(nodeToAdd.prev) && (nodeToAdd.prev.next = nodeToAdd);
 		++_length;
 
 		return nodeToAdd;
@@ -92,7 +92,7 @@ public class ListBase {
 	[Inline]
 	protected final function $addNodeAfter( nodeToAdd:*, nodeInList:* = null ):* {
 		// if list is empty or the node need to add after tail or nodeInList is not set, add node to the end
-		if ( _firstNode == null || nodeInList == null || nodeInList == _lastNode ) {
+		if ( _firstNode == null || nodeInList == null /*|| nodeInList == _lastNode*/ ) {
 			return $addNode( nodeToAdd );
 		}
 
@@ -100,8 +100,10 @@ public class ListBase {
 
 		nodeToAdd.prev = nodeInList;
 		nodeToAdd.next = nodeInList.next;
-		nodeToAdd.prev.next = nodeToAdd;
-		nodeToAdd.next.prev = nodeToAdd;
+		nodeInList.next = nodeToAdd;
+		(nodeToAdd.next) && (nodeToAdd.next.prev = nodeToAdd);
+		//nodeToAdd.prev.next = nodeToAdd;
+		//nodeToAdd.next.prev = nodeToAdd;
 		++_length;
 
 		return nodeToAdd;

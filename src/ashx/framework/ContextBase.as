@@ -27,16 +27,19 @@ public class ContextBase {
 		}
 	}
 
-	public function share( instance:* ):* {
-		sharedInstances[instance.constructor] = instance;
+	public function share( object:* ):* {
+		sharedInstances[object.constructor] = object;
 	}
 
-	public function getShared( instanceType:Class ):* {
-		return sharedInstances[instanceType];
+	public function getShared( objectType:Class ):* {
+		return sharedInstances[objectType];
 	}
 
-	public function unshare( instanceType:Class ):* {
-		return sharedInstances[instanceType];
+	public function unshare( object:* ):* {
+		var objectType:Class = ( object is Class ? object : object.constructor );
+		object = sharedInstances[objectType];
+		delete sharedInstances[objectType];
+		return object;
 	}
 }
 }

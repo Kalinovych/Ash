@@ -20,7 +20,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	private var nodeClass:Class;
 	//private var nodePool:NodePool;
 
-	private var _nodeList:AspectList = new AspectList();
+	private var _aspects:AspectList = new AspectList();
 
 	/** Map of this family nodes by entity */
 	internal var nodeByEntity:Dictionary = new Dictionary();
@@ -48,8 +48,8 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		AspectUtil.describeAspect( nodeClass, this );
 	}
 
-	public function get nodeList():AspectList {
-		return _nodeList;
+	public function get aspects():AspectList {
+		return _aspects;
 	}
 
 	public function addMatchedEntity( entity:Entity ):void {
@@ -161,14 +161,14 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		}
 
 		nodeByEntity[entity] = node;
-		nodeList.add( node );
+		aspects.add( node );
 	}
 
 	[Inline]
 	private final function $removeNodeOf( entity:Entity ):void {
 		var node:Aspect = nodeByEntity[entity];
 		delete nodeByEntity[entity];
-		nodeList.remove( node );
+		aspects.remove( node );
 
 		/*if ( engine.updating ) {
 			nodePool.cache( node );

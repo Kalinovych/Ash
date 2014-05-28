@@ -28,27 +28,26 @@ use namespace INCLUDE_VARIABLES;
 use namespace INCLUDE_ACCESSORS;
 
 public class AspectUtil {
-	// cached data, shared between aspects
-	
+	// cached data, shared between aspect observers
 	private static var propertyMapByNode:Dictionary = new Dictionary();
 	private static var componentInterestsByNode:Dictionary = new Dictionary();
 	private static var excludedComponentsByNode:Dictionary = new Dictionary();
 	private static var optionalComponentsByNode:Dictionary = new Dictionary();
 
-	public static function describeAspect( nodeClass:Class, aspect:AspectObserver ):void {
-		var propertyMap:Dictionary = propertyMapByNode[nodeClass];
-		var componentInterests:Vector.<Class> = componentInterestsByNode[nodeClass];
-		var excludedComponents:Dictionary = excludedComponentsByNode[nodeClass];
-		var optionalComponents:Dictionary = optionalComponentsByNode[nodeClass];
+	public static function describeAspect( type:Class, observer:AspectObserver ):void {
+		var propertyMap:Dictionary = propertyMapByNode[type];
+		var componentInterests:Vector.<Class> = componentInterestsByNode[type];
+		var excludedComponents:Dictionary = excludedComponentsByNode[type];
+		var optionalComponents:Dictionary = optionalComponentsByNode[type];
 
 		if ( !propertyMap ) {
 			propertyMap = new Dictionary();
-			propertyMapByNode[nodeClass] = propertyMap;
+			propertyMapByNode[type] = propertyMap;
 
 			componentInterests = new Vector.<Class>();
-			componentInterestsByNode[nodeClass] = componentInterests;
+			componentInterestsByNode[type] = componentInterests;
 
-			var type:Object = DescribeTypeJSONCached.describeType( nodeClass, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
+			var type:Object = DescribeTypeJSONCached.describeType( type, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
 			var propList:Array = [];
 			if ( type.traits.variables ) {
 				propList.push.apply( null, type.traits.variables );
@@ -73,14 +72,14 @@ public class AspectUtil {
 							if ( metaName == "Without" ) {
 								if ( !excludedComponents ) {
 									excludedComponents = new Dictionary();
-									excludedComponentsByNode[nodeClass] = excludedComponents;
+									excludedComponentsByNode[type] = excludedComponents;
 								}
 								excludedComponents[componentClass] = propertyName;
 								break componentMapping;
 							} else if ( metaName == "Optional" ) {
 								if ( !optionalComponents ) {
 									optionalComponents = new Dictionary();
-									optionalComponentsByNode[nodeClass] = optionalComponents;
+									optionalComponentsByNode[type] = optionalComponents;
 								}
 								optionalComponents[componentClass] = propertyName;
 								break componentMapping;
@@ -93,10 +92,10 @@ public class AspectUtil {
 			}
 		}
 
-		aspect.propertyMap = propertyMap;
-		aspect.componentInterests = componentInterests;
-		aspect.excludedComponents = excludedComponents;
-		aspect.optionalComponents = optionalComponents;
+		observer.propertyMap = propertyMap;
+		observer.componentInterests = componentInterests;
+		observer.excludedComponents = excludedComponents;
+		observer.optionalComponents = optionalComponents;
 	}
 }
 }
