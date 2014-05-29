@@ -1,16 +1,16 @@
 package ash.core {
 
-import ashx.engine.api.ecse;
+import ecs.framework.api.ecsf;
 import ash.signals.Signal0;
 
-import ashx.engine.entity.Entity;
+import ecs.framework.entity.Entity;
 
 import com.flashrush.signatures.BitSignManager;
 
 import flash.utils.Dictionary;
 
 
-use namespace ecse;
+use namespace ecsf;
 
 /**
  * The Engine class is the central point for creating and managing your game state. Add

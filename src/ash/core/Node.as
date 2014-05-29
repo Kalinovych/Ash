@@ -1,6 +1,6 @@
 package ash.core
 {
-import ashx.engine.entity.Entity;
+import ecs.framework.entity.Entity;
 
 /**
 	 * The base class for a node.

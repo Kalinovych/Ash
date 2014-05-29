@@ -2,8 +2,8 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
-import ashx.engine.api.ecse;
-import ashx.engine.entity.Entity;
+import ecs.framework.api.ecsf;
+import ecs.framework.entity.Entity;
 
 import com.flashrush.signatures.BitSign;
 
@@ -12,7 +12,7 @@ import flash.utils.Dictionary;
 import flash.utils.describeType;
 import flash.utils.getDefinitionByName;
 
-use namespace ecse;
+use namespace ecsf;
 
 /**
  * Family designed to identify entities as defined node and add or remove that node to the NodeList.
