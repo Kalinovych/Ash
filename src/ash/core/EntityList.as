@@ -1,5 +1,5 @@
 package ash.core {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 
 /**
@@ -7,7 +7,7 @@ import ecs.framework.entity.Entity;
  * managing the entities.
  */
 	
-use namespace ecsf;
+use namespace ecs_core;
 
 internal class EntityList {
 	internal var head:Entity;

@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists.iterators {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.lists.ListBase;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class IteratorBase {
 	protected var _list:ListBase;
@@ -15,11 +15,11 @@ public class IteratorBase {
 		this._list = list;
 	}
 
-	ecsf function get list():ListBase {
+	ecs_core function get list():ListBase {
 		return _list;
 	}
 
-	ecsf function set list( value:ListBase ):void {
+	ecs_core function set list( value:ListBase ):void {
 		_list = value;
 	}
 

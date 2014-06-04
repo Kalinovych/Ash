@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.entity.api {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public interface IEntityManager {
 	function get first():Entity;

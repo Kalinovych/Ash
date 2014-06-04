@@ -3,9 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class ItemNodeFactory {
 	private var head:Node;

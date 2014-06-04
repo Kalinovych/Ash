@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
 import ecs.framework.entity.api.IEntityManager;
@@ -11,7 +11,7 @@ import ecs.framework.systems.SystemManager;
 import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemManager;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class ESContext extends ContextBase {
 	protected var entities:IEntityManager;
@@ -66,12 +66,12 @@ public class ESContext extends ContextBase {
 	/* ES Framework internal */
 
 	[Inline]
-	ecsf final function get entities():IEntityManager {
+	ecs_core final function get entities():IEntityManager {
 		return this.entities;
 	}
 
 	[Inline]
-	ecsf final function get systems():ISystemManager {
+	ecs_core final function get systems():ISystemManager {
 		return this.systems;
 	}
 

@@ -3,11 +3,11 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.instanceManager {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class InstanceManager {
 	protected var list:BindingList = new BindingList();

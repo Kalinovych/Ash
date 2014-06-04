@@ -3,14 +3,14 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class LinkedSet extends NodeList {
-	ecsf var nodeByContent:Dictionary = new Dictionary();
+	ecs_core var nodeByContent:Dictionary = new Dictionary();
 
 	public function LinkedSet() {
 		super();

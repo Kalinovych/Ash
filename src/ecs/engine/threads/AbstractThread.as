@@ -3,12 +3,12 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.engine.processes.IProcess;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class AbstractThread implements IProcessThread {
 	protected var processList:LinkedSet = new LinkedSet();

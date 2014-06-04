@@ -3,5 +3,5 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.api {
-	public namespace ecsf = "http://flashrush.com/ns/ECSFramework";
+	public namespace ecs_core = "http://flashrush.com/ns/ECSFramework";
 }

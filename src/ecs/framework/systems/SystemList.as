@@ -3,14 +3,14 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.systems {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.systems.api.ISystem;
 import ecs.lists.Node;
 import ecs.lists.NodeList;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class SystemList extends NodeList {
 	protected var nodeBySystem:Dictionary = new Dictionary();

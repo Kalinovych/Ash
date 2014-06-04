@@ -3,14 +3,14 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class LinkedMap extends NodeList {
-	ecsf var nodeByKey:Dictionary = new Dictionary();
+	ecs_core var nodeByKey:Dictionary = new Dictionary();
 
 	public function LinkedMap() {
 	}

@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.systems {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemHandler;
 import ecs.framework.systems.api.ISystemManager;
@@ -13,7 +13,7 @@ import ecs.lists.NodeList;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class SystemManager extends NodeList implements ISystemManager {
 	protected var nodeBySystemType:Dictionary = new Dictionary();

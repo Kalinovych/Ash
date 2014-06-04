@@ -3,11 +3,11 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists.iterators {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.lists.Node;
 import ecs.lists.NodeList;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class $ContentIterator extends IteratorBase {
 	protected var _currentNode:Node;

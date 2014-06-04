@@ -4,12 +4,12 @@
  */
 
 package ecs.engine {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
 import ecs.framework.systems.SystemManager;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class ESEngine {
 	protected var _entities:EntityManager;
@@ -53,7 +53,7 @@ public class ESEngine {
 	}
 	
 
-	ecsf function get entities():EntityManager {
+	ecs_core function get entities():EntityManager {
 		return _entities;
 	}
 }

@@ -3,15 +3,15 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class ContextBase {
-	ecsf var extensions:Dictionary = new Dictionary();
-	ecsf var sharedInstances:Dictionary = new Dictionary();
+	ecs_core var extensions:Dictionary = new Dictionary();
+	ecs_core var sharedInstances:Dictionary = new Dictionary();
 
 	public function install( ...extensions ):void {
 		for each( var ext:* in extensions ) {

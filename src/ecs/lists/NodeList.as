@@ -3,9 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class NodeList extends ListBase {
 	public static const sharedNodeFactory:ItemNodeFactory = new ItemNodeFactory();
@@ -17,17 +17,17 @@ public class NodeList extends ListBase {
 	}
 
 	[Inline]
-	ecsf final function get $length():uint {
+	ecs_core final function get $length():uint {
 		return _length;
 	}
 
 	[Inline]
-	ecsf final function get $firstNode():Node {
+	ecs_core final function get $firstNode():Node {
 		return _firstNode;
 	}
 
 	[Inline]
-	ecsf final function get $lastNode():Node {
+	ecs_core final function get $lastNode():Node {
 		return _lastNode;
 	}
 

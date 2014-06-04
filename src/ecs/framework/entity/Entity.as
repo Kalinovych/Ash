@@ -1,5 +1,5 @@
 package ecs.framework.entity {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
@@ -8,7 +8,7 @@ import com.flashrush.signatures.BitSign;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 /**
  * An entity is composed from components. As such, it is essentially a collection object for components.
@@ -29,26 +29,26 @@ use namespace ecsf;
  * position component. Systems operate on entities based on the components they have.</p>
  */
 public class Entity {
-	ecsf static var idIndex:uint = 0;
+	ecs_core static var idIndex:uint = 0;
 
-	ecsf var _id:uint;
+	ecs_core var _id:uint;
 
-	ecsf var _alive:Boolean = false;
+	ecs_core var _alive:Boolean = false;
 
-	ecsf var components:Dictionary = new Dictionary();
+	ecs_core var components:Dictionary = new Dictionary();
 
-	ecsf var _componentCount:uint = 0;
+	ecs_core var _componentCount:uint = 0;
 
-	ecsf var componentHandlers:LinkedSet = new LinkedSet();
+	ecs_core var componentHandlers:LinkedSet = new LinkedSet();
 
-	ecsf var sign:BitSign;
+	ecs_core var sign:BitSign;
 
 	public var name:String;
 
 	/* list links */
 
-	ecsf var prev:Entity;
-	ecsf var next:Entity;
+	ecs_core var prev:Entity;
+	ecs_core var next:Entity;
 
 	/**
 	 * The constructor
@@ -191,11 +191,11 @@ public class Entity {
 	}
 
 
-	ecsf function addComponentHandler( handler:IComponentHandler ):void {
+	ecs_core function addComponentHandler( handler:IComponentHandler ):void {
 		componentHandlers.add( handler );
 	}
 
-	ecsf function removeComponentHandler( handler:IComponentHandler ):void {
+	ecs_core function removeComponentHandler( handler:IComponentHandler ):void {
 		componentHandlers.remove( handler );
 	}
 }

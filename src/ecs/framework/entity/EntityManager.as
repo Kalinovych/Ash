@@ -3,14 +3,14 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.entity {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.api.IEntityHandler;
 import ecs.framework.entity.api.IEntityManager;
 import ecs.lists.LinkedSet;
 import ecs.lists.ListBase;
 import ecs.lists.Node;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class EntityManager extends ListBase implements IEntityManager {
 	protected var _entityById:Vector.<Entity>;

@@ -10,7 +10,7 @@ public class ListBase {
 
 	public function ListBase() {
 	}
-
+	
 	/**
 	 * Adds a node to the end of the list.
 	 * @param node The node to add to this list.
@@ -351,7 +351,7 @@ public class ListBase {
 		if ( _firstNode == _lastNode ) {
 			return;
 		}
-		var lists:Vector.<Object> = new Vector.<Object>;
+		var lists:Vector.<Object> = new Vector.<Object>();
 		// disassemble the list
 		var start:* = _firstNode;
 		var end:*;
@@ -362,12 +362,14 @@ public class ListBase {
 			}
 			var next:* = end.next;
 			start.prev = end.next = null;
-			lists.push( start );
+			lists[lists.length] = start;
 			start = next;
 		}
 		// reassemble it in order
-		while ( lists.length > 1 ) {
-			lists.push( merge( lists.shift(), lists.shift(), sortFunction ) );
+		var len:uint = lists.length;
+		while ( len > 1 ) {
+			len -= 2;
+			lists[len] = merge( lists.shift(), lists.shift(), sortFunction );
 		}
 		// find the tail
 		_firstNode = lists[0];

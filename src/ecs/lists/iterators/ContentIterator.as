@@ -3,41 +3,51 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists.iterators {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
+import ecs.lists.Node;
 import ecs.lists.NodeList;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 /**
  * Node content iterator
  */
-public class ContentIterator extends $ContentIterator {
+public class ContentIterator {
+	ecs_core var list:NodeList;
+	ecs_core var currentNode:Node;
+	ecs_core var currentContent:*;
 	
 	public function ContentIterator( list:NodeList ) {
-		super( list );
+		this.list = list;
 	}
 
 	[Inline]
 	public final function get current():* {
-		return _current;
+		return currentContent;
 	}
 
 	public function next():* {
-		_currentNode = ( _currentNode ? _currentNode.next : _list._firstNode );
-		_current = ( _currentNode ? _currentNode.content : null );
-		return _current;
+		currentNode = ( currentNode ? currentNode.next : list.$firstNode );
+		currentContent = ( currentNode ? currentNode.content : null );
+		return currentContent;
 	}
 
 	public function first():* {
-		_currentNode = _list._firstNode;
-		_current = ( _currentNode ? _currentNode.content : null );
-		return _current;
+		currentNode = list.$firstNode;
+		currentContent = ( currentNode ? currentNode.content : null );
+		return currentContent;
 	}
 
 	public function last():* {
-		_currentNode = _list._lastNode;
-		_current = ( _currentNode ? _currentNode.content : null );
-		return _current;
+		currentNode = list.$lastNode;
+		currentContent = ( currentNode ? currentNode.content : null );
+		return currentContent;
+	}
+
+	public function dispose():void {
+		list = null;
+		currentNode = null;
+		currentContent = null;
 	}
 }
 }

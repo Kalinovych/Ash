@@ -3,14 +3,14 @@
  * @author Alexander Kalinovych
  */
 package ecs.framework.entity {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
 import flash.errors.IllegalOperationError;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class EntityFactory {
-	ecsf var idIndex:uint = 0;
+	ecs_core var idIndex:uint = 0;
 
 	public function EntityFactory() {
 	}

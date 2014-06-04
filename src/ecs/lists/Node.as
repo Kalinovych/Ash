@@ -3,9 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class Node {
 	public var content:*;
@@ -13,13 +13,13 @@ public class Node {
 	public var next:Node;
 
 	/** A node id in the mapped list */
-	ecsf var id:uint;
+	ecs_core var id:uint;
 
 	/** For ordered lists */
-	ecsf var order:int = 0;
+	ecs_core var order:int = 0;
 
 	/** Is node added to a list and not removed */
-	ecsf var isAttached:Boolean = false;
+	ecs_core var isAttached:Boolean = false;
 
 	internal var prevInFactory:Node;
 

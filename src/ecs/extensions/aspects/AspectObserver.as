@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
 
@@ -11,7 +11,7 @@ import com.flashrush.signatures.BitSign;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 /**
  * Aspect & AspectObserver merged in one class

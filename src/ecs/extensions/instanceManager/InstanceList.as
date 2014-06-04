@@ -4,11 +4,11 @@
  */
 package ecs.extensions.instanceManager {
 
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class InstanceList {
 	internal var list:LinkedSet = new LinkedSet();

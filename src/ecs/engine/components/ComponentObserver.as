@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.components {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
@@ -13,7 +13,7 @@ import ecs.lists.Node;
 
 import flash.utils.Dictionary;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 /**
  * Global observer of components

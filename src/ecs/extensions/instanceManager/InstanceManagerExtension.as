@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.instanceManager {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.api.IEntityHandler;
@@ -11,7 +11,7 @@ import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemHandler;
 import ecs.engine.ESContext;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class InstanceManagerExtension implements IEntityHandler, IComponentHandler, ISystemHandler {
 	protected var instanceManager:InstanceManager;

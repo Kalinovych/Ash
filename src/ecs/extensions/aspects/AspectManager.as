@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
-import ecs.framework.api.ecsf;
+import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
 import ecs.framework.entity.api.IEntityHandler;
@@ -14,7 +14,7 @@ import ecs.lists.Node;
 import com.flashrush.signatures.BitSign;
 import com.flashrush.signatures.BitSignManager;
 
-use namespace ecsf;
+use namespace ecs_core;
 
 public class AspectManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityManager;
