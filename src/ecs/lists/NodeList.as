@@ -4,6 +4,7 @@
  */
 package ecs.lists {
 import ecs.framework.api.ecs_core;
+import ecs.lists.iterators.Iterator;
 
 use namespace ecs_core;
 
@@ -29,6 +30,12 @@ public class NodeList extends ListBase {
 	[Inline]
 	ecs_core final function get $lastNode():Node {
 		return _lastNode;
+	}
+
+	[Inline]
+	ecs_core final function iterator():Iterator {
+		// return _iteratorFactory.get( this );
+		return new Iterator( this );
 	}
 
 	[Inline]
@@ -62,7 +69,7 @@ public class NodeList extends ListBase {
 			node.next = null;
 		}
 		node.content = null;
-		nodeFactory.recycle( node );
+		nodeFactory && nodeFactory.recycle( node );
 	}
 
 }

@@ -11,26 +11,45 @@ use namespace ecs_core;
 
 public class Iterator {
 	ecs_core var _factory:*;
-	
-	//ecs_core var _list:NodeList;
-	protected var _node:Node;
-	protected var _nextNode:Node;
-	protected var _content:*;
+
+	protected var _list:NodeList;
+	protected var _node:Node = undefined;
+	protected var _content:* = undefined;
+	//protected var _nextNode:Node;
 
 	public function Iterator( list:NodeList ) {
-		//_list = list;
-		_nextNode = list.$firstNode;
+		_list = list;
 	}
 
+	/**
+	 * Return a content of the current node
+	 */
 	[Inline]
 	public final function get current():* {
 		return _content;
 	}
-
+	
+	
+	/*
+	TODO: What to do if withing iteration loop, current and next nodes will be removed by third party?
+	 */
+	
 	public function pickNext():Boolean {
+		var next:Node = (_node && _node.next ? _node.next : ( _node === undefined ? _list.$firstNode : null ) );
+		if ( next ) {
+			_node = next;
+			_content = _node.content;
+			return true;
+		}
+		return false;
+	}
+
+	/*public function pickNext():Boolean {
 		if ( _nextNode ) {
 			_node = _nextNode;
+			_content = _node.content;
 			_nextNode = null;
+			return true;
 		}
 
 		if ( _node == null || _node.next == null ) {
@@ -42,21 +61,21 @@ public class Iterator {
 		_node = _node.next;
 		_content = _node.content;
 		return true;
-	}
+	}*/
 
-	public function removeCurrent():* {
+	/*public function removeCurrent():* {
 		// _nextNode = _node.next;
 		// _list.removeNode(_node);
 		return _content;
-	}
+	}*/
 
 	public function dispose():void {
-		//_list = null;
+		_list = null;
 		_node = null;
-		_nextNode = null;
 		_content = null;
+		//_nextNode = null;
 
-		//_factory && _factory.recycle( this );
+		_factory && _factory.recycle( this );
 	}
 }
 }
