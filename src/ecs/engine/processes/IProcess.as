@@ -5,7 +5,7 @@
 package ecs.engine.processes {
 public interface IProcess {
 	function onAdded():void;
-	
+
 	function onRemoved():void;
 }
 }
