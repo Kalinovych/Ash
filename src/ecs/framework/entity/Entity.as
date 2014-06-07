@@ -1,4 +1,5 @@
 package ecs.framework.entity {
+import ecs.engine.core.CoreUnit;
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.lists.LinkedSet;
@@ -28,7 +29,7 @@ use namespace ecs_core;
  * <p>All entities that have a position in the game world, will have an instance of the
  * position component. Systems operate on entities based on the components they have.</p>
  */
-public class Entity {
+public class Entity extends CoreUnit {
 	ecs_core static var idIndex:uint = 0;
 
 	ecs_core var _id:uint;
@@ -47,8 +48,8 @@ public class Entity {
 
 	/* list links */
 
-	ecs_core var prev:Entity;
-	ecs_core var next:Entity;
+	//ecs_core var prev:Entity;
+	//ecs_core var next:Entity;
 
 	/**
 	 * The constructor

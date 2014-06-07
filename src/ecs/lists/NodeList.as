@@ -9,7 +9,7 @@ import ecs.lists.iterators.Iterator;
 use namespace ecs_core;
 
 public class NodeList extends ListBase {
-	public static const sharedNodeFactory:ItemNodeFactory = new ItemNodeFactory();
+	public static const sharedNodeFactory:ItemNodeFactory = new ItemNodeFactory( 100, 50 );
 
 	protected var nodeFactory:ItemNodeFactory;
 
@@ -43,19 +43,20 @@ public class NodeList extends ListBase {
 		node.order = order;
 		var nodeBefore:Node = _lastNode;
 		if ( nodeBefore == null || nodeBefore.order <= order ) {
-			$addNode( node );
-		} else {
-			while ( nodeBefore && nodeBefore.order > order ) {
-				nodeBefore = nodeBefore.prev;
-			}
-			if ( nodeBefore ) {
-				$addNodeAfter( node, nodeBefore );
-			} else {
-				$addNodeFirst( node );
-			}
+			return $addNode( node );
 		}
+
+		while ( nodeBefore && nodeBefore.order > order ) {
+			nodeBefore = nodeBefore.prev;
+		}
+
+		if ( nodeBefore ) {
+			return $addNodeAfter( node, nodeBefore );
+		}
+
+		return $addNodeFirst( node );
 	}
-	
+
 	[Inline]
 	protected final function $createNode( item:* = null ):Node {
 		var node:Node = nodeFactory.get();
