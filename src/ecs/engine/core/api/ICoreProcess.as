@@ -3,7 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.core.api {
-public interface ICoreProcess {
+import ecs.lists.IOrdered;
+import ecs.lists.api.INode;
+
+public interface ICoreProcess extends INode, IOrdered {
 	function tick():void;
 }
 }

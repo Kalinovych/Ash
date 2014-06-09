@@ -4,7 +4,7 @@
  */
 package ecs.engine.threads {
 import ecs.framework.api.ecs_core;
-import ecs.engine.processes.IUpdateProcess;
+import ecs.engine.processes.api.IUpdateProcess;
 import ecs.lists.Node;
 
 use namespace ecs_core;

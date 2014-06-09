@@ -7,12 +7,12 @@ import ecs.framework.api.ecs_core;
 
 use namespace ecs_core;
 
-public class CoreUnitList {
-	ecs_core var first:CoreUnit;
-	ecs_core var last:CoreUnit;
+public class ESUnitList {
+	ecs_core var first:ESUnit;
+	ecs_core var last:ESUnit;
 	ecs_core var length:uint = 0;
 
-	ecs_core function attach( unit:CoreUnit ):void {
+	ecs_core function attach( unit:ESUnit ):void {
 		if ( !first ) {
 			first = unit;
 			last = unit;
@@ -28,7 +28,7 @@ public class CoreUnitList {
 		length++;
 	}
 
-	ecs_core function detach( unit:CoreUnit ):void {
+	ecs_core function detach( unit:ESUnit ):void {
 		if ( first == unit ) {
 			first = first.next;
 		}
@@ -50,7 +50,7 @@ public class CoreUnitList {
 
 	ecs_core function detachAll():void {
 		while ( first ) {
-			var unit:CoreUnit = first;
+			var unit:ESUnit = first;
 			first = first.next;
 			unit.prev = null;
 			unit.next = null;

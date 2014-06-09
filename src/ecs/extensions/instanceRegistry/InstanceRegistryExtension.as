@@ -2,33 +2,33 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ecs.extensions.instanceManager {
+package ecs.extensions.instanceRegistry {
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.api.IEntityHandler;
 import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemHandler;
-import ecs.engine.ESContext;
+import ecs.engine.ESContext_00;
 
 use namespace ecs_core;
 
-public class InstanceManagerExtension implements IEntityHandler, IComponentHandler, ISystemHandler {
-	protected var instanceManager:InstanceManager;
+public class InstanceRegistryExtension implements IEntityHandler, IComponentHandler, ISystemHandler {
+	protected var instanceRegistry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
 	protected var observeEntities:Boolean;
 
-	public function InstanceManagerExtension( observeComponents:Boolean = true, observeSystems:Boolean = true, observeEntities:Boolean = true ) {
+	public function InstanceRegistryExtension( observeComponents:Boolean = true, observeSystems:Boolean = true, observeEntities:Boolean = true ) {
 		this.observeComponents = observeComponents;
 		this.observeSystems = observeSystems;
 		this.observeEntities = observeEntities;
 	}
 
-	public function extend( context:ESContext ):void {
-		if ( !instanceManager ) {
-			instanceManager = new InstanceManager();
-			context.share( instanceManager );
+	public function extend( context:ESContext_00 ):void {
+		if ( !instanceRegistry ) {
+			instanceRegistry = new InstanceRegistry();
+			context.share( instanceRegistry );
 		}
 
 		if ( observeEntities || observeComponents ) {
@@ -41,40 +41,40 @@ public class InstanceManagerExtension implements IEntityHandler, IComponentHandl
 
 	public function onEntityAdded( entity:Entity ):void {
 		if ( observeEntities ) {
-			instanceManager.handleAdded( entity );
+			instanceRegistry.handleAdded( entity );
 		}
 		if ( observeComponents ) {
 			for each( var component:* in entity.components ) {
-				instanceManager.handleAdded( component );
+				instanceRegistry.handleAdded( component );
 			}
 		}
 	}
 
 	public function onEntityRemoved( entity:Entity ):void {
 		if ( observeEntities ) {
-			instanceManager.handleRemoved( entity );
+			instanceRegistry.handleRemoved( entity );
 		}
 		if ( observeComponents ) {
 			for each( var component:* in entity.components ) {
-				instanceManager.handleRemoved( component );
+				instanceRegistry.handleRemoved( component );
 			}
 		}
 	}
 
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
-		instanceManager.handleAdded( component );
+		instanceRegistry.handleAdded( component );
 	}
 
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
-		instanceManager.handleRemoved( component );
+		instanceRegistry.handleRemoved( component );
 	}
 
 	public function onSystemAdded( system:ISystem ):void {
-		instanceManager.handleAdded( system );
+		instanceRegistry.handleAdded( system );
 	}
 
 	public function onSystemRemoved( system:ISystem ):void {
-		instanceManager.handleRemoved( system );
+		instanceRegistry.handleRemoved( system );
 	}
 }
 }

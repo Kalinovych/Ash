@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
-import ecs.engine.processes.IRenderProcess;
+import ecs.engine.processes.api.IRenderProcess;
 
 public class RenderThread extends AbstractThread {
 	

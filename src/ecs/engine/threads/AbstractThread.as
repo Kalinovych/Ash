@@ -4,7 +4,7 @@
  */
 package ecs.engine.threads {
 import ecs.framework.api.ecs_core;
-import ecs.engine.processes.IProcess;
+import ecs.engine.processes.api.IProcess;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
 

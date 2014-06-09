@@ -3,11 +3,11 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.core.api {
-import ecs.engine.core.CoreUnit;
+import ecs.engine.core.ESUnit;
 
 public interface IUnitObserver {
-	function unitAdded( unit:CoreUnit ):void;
+	function unitAdded( unit:ESUnit ):void;
 
-	function unitRemoved( unit:CoreUnit ):void;
+	function unitRemoved( unit:ESUnit ):void;
 }
 }

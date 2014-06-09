@@ -30,11 +30,11 @@ public class EntityNodes {
 
 	ecs_core function detach( node:Entity ):void {
 		if ( first == node ) {
-			first = first.next;
+			first = first.next as Entity;
 		}
 
 		if ( last == node ) {
-			last = last.prev;
+			last = last.prev as Entity;
 		}
 
 		if ( node.prev ) {
@@ -50,8 +50,8 @@ public class EntityNodes {
 
 	ecs_core function detachAll():void {
 		while ( first ) {
-			var node:Entity = first;
-			first = first.next;
+			var node:ESUnit = first;
+			first = first.next as Entity;
 			node.prev = null;
 			node.next = null;
 		}

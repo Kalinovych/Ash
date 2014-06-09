@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
-import ecs.engine.processes.IProcess;
+import ecs.engine.processes.api.IProcess;
 
 public interface IProcessThread {
 	function processAdded( process:IProcess ):void;

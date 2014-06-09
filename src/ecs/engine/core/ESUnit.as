@@ -4,14 +4,15 @@
  */
 package ecs.engine.core {
 import ecs.framework.api.ecs_core;
+import ecs.lists.api.INode;
 
 use namespace ecs_core;
 
-public class CoreUnit {
-	ecs_core var prev:CoreUnit;
-	ecs_core var next:CoreUnit;
+public class ESUnit implements INode {
+	ecs_core var prev:ESUnit;
+	ecs_core var next:ESUnit;
 
-	ecs_core function after( prevUnit:CoreUnit ):CoreUnit {
+	ecs_core function after( prevUnit:ESUnit ):ESUnit {
 		if ( this.prev ) {
 			this.prev.next = null;
 		}
@@ -28,7 +29,7 @@ public class CoreUnit {
 		return this;
 	}
 
-	ecs_core function before( nextUnit:CoreUnit ):CoreUnit {
+	ecs_core function before( nextUnit:ESUnit ):ESUnit {
 		if ( this.next ) {
 			this.next.prev = null;
 		}

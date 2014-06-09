@@ -3,9 +3,9 @@ package ash.core {
 import ecs.framework.api.ecs_core;
 import ash.signals.Signal0;
 
-import ecs.framework.entity.Entity;
-
 import com.flashrush.signatures.BitSignManager;
+
+import ecs.framework.entity.Entity;
 
 import flash.utils.Dictionary;
 

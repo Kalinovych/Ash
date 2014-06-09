@@ -2,21 +2,27 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ecs.extensions.instanceManager {
+package ecs.extensions.instanceRegistry {
+import ecs.extensions.instanceRegistry.api.IInstanceRegistry;
 import ecs.framework.api.ecs_core;
 
 import flash.utils.Dictionary;
 
 use namespace ecs_core;
 
-public class InstanceManager {
+public class InstanceRegistry implements IInstanceRegistry {
 	protected var list:BindingList = new BindingList();
 	protected var bindingByType:Dictionary = new Dictionary();
 
 	public function getInstancesOf( type:Class ):InstanceList {
 		var node:BindingNode = bindingByType[type];
 		if ( node ) {
-			return node.instances;
+			var wrapper:InstanceList = new InstanceList();
+			wrapper.type = node.type;
+			wrapper.list = node.instances;
+			wrapper.registry = this;
+			node.referenceCount++;
+			return wrapper;
 		}
 		return null;
 	}
@@ -36,7 +42,7 @@ public class InstanceManager {
 		}
 	}
 
-	public function unobserve( type:Class ):void {
+	public function unObserve( type:Class ):void {
 		var node:BindingNode = bindingByType[type];
 		if ( node ) {
 			delete bindingByType[type];
@@ -50,7 +56,7 @@ public class InstanceManager {
 		var node:BindingNode = list.first;
 		while ( node ) {
 			if ( instance is node.type ) {
-				if ( node.instances.list.add( instance ) ) {
+				if ( node.instances.add( instance ) ) {
 					handleCount++;
 				}
 			}
@@ -63,25 +69,54 @@ public class InstanceManager {
 		var node:BindingNode = list.first;
 		while ( node ) {
 			if ( instance is node.type ) {
-				if ( node.instances.list.remove( instance ) ) {
-					handleCount++;
+				if ( node.instances.remove( instance ) ) {
+					handleCount--;
 				}
 			}
 		}
 		return handleCount;
 	}
+
+	public function referenceDisposed( ref:InstanceList ):void {
+		// TODO: refCount--
+		var node:BindingNode = bindingByType[ref.type];
+		node.referenceCount--;
+		ref.type = null;
+		ref.list = null;
+		ref.registry = null;
+	}
 }
 }
 
-import ecs.extensions.instanceManager.InstanceList;
+import ecs.extensions.instanceRegistry.InstanceList;
+import ecs.lists.LinkedSet;
 import ecs.lists.ListBase;
 
 class BindingNode {
 	public var type:Class;
-	public var instances:InstanceList = new InstanceList();
+	public var instances:LinkedSet = new LinkedSet();
+	//public var instances:InstanceList = new InstanceList();
+	public var referenceCount:int = 0;
+
+	public var noReferencesCallback:Function;
 
 	public var prev:BindingNode;
 	public var next:BindingNode;
+
+	public function getReference():InstanceList {
+		// TODO: implement getReference here
+		referenceCount++;
+		var ref:InstanceList = new InstanceList();
+		return ref;
+	}
+
+	public function disposeReference( ref:InstanceList ):void {
+		// TODO: implement disposeReference here
+
+		if ( referenceCount == 0 && noReferencesCallback != null ) {
+			noReferencesCallback( this );
+		}
+	}
 
 	public function dispose():void {
 		type = null;
