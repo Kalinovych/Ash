@@ -73,7 +73,7 @@ public class Engine {
 			throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 		}
 
-		entity.sign = signManager.signKeys( entity.components );
+		entity._sign = signManager.signKeys( entity._components );
 
 		entityList.add( entity );
 		entityByName[ entity.id ] = entity;
@@ -107,8 +107,8 @@ public class Engine {
 
 		delete entityByName[ entity.id ];
 		entityList.remove( entity );
-		signManager.recycleSign( entity.sign );
-		entity.sign = null;
+		signManager.recycleSign( entity._sign );
+		entity._sign = null;
 	}
 
 	/**
@@ -116,12 +116,12 @@ public class Engine {
 	 */
 	protected function componentAdded( entity:Entity, componentClass:Class ):void {
 		// put component bit to the entity dna
-		entity.sign.add( componentClass );
+		entity._sign.add( componentClass );
 
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList && familyList.length ) {
 			for each( var family:Family in familyList ) {
-				if ( entity.sign.contains( family.sign ) ) {
+				if ( entity._sign.contains( family.sign ) ) {
 					family.componentAdded( entity, componentClass );
 				}
 			}
@@ -135,13 +135,13 @@ public class Engine {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList && familyList.length ) {
 			for each( var family:Family in familyList ) {
-				if ( entity.sign.contains( family.sign ) ) {
+				if ( entity._sign.contains( family.sign ) ) {
 					family.componentRemoved( entity, componentClass );
 				}
 			}
 		}
 
-		entity.sign.remove( componentClass );
+		entity._sign.remove( componentClass );
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class Engine {
 
 	[Inline]
 	protected final function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
-		return ( entity.sign.contains( family.sign ) && !( family.exclusionSign && entity.sign.contains( family.exclusionSign ) ) );
+		return ( entity._sign.contains( family.sign ) && !( family.exclusionSign && entity._sign.contains( family.exclusionSign ) ) );
 	}
 
 

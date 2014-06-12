@@ -4,8 +4,8 @@
  */
 package ecs.framework.systems.api {
 public interface ISystem {
-	function onAdded():void;
+	function added():void;
 
-	function onRemoved():void;
+	function removed():void;
 }
 }

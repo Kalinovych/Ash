@@ -44,25 +44,6 @@ public class Iterator {
 		return false;
 	}
 
-	/*public function pickNext():Boolean {
-		if ( _nextNode ) {
-			_node = _nextNode;
-			_content = _node.content;
-			_nextNode = null;
-			return true;
-		}
-
-		if ( _node == null || _node.next == null ) {
-			_node = null;
-			_content = null;
-			return false;
-		}
-
-		_node = _node.next;
-		_content = _node.content;
-		return true;
-	}*/
-
 	/*public function removeCurrent():* {
 		// _nextNode = _node.next;
 		// _list.removeNode(_node);

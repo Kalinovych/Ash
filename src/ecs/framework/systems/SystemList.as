@@ -39,15 +39,15 @@ public class SystemList extends NodeList {
 		// add with the order
 		var nodeBefore:Node = _lastNode;
 		if ( nodeBefore == null || nodeBefore.order <= order ) {
-			$addNode( node );
+			$attach( node );
 		} else {
 			while ( nodeBefore && nodeBefore.order > order ) {
 				nodeBefore = nodeBefore.prev;
 			}
 			if ( nodeBefore ) {
-				$addNodeAfter( node, nodeBefore );
+				$attachAfter( node, nodeBefore );
 			} else {
-				$addNodeFirst( node );
+				$attachFirst( node );
 			}
 		}
 	}
@@ -56,7 +56,7 @@ public class SystemList extends NodeList {
 		var node:Node = nodeBySystem[system];
 		if ( node ) {
 			delete nodeBySystem[system];
-			$removeNode( node );
+			$detach( node );
 		}
 	}
 

@@ -17,7 +17,7 @@ public class ListBase {
 	 * @return The node instance passed as node parameter
 	 */
 	[Inline]
-	protected final function $addNode( node:* ):* {
+	protected final function $attach( node:* ):* {
 		if ( _firstNode == null ) {
 			node.prev = null;
 			node.next = null;
@@ -40,7 +40,7 @@ public class ListBase {
 	 * @return The node instance passed as node parameter
 	 */
 	[Inline]
-	protected final function $addNodeFirst( node:* ):* {
+	protected final function $attachFirst( node:* ):* {
 		if ( _firstNode == null ) {
 			node.prev = null;
 			node.next = null;
@@ -65,10 +65,10 @@ public class ListBase {
 	 * @return The node instance passed as nodeToAdd parameter
 	 */
 	[Inline]
-	protected final function $addNodeBefore( nodeToAdd:*, nodeInList:* = null ):* {
+	protected final function $attachBefore( nodeToAdd:*, nodeInList:* = null ):* {
 		// if list is empty or the node need to add before head or nodeInList is not set, add node as first
 		if ( _firstNode == null || nodeInList == null/* || nodeInList == _firstNode*/ ) {
-			return $addNodeFirst( nodeToAdd );
+			return $attachFirst( nodeToAdd );
 		}
 
 		/* Here this list contains at least two nodes */
@@ -90,10 +90,10 @@ public class ListBase {
 	 * @return The node instance passed as nodeToAdd parameter
 	 */
 	[Inline]
-	protected final function $addNodeAfter( nodeToAdd:*, nodeInList:* = null ):* {
+	protected final function $attachAfter( nodeToAdd:*, nodeInList:* = null ):* {
 		// if list is empty or the node need to add after tail or nodeInList is not set, add node to the end
 		if ( _firstNode == null || nodeInList == null /*|| nodeInList == _lastNode*/ ) {
-			return $addNode( nodeToAdd );
+			return $attach( nodeToAdd );
 		}
 
 		/* Here this list contains at least two nodes */
@@ -119,19 +119,19 @@ public class ListBase {
 	 */
 
 	[Inline]
-	protected final function $addNodeAt( node:*, index:int ):* {
+	protected final function $attachAt( node:*, index:int ):* {
 		if ( _firstNode == null || index >= _length ) {
-			return $addNode( node );
+			return $attach( node );
 		}
 
 		if ( index <= 0 ) {
-			return $addNodeFirst( node );
+			return $attachFirst( node );
 		}
 
 		var i:int = 1;
 		for ( var nodeInList:* = _firstNode.next; nodeInList; nodeInList = nodeInList.next ) {
 			if ( i == index ) {
-				return $addNodeBefore( node, nodeInList );
+				return $attachBefore( node, nodeInList );
 			}
 			i++;
 		}
@@ -145,7 +145,7 @@ public class ListBase {
 	 * @param node A node to remove.
 	 */
 	[Inline]
-	protected final function $removeNode( node:* ):* {
+	protected final function $detach( node:* ):* {
 		if ( node == _firstNode ) {
 			_firstNode = _firstNode.next;
 		}
@@ -166,7 +166,7 @@ public class ListBase {
 	}
 
 	[Inline]
-	protected final function $removeFirstNode():* {
+	protected final function $detachFirst():* {
 		if ( _firstNode ) {
 			var node:* = _firstNode;
 			_firstNode = _firstNode.next;
@@ -184,7 +184,7 @@ public class ListBase {
 	}
 
 	[Inline]
-	protected final function $removeLastNode():* {
+	protected final function $detachLast():* {
 		if ( _lastNode ) {
 			var node:* = _lastNode;
 			_lastNode = _lastNode.prev;
@@ -202,7 +202,7 @@ public class ListBase {
 	}
 
 	[Inline]
-	protected final function $removeAllNodes():void {
+	protected final function $detachAll():void {
 		while ( _firstNode ) {
 			var node:* = _firstNode;
 			_firstNode = _firstNode.next;

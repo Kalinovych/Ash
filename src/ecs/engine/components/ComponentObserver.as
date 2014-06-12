@@ -48,7 +48,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		entity.addComponentHandler( this );
 		//entity.componentHandler = this;
 		
-		var components:* = entity.components;
+		var components:* = entity._components;
 		for ( var componentType:* in components ) {
 			onComponentAdded( entity, components[componentType], componentType );
 		}
@@ -56,7 +56,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 
 	/** @private */
 	public function onEntityRemoved( entity:Entity ):void {
-		var components:* = entity.components;
+		var components:* = entity._components;
 		for ( var componentType:* in components ) {
 			onComponentRemoved( entity, components[componentType], componentType );
 		}

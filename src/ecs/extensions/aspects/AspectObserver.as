@@ -114,7 +114,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		// Check is removed component makes the entity as a member of this family
 		if ( excludedComponents && excludedComponents[component] ) {
 			// no more unacceptable components?
-			if ( !entity.sign.contains( exclusionSign ) ) {
+			if ( !entity._sign.contains( exclusionSign ) ) {
 				addMatchedEntity( entity );
 			}
 			return;

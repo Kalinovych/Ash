@@ -137,10 +137,10 @@ class BindingList extends ListBase {
 	}
 
 	public function add( binding:BindingNode ):BindingNode {
-		return $addNode( binding );
+		return $attach( binding );
 	}
 
 	public function remove( binding:BindingNode ):BindingNode {
-		return $removeNode( binding );
+		return $detach( binding );
 	}
 }

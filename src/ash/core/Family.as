@@ -183,7 +183,7 @@ public class Family {
 		// Check is removed component makes the entity as a member of this family
 		if ( excludedComponents && excludedComponents[componentClass] ) {
 			// no more unacceptable components?
-			if ( !entity.sign.contains( exclusionSign ) ) {
+			if ( !entity._sign.contains( exclusionSign ) ) {
 				addEntity( entity );
 			}
 			return;

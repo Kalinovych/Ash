@@ -9,17 +9,12 @@ import ecs.lists.iterators.Iterator;
 use namespace ecs_core;
 
 public class NodeList extends ListBase {
-	public static const sharedNodeFactory:ItemNodeFactory = new ItemNodeFactory( 100, 50 );
+	public static const sharedNodeFactory:NodeFactory = new NodeFactory( 100, 50 );
 
-	protected var nodeFactory:ItemNodeFactory;
+	protected var nodeFactory:NodeFactory;
 
 	public function NodeList() {
 		nodeFactory = sharedNodeFactory;
-	}
-
-	[Inline]
-	ecs_core final function get $length():uint {
-		return _length;
 	}
 
 	[Inline]
@@ -33,17 +28,23 @@ public class NodeList extends ListBase {
 	}
 
 	[Inline]
+	ecs_core final function get $length():uint {
+		return _length;
+	}
+
+	[Inline]
 	ecs_core final function iterator():Iterator {
-		// return _iteratorFactory.get( this );
+		//TODO: return _iteratorFactory.get( this );
 		return new Iterator( this );
 	}
 
 	[Inline]
-	protected final function $addNodeOrdered( node:Node, order:int ):Node {
+	protected final function $attachOrdered( node:Node, order:int ):Node {
 		node.order = order;
+		
 		var nodeBefore:Node = _lastNode;
 		if ( nodeBefore == null || nodeBefore.order <= order ) {
-			return $addNode( node );
+			return $attach( node );
 		}
 
 		while ( nodeBefore && nodeBefore.order > order ) {
@@ -51,10 +52,10 @@ public class NodeList extends ListBase {
 		}
 
 		if ( nodeBefore ) {
-			return $addNodeAfter( node, nodeBefore );
+			return $attachAfter( node, nodeBefore );
 		}
 
-		return $addNodeFirst( node );
+		return $attachFirst( node );
 	}
 
 	[Inline]

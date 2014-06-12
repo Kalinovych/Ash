@@ -7,13 +7,13 @@ import ecs.framework.api.ecs_core;
 
 use namespace ecs_core;
 
-public class ItemNodeFactory {
+public class NodeFactory {
 	private var head:Node;
-	private var growthValue:uint = 1;
-	private var _createdCount:uint = 0;
-	private var _availableCount:uint = 0;
+	private var growthValue:uint;
+	private var _createdCount:uint;
+	private var _availableCount:uint;
 
-	public function ItemNodeFactory( preAllocate:uint = 0, growthValue:uint = 1 ) {
+	public function NodeFactory( preAllocate:uint = 0, growthValue:uint = 1 ) {
 		this.growthValue = growthValue || 1;
 		if ( preAllocate ) {
 			allocate( preAllocate );

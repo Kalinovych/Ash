@@ -44,7 +44,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 			instanceRegistry.handleAdded( entity );
 		}
 		if ( observeComponents ) {
-			for each( var component:* in entity.components ) {
+			for each( var component:* in entity._components ) {
 				instanceRegistry.handleAdded( component );
 			}
 		}
@@ -55,7 +55,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 			instanceRegistry.handleRemoved( entity );
 		}
 		if ( observeComponents ) {
-			for each( var component:* in entity.components ) {
+			for each( var component:* in entity._components ) {
 				instanceRegistry.handleRemoved( component );
 			}
 		}

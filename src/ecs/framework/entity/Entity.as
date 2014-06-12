@@ -1,11 +1,12 @@
 package ecs.framework.entity {
+import com.flashrush.signatures.BitSign;
+import com.flashrush.utils.ClassUtil;
+
 import ecs.engine.core.ESUnit;
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
-
-import com.flashrush.signatures.BitSign;
 
 import flash.utils.Dictionary;
 
@@ -33,16 +34,12 @@ public class Entity extends ESUnit {
 	ecs_core static var idIndex:uint = 0;
 
 	ecs_core var _id:uint;
-
 	ecs_core var _alive:Boolean = false;
+	ecs_core var _sign:BitSign;
 
-	ecs_core var components:Dictionary = new Dictionary();
-
+	ecs_core var _components:Dictionary = new Dictionary();
 	ecs_core var _componentCount:uint = 0;
-
-	ecs_core var componentHandlers:LinkedSet = new LinkedSet();
-
-	ecs_core var sign:BitSign;
+	ecs_core var _componentHandlers:LinkedSet = new LinkedSet();
 
 	public var name:String;
 
@@ -98,16 +95,20 @@ public class Entity extends ESUnit {
 		}
 
 		// if already contains a component of the type, remove it first
-		if ( components[ type ] ) {
+		var current:* = _components[type];
+		if ( current ) {
+			if ( component === current ) {
+				return this;
+			}
 			remove( type );
 		}
 
 		// add
-		components[ type ] = component;
+		_components[ type ] = component;
 		_componentCount++;
 
 		// notify handlers
-		var node:Node = componentHandlers.$firstNode;
+		var node:Node = _componentHandlers.$firstNode;
 		while ( node ) {
 			var handler:IComponentHandler = node.content;
 			handler.onComponentAdded( this, type, component );
@@ -124,13 +125,13 @@ public class Entity extends ESUnit {
 	 * @return the component, or null if the component doesn't exist in the entity
 	 */
 	public function remove( type:Class ):* {
-		var component:* = components[ type ];
+		var component:* = _components[ type ];
 		if ( component ) {
-			delete components[ type ];
+			delete _components[ type ];
 			_componentCount--;
 
 			// notify handlers
-			var node:Node = componentHandlers.$firstNode;
+			var node:Node = _componentHandlers.$firstNode;
 			while ( node ) {
 				var handler:IComponentHandler = node.content;
 				handler.onComponentRemoved( this, type, component );
@@ -143,7 +144,7 @@ public class Entity extends ESUnit {
 	}
 
 	public function removeAll():void {
-		for ( var componentId:Class in components ) {
+		for ( var componentId:Class in _components ) {
 			remove( componentId );
 		}
 	}
@@ -156,7 +157,7 @@ public class Entity extends ESUnit {
 	 */
 	[Inline]
 	public final function get( componentClass:Class ):* {
-		return components[ componentClass ];
+		return _components[ componentClass ];
 	}
 
 	/**
@@ -167,7 +168,7 @@ public class Entity extends ESUnit {
 	public function getAll( result:Array = null ):Array {
 		result ||= [];
 		var i:int = result.length;
-		for each( var component:* in components ) {
+		for each( var component:* in _components ) {
 			result[i] = component;
 			i++;
 		}
@@ -182,21 +183,33 @@ public class Entity extends ESUnit {
 	 */
 	[Inline]
 	public final function has( componentClass:Class ):Boolean {
-		return components[ componentClass ] != null;
+		return _components[ componentClass ] != null;
 	}
 
 	public function toString():String {
 		//return "Entity(id=" + id.toString() + ")";
-		return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
+		//return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
+		//return "Entity(id=" + _id + ")[" + componentsToStr() +"]";
+		//return "Entity_" + _id + "[" + componentsToStr() +"]";
+		return "[Entity_" + _id + "{" + componentsToStr() + "})";
+	}
+
+	private function componentsToStr():String {
+		var result:String = "";
+		for ( var type:Class in _components ) {
+			result && (result += ", ");
+			result += ClassUtil.getClassLocalName( type );
+		}
+		return result;
 	}
 
 
 	ecs_core function addComponentHandler( handler:IComponentHandler ):void {
-		componentHandlers.add( handler );
+		_componentHandlers.add( handler );
 	}
 
 	ecs_core function removeComponentHandler( handler:IComponentHandler ):void {
-		componentHandlers.remove( handler );
+		_componentHandlers.remove( handler );
 	}
 }
 }

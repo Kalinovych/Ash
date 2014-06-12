@@ -51,7 +51,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		if (signTable.length <= id) {
 			signTable.length = id + 1;
 		}
-		var sign:BitSign = signManager.signKeys( entity.components );
+		var sign:BitSign = signManager.signKeys( entity._components );
 		signTable[id] = sign;
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
@@ -70,8 +70,8 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 				observer.removeMatchedEntity( entity );
 			}
 		}
-		signManager.recycleSign( entity.sign );
-		entity.sign = null;
+		signManager.recycleSign( entity._sign );
+		entity._sign = null;
 	}
 
 	/** @private **/

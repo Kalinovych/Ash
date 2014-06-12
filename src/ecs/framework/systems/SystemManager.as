@@ -31,7 +31,7 @@ public class SystemManager extends NodeList implements ISystemManager {
 
 		var node:Node = $createNode( system );
 		nodeBySystemType[type] = node;
-		$addNodeOrdered( node, order );
+		$attachOrdered( node, order );
 		// notify observers
 		var handlerNode:Node = handlers.$firstNode;
 		while ( handlerNode ) {
@@ -55,7 +55,7 @@ public class SystemManager extends NodeList implements ISystemManager {
 		
 		system = systemNode.content;
 		delete nodeBySystemType[type];
-		$removeNode( systemNode );
+		$detach( systemNode );
 		systemNode.content = null;
 		
 		// notify observers

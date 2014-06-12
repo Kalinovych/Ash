@@ -9,6 +9,9 @@ import flash.utils.Dictionary;
 
 use namespace ecs_core;
 
+/**
+ * Linked collection of unique items
+ */
 public class LinkedSet extends NodeList {
 	ecs_core var nodeByContent:Dictionary = new Dictionary();
 
@@ -21,8 +24,8 @@ public class LinkedSet extends NodeList {
 
 		var node:Node = $createNode( content );
 		nodeByContent[content] = node;
+		$attach( node );
 		node.isAttached = true;
-		$addNode( node );
 		return true;
 	}
 
@@ -32,7 +35,7 @@ public class LinkedSet extends NodeList {
 
 		delete nodeByContent[content];
 		node.isAttached = false;
-		$removeNode( node );
+		$detach( node );
 		disposeNode( node, false );
 		return true;
 	}
@@ -48,7 +51,7 @@ public class LinkedSet extends NodeList {
 	}
 
 	public function has( content:* ):Boolean {
-		return $has( content );
+		return ( nodeByContent[content] != null );
 	}
 
 	[Inline]
