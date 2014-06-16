@@ -8,7 +8,7 @@ import ecs.framework.entity.Entity;
 
 use namespace ecs_core;
 
-public class EntityNodes {
+public class EntityList {
 	ecs_core var first:Entity;
 	ecs_core var last:Entity;
 	ecs_core var length:uint = 0;
@@ -50,7 +50,7 @@ public class EntityNodes {
 
 	ecs_core function detachAll():void {
 		while ( first ) {
-			var node:ESUnit = first;
+			var node:Entity = first;
 			first = first.next as Entity;
 			node.prev = null;
 			node.next = null;

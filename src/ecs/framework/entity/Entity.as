@@ -2,7 +2,6 @@ package ecs.framework.entity {
 import com.flashrush.signatures.BitSign;
 import com.flashrush.utils.ClassUtil;
 
-import ecs.engine.core.ESUnit;
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.lists.LinkedSet;
@@ -30,7 +29,7 @@ use namespace ecs_core;
  * <p>All entities that have a position in the game world, will have an instance of the
  * position component. Systems operate on entities based on the components they have.</p>
  */
-public class Entity extends ESUnit {
+public class Entity {
 	ecs_core static var idIndex:uint = 0;
 
 	ecs_core var _id:uint;
@@ -45,8 +44,8 @@ public class Entity extends ESUnit {
 
 	/* list links */
 
-	//ecs_core var prev:Entity;
-	//ecs_core var next:Entity;
+	ecs_core var prev:Entity;
+	ecs_core var next:Entity;
 
 	/**
 	 * The constructor

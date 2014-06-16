@@ -6,6 +6,8 @@ package ecs.engine.core {
 import ecs.engine.core.api.IUnitObserver;
 import ecs.framework.api.ecs_core;
 
+use namespace ecs_core;
+
 public class UnitsCore extends ESUnitList{
 	//ecs_core var units:ESUnitList = new ESUnitList();
 	protected var observers:Vector.<IUnitObserver> = new Vector.<IUnitObserver>();

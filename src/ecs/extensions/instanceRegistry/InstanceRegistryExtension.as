@@ -9,7 +9,7 @@ import ecs.framework.entity.Entity;
 import ecs.framework.entity.api.IEntityHandler;
 import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemHandler;
-import ecs.engine.ESContext_00;
+import ecs.engine.ESContext;
 
 use namespace ecs_core;
 
@@ -25,7 +25,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		this.observeEntities = observeEntities;
 	}
 
-	public function extend( context:ESContext_00 ):void {
+	public function extend( context:ESContext ):void {
 		if ( !instanceRegistry ) {
 			instanceRegistry = new InstanceRegistry();
 			context.share( instanceRegistry );

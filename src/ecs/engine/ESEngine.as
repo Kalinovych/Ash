@@ -4,6 +4,9 @@
  */
 
 package ecs.engine {
+import com.flashrush.signals.ISignal;
+import com.flashrush.signals.SignalPro;
+
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
@@ -12,6 +15,10 @@ import ecs.framework.systems.SystemManager;
 use namespace ecs_core;
 
 public class ESEngine {
+	protected var _onPreUpdate:ISignal = new SignalPro( Number );
+	protected var _onUpdate:ISignal = new SignalPro( Number );
+	protected var _onPostUpdate:ISignal = new SignalPro( Number );
+
 	protected var _entities:EntityManager;
 	protected var _systems:SystemManager;
 
@@ -19,7 +26,9 @@ public class ESEngine {
 		_entities = new EntityManager();
 		_systems = new SystemManager();
 	}
-
+	
+	/* Entities */
+	
 	public function addEntity( entity:Entity ):Entity {
 		return _entities.add( entity );
 	}
@@ -40,21 +49,23 @@ public class ESEngine {
 		_entities.removeAll();
 	}
 
-	public function addSystem( system:*, order:int ):ESEngine {
-		_systems.add( system, order );
-	}
-	
-	public function getSystem( systemType:Class ):* {
-		return _systems.get( systemType );
-	}
-	
-	public function removeSystem( system:* ):void {
-		_systems.remove( system );
-	}
-	
-
 	ecs_core function get entities():EntityManager {
 		return _entities;
 	}
+	
+	/* Systems */
+	
+	public function addSystem( system:*, order:int ):ESEngine {
+		_systems.add( system, order );
+	}
+
+	public function getSystem( systemType:Class ):* {
+		return _systems.get( systemType );
+	}
+
+	public function removeSystem( system:* ):void {
+		_systems.remove( system );
+	}
+
 }
 }
