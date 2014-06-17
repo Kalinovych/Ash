@@ -6,14 +6,14 @@ package ecs.engine.threads {
 import ecs.engine.processes.api.IRenderProcess;
 
 public class RenderThread extends AbstractThread {
-	
-	public function render():void {
+
+	public function process( deltaTime:Number ):void {
 		$forEach( $callRender );
 	}
 
 	protected final function $callRender( process:IRenderProcess ):void {
 		process.render();
 	}
-	
+
 }
 }

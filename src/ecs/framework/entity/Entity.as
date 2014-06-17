@@ -1,5 +1,4 @@
 package ecs.framework.entity {
-import com.flashrush.signatures.BitSign;
 import com.flashrush.utils.ClassUtil;
 
 import ecs.framework.api.ecs_core;
@@ -34,13 +33,14 @@ public class Entity {
 
 	ecs_core var _id:uint;
 	ecs_core var _alive:Boolean = false;
-	ecs_core var _sign:BitSign;
 
 	ecs_core var _components:Dictionary = new Dictionary();
 	ecs_core var _componentCount:uint = 0;
 	ecs_core var _componentHandlers:LinkedSet = new LinkedSet();
-
-	public var name:String;
+	//ecs_core var _sign:BitSign;
+	ecs_core var _mask0:uint;
+	ecs_core var _mask1:uint;
+	ecs_core var _mask2:uint;
 
 	/* list links */
 

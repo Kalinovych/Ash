@@ -10,8 +10,8 @@ import ecs.lists.Node;
 use namespace ecs_core;
 
 public class UpdateThread extends AbstractThread {
-
-	public function update( deltaTime:Number ):void {
+	
+	public function process( deltaTime:Number ):void {
 		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
 			var process:IUpdateProcess = node.content;
 			process.update( deltaTime );

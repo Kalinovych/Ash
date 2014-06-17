@@ -16,12 +16,12 @@ internal class SimpleEntityMap implements EntityMap, IEntityHandler {
 		return entityByName[name];
 	}
 
-	public function onEntityAdded( entity:Entity ):void {
+	public function handleAddedEntity( entity:Entity ):void {
 		var name:Name = entity.get( Name );
 		name && ( entityByName[name.name] = entity );
 	}
 
-	public function onEntityRemoved( entity:Entity ):void {
+	public function handleRemovedEntity( entity:Entity ):void {
 		var name:Name = entity.get( Name );
 		name && ( delete entityByName[name.name] );
 	}

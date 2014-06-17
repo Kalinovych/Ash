@@ -43,7 +43,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	}
 
 	/** @private **/
-	public function onEntityAdded( entity:Entity ):void {
+	public function handleAddedEntity( entity:Entity ):void {
 		trace( "[AspectsManager.onEntityAdded]›", entity );
 		//entity.sign = signManager.signKeys( entity.components );
 		
@@ -56,22 +56,22 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
 			if ( $signMatchAspect( sign, observer ) ) {
-				observer.addMatchedEntity( entity );
+				observer.registerEntity( entity );
 			}
 		}
 	}
 
 	/** @private **/
-	public function onEntityRemoved( entity:Entity ):void {
+	public function handleRemovedEntity( entity:Entity ):void {
 		var sign:BitSign = signTable[entity._id];
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
 			if ( $signMatchAspect( sign, observer ) ) {
-				observer.removeMatchedEntity( entity );
+				observer.unRegisterEntity( entity );
 			}
 		}
-		signManager.recycleSign( entity._sign );
-		entity._sign = null;
+		signManager.recycleSign( sign );
+		//entity._sign = null;
 	}
 
 	/** @private **/
@@ -86,7 +86,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		for ( var entity:Entity = entities.first; entity; entity = entity.next ) {
 			var sign:BitSign = signTable[entity._id];
 			if ( $signMatchAspect( sign, observer ) ) {
-				observer.addMatchedEntity( entity );
+				observer.registerEntity( entity );
 			}
 		}
 

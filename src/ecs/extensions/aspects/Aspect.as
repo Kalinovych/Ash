@@ -8,8 +8,8 @@ import ecs.framework.entity.Entity;
 public class Aspect {
 	public var entity:Entity;
 
-	public var prev/*<AspectNode>*/:*;
+	public var prev/*<Aspect>*/:*;
 
-	public var next/*<AspectNode>*/:*;
+	public var next/*<Aspect>*/:*;
 }
 }

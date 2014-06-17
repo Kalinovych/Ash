@@ -66,6 +66,10 @@ public class ESEngine {
 	public function removeSystem( system:* ):void {
 		_systems.remove( system );
 	}
-
+	
+	/* Processing */
+	public function update( deltaTime:Number ):void {
+		
+	}
 }
 }

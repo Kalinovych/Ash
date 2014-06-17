@@ -47,10 +47,10 @@ public class AspectUtil {
 			componentInterests = new Vector.<Class>();
 			componentInterestsByNode[type] = componentInterests;
 
-			var type:Object = DescribeTypeJSONCached.describeType( type, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
+			var typeInfo:Object = DescribeTypeJSONCached.describeType( type, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
 			var propList:Array = [];
-			if ( type.traits.variables ) {
-				propList.push.apply( null, type.traits.variables );
+			if ( typeInfo.traits.variables ) {
+				propList.push.apply( null, typeInfo.traits.variables );
 			}
 
 			// parse properties

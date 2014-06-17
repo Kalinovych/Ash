@@ -15,6 +15,9 @@ import flash.utils.Dictionary;
 
 use namespace ecs_core;
 
+/**
+ * Simple node-based system list implementation with observers
+ */
 public class SystemManager extends NodeList implements ISystemManager {
 	protected var nodeBySystemType:Dictionary = new Dictionary();
 	protected var handlers:LinkedSet = new LinkedSet();
@@ -32,6 +35,7 @@ public class SystemManager extends NodeList implements ISystemManager {
 		var node:Node = $createNode( system );
 		nodeBySystemType[type] = node;
 		$attachOrdered( node, order );
+
 		// notify observers
 		var handlerNode:Node = handlers.$firstNode;
 		while ( handlerNode ) {
@@ -46,18 +50,32 @@ public class SystemManager extends NodeList implements ISystemManager {
 		return ( node ? node.content : null );
 	}
 
+	public function getList( result:Vector.<ISystem> = null ):Vector.<ISystem> {
+		if ( result ) {
+			result.length = _length;
+		} else {
+			result = new Vector.<ISystem>( _length );
+		}
+		var i:uint = 0;
+		for ( var node:Node = _firstNode; node; node = node.next, i++ ) {
+			result[i] = node.content
+		}
+		return result;
+	}
+
 	public function remove( system:* ):* {
 		var type:Class = ( system is Class ? system : system.constructor );
 		var systemNode:Node = nodeBySystemType[type];
 		if ( !systemNode ) {
 			return null;
 		}
-		
+
 		system = systemNode.content;
 		delete nodeBySystemType[type];
 		$detach( systemNode );
 		systemNode.content = null;
-		
+		system.removed();
+
 		// notify observers
 		var handlerNode:Node = handlers.$firstNode;
 		while ( handlerNode ) {
@@ -65,7 +83,7 @@ public class SystemManager extends NodeList implements ISystemManager {
 			handler.onSystemRemoved( system );
 			handlerNode = handlerNode.next;
 		}
-		
+
 		return system;
 	}
 

@@ -6,8 +6,8 @@ package ecs.framework.entity.api {
 import ecs.framework.entity.*;
 
 public interface IEntityHandler {
-	function onEntityAdded( entity:Entity ):void;
+	function handleAddedEntity( entity:Entity ):void;
 
-	function onEntityRemoved( entity:Entity ):void;
+	function handleRemovedEntity( entity:Entity ):void;
 }
 }

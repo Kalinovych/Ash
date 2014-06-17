@@ -14,7 +14,7 @@ import ecs.engine.ESContext;
 use namespace ecs_core;
 
 public class InstanceRegistryExtension implements IEntityHandler, IComponentHandler, ISystemHandler {
-	protected var instanceRegistry:InstanceRegistry;
+	ecs_core var instanceRegistry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
 	protected var observeEntities:Boolean;
@@ -39,7 +39,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function onEntityAdded( entity:Entity ):void {
+	public function handleAddedEntity( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleAdded( entity );
 		}
@@ -50,7 +50,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function onEntityRemoved( entity:Entity ):void {
+	public function handleRemovedEntity( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleRemoved( entity );
 		}

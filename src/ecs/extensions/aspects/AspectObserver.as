@@ -3,11 +3,11 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
+import com.flashrush.signatures.BitSign;
+
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
-
-import com.flashrush.signatures.BitSign;
 
 import flash.utils.Dictionary;
 
@@ -17,7 +17,7 @@ use namespace ecs_core;
  * Aspect & AspectObserver merged in one class
  */
 internal class AspectObserver implements IComponentHandler/*, IEntityObserver */ {
-	private var nodeClass:Class;
+	private var aspectClass:Class;
 	//private var nodePool:NodePool;
 
 	private var _aspects:AspectList = new AspectList();
@@ -43,16 +43,16 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	/** Bit representation of the family's excluded components for fast matching */
 	internal var exclusionSign:BitSign;
 
-	public function AspectObserver( nodeClass:Class ) {
-		this.nodeClass = nodeClass;
-		AspectUtil.describeAspect( nodeClass, this );
+	public function AspectObserver( aspectClass:Class ) {
+		this.aspectClass = aspectClass;
+		AspectUtil.describeAspect( aspectClass, this );
 	}
 
 	public function get aspects():AspectList {
 		return _aspects;
 	}
 
-	public function addMatchedEntity( entity:Entity ):void {
+	public function registerEntity( entity:Entity ):void {
 		//entity.ecse::addComponentObserver( this );
 
 		// do nothing if an entity already identified in this family
@@ -63,7 +63,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		$createNodeOf( entity );
 	}
 
-	public function removeMatchedEntity( entity:Entity ):void {
+	public function unRegisterEntity( entity:Entity ):void {
 		//entity.ecse::removeComponentObserver( this );
 
 		if ( nodeByEntity[entity] ) {
@@ -115,7 +115,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		if ( excludedComponents && excludedComponents[component] ) {
 			// no more unacceptable components?
 			if ( !entity._sign.contains( exclusionSign ) ) {
-				addMatchedEntity( entity );
+				registerEntity( entity );
 			}
 			return;
 		}
@@ -146,9 +146,19 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	private final function $createNodeOf( entity:Entity ):void {
 		// Create new node and assign components from the entity to the node variables
 		//var node:Node = nodePool.get();
-		var node:Aspect = new nodeClass();
+		var node:Aspect = new aspectClass();
 		node.entity = entity;
-		for ( var componentClass:* in propertyMap ) {
+
+		var i:uint;
+		var len:uint = componentInterests.length;
+		var componentClass:Class;
+		for ( i = 0; i < len; i++ ) {
+			componentClass = componentInterests[i];
+			var property:String = propertyMap[componentClass] || optionalComponents[componentClass];
+			node[property] = entity.get( componentClass );
+		}
+
+		/*for ( var componentClass:* in propertyMap ) {
 			var property:String = propertyMap[componentClass];
 			node[property] = entity.get( componentClass );
 		}
@@ -158,7 +168,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 				property = optionalComponents[componentClass];
 				node[property] = entity.get( componentClass );
 			}
-		}
+		}*/
 
 		nodeByEntity[entity] = node;
 		aspects.add( node );

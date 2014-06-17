@@ -18,6 +18,8 @@ public class InstanceList {
 	internal var list:LinkedSet;// = new LinkedSet();
 	internal var registry:InstanceRegistry;
 
+	public function InstanceList() {}
+	
 	public final function get firstNode():Node {
 		return list.$firstNode;
 	}
@@ -29,8 +31,6 @@ public class InstanceList {
 	public final function get length():uint {
 		return list.$length;
 	}
-
-	public function InstanceList() {}
 
 	public function dispose():void {
 		registry.referenceDisposed( this );

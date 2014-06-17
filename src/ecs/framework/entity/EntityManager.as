@@ -57,7 +57,7 @@ public class EntityManager extends ListBase implements IEntityManager {
 		// notify handlers
 		for ( var node:Node = _handlers.$firstNode; node; node = node.next ) {
 			var handler:IEntityHandler = node.content;
-			handler.onEntityAdded( entity );
+			handler.handleAddedEntity( entity );
 		}
 
 		return entity;
@@ -86,14 +86,10 @@ public class EntityManager extends ListBase implements IEntityManager {
 		$detach( entity );
 		_entityCount--;
 
-		// notify handlers in backward order (?)
-		/*for ( var node:ItemNode = mHandlers.ecse::_lastNode; node; node = node.prev ) {
-			var handler:IEntityHandler = node.item;
-			handler.onEntityRemoved( entity );
-		}*/
+		// notify handlers in backward order
 		for ( var node:Node = _handlers.$lastNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.content;
-			handler.onEntityRemoved( entity );
+			handler.handleRemovedEntity( entity );
 		}
 
 		return entity;

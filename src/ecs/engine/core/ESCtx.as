@@ -14,37 +14,43 @@ import ecs.lists.Node;
 
 use namespace ecs_core;
 
-public class ESConextAsBus {
+/**
+ * Scoped collection of entities and systems
+ */
+public class ESCtx {
 	ecs_core var entityList:EntityList = new EntityList();
 	ecs_core var systemList:SystemList = new SystemList();
 
 	ecs_core var entityHandlers:LinkedSet = new LinkedSet();
 	ecs_core var systemHandlers:LinkedSet = new LinkedSet();
-
-	public function ESConextAsBus() {
+	
+	public function ESCtx() {
 	}
 
 	public function addEntity( entity:Entity ):Entity {
+		entityList.attach( entity );
 		var node:Node = entityHandlers.$firstNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.content;
-			handler.onEntityAdded( entity );
+			handler.handleAddedEntity( entity );
 			node = node.next;
 		}
 		return entity;
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
+		entityList.detach( entity );
 		var node:Node = entityHandlers.$lastNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.content;
-			handler.onEntityRemoved( entity );
+			handler.handleRemovedEntity( entity );
 			node = node.prev;
 		}
 		return entity;
 	}
 
 	public function addSystem( system:ISystem, order:int = 0 ):* {
+		systemList.add( system, order );
 		var node:Node = systemHandlers.$firstNode;
 		while ( node ) {
 			var handler:ISystemHandler = node.content;
@@ -55,6 +61,7 @@ public class ESConextAsBus {
 	}
 
 	public function removeSystem( system:ISystem ):* {
+		systemList.remove( system );
 		var node:Node = systemHandlers.$lastNode;
 		while ( node ) {
 			var handler:ISystemHandler = node.content;
