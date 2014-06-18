@@ -3,7 +3,7 @@ package ash.core {
 import ecs.framework.api.ecs_core;
 import ash.signals.Signal0;
 
-import com.flashrush.signatures.BitSignManager;
+import flashrush.signatures.BitSignManager;
 
 import ecs.framework.entity.Entity;
 

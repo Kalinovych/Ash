@@ -1,4 +1,6 @@
 package ecs.framework.entity {
+import flashrush.signatures.v2.api.ISign;
+import flashrush.signatures.v2.bitmask.ByteSign;
 import com.flashrush.utils.ClassUtil;
 
 import ecs.framework.api.ecs_core;
@@ -37,10 +39,7 @@ public class Entity {
 	ecs_core var _components:Dictionary = new Dictionary();
 	ecs_core var _componentCount:uint = 0;
 	ecs_core var _componentHandlers:LinkedSet = new LinkedSet();
-	//ecs_core var _sign:BitSign;
-	ecs_core var _mask0:uint;
-	ecs_core var _mask1:uint;
-	ecs_core var _mask2:uint;
+	ecs_core var _sign:ByteSign;
 
 	/* list links */
 
@@ -61,10 +60,6 @@ public class Entity {
 		return _id;
 	}
 
-	public function get componentCount():uint {
-		return _componentCount;
-	}
-
 	/**
 	 *  Determines whether the entity was added and wasn't removed from an engine.
 	 */
@@ -73,6 +68,14 @@ public class Entity {
 		return _alive;
 	}
 
+	public function get componentCount():uint {
+		return _componentCount;
+	}
+
+	public function sign():ISign {
+		return _sign;
+	}
+	
 	/**
 	 * Add a component to the entity.
 	 *

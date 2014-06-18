@@ -5,7 +5,7 @@ package ash.core {
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 
-import com.flashrush.signatures.BitSign;
+import flashrush.signatures.BitSign;
 
 import flash.system.System;
 import flash.utils.Dictionary;

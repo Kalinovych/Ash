@@ -3,7 +3,8 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
-import com.flashrush.signatures.BitSign;
+import flashrush.signatures.BitSign;
+import flashrush.signatures.v2.bitmask.ByteSign;
 
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
@@ -38,10 +39,10 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	internal var optionalComponents:Dictionary;
 
 	/** Bit representation of the family's required components for fast matching */
-	internal var sign:BitSign;
+	internal var sign:com.flashrush.signatures.v2.bitmask.BitSign;
 
 	/** Bit representation of the family's excluded components for fast matching */
-	internal var exclusionSign:BitSign;
+	internal var exclusionSign:com.flashrush.signatures.v2.bitmask.BitSign;
 
 	public function AspectObserver( aspectClass:Class ) {
 		this.aspectClass = aspectClass;
@@ -114,7 +115,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		// Check is removed component makes the entity as a member of this family
 		if ( excludedComponents && excludedComponents[component] ) {
 			// no more unacceptable components?
-			if ( !entity._sign.contains( exclusionSign ) ) {
+			if ( !entity._sign.hasAllOf( exclusionSign ) ) {
 				registerEntity( entity );
 			}
 			return;

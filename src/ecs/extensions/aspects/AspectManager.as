@@ -11,8 +11,8 @@ import ecs.engine.components.IComponentObserver;
 import ecs.lists.LinkedMap;
 import ecs.lists.Node;
 
-import com.flashrush.signatures.BitSign;
-import com.flashrush.signatures.BitSignManager;
+import flashrush.signatures.BitSign;
+import flashrush.signatures.BitSignManager;
 
 use namespace ecs_core;
 

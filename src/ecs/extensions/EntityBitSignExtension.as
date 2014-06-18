@@ -3,8 +3,8 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions {
-import com.flashrush.signatures.BitSign;
-import com.flashrush.signatures.BitSignManager;
+import flashrush.signatures.BitSign;
+import flashrush.signatures.BitSignManager;
 
 import ecs.engine.components.IComponentObserver;
 import ecs.engine.core.ESCtx;
