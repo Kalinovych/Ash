@@ -3,6 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
+import com.flashrush.signals.v2.ISignal;
+import com.flashrush.signals.v2.SignalPro;
+
 import ecs.engine.components.ComponentObserver;
 import ecs.engine.threads.RenderThread;
 import ecs.engine.threads.UpdateThread;
@@ -35,6 +38,12 @@ public class GameEngine {
 
 	protected var updateThread:UpdateThread;
 	protected var renderThread:RenderThread;
+
+	protected var _onUpdate:SignalPro = new SignalPro();
+
+	public function get onUpdate():ISignal {
+		return _onUpdate;
+	}
 
 	public function GameEngine() {
 		_state = INITIALIZING;
@@ -117,7 +126,7 @@ class GameEngineState {
 	public static const UPDATING:int = sStateEnum++;
 	public static const RENDERING:int = sStateEnum++;
 	public static const DISPOSED:int = sStateEnum++;
-	
+
 	internal var _value:int = UNINITIALIZED;
 
 	[Inline]
@@ -139,5 +148,5 @@ class GameEngineState {
 	public final function get rendering():Boolean {
 		return (_value == RENDERING);
 	}
-	
+
 }
