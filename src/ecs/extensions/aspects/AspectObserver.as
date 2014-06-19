@@ -3,14 +3,13 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
-import flashrush.signatures.BitSign;
-import flashrush.signatures.v2.bitmask.ByteSign;
-
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
 
 import flash.utils.Dictionary;
+
+import flashrush.signatures.api.ISignature;
 
 use namespace ecs_core;
 
@@ -39,10 +38,10 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	internal var optionalComponents:Dictionary;
 
 	/** Bit representation of the family's required components for fast matching */
-	internal var sign:com.flashrush.signatures.v2.bitmask.BitSign;
+	internal var sign:ISignature;
 
 	/** Bit representation of the family's excluded components for fast matching */
-	internal var exclusionSign:com.flashrush.signatures.v2.bitmask.BitSign;
+	internal var exclusionSign:ISignature;
 
 	public function AspectObserver( aspectClass:Class ) {
 		this.aspectClass = aspectClass;

@@ -3,16 +3,16 @@
  * @author Alexander Kalinovych
  */
 package ecs.extensions.aspects {
+import ecs.engine.components.IComponentObserver;
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
 import ecs.framework.entity.api.IEntityHandler;
-import ecs.engine.components.IComponentObserver;
 import ecs.lists.LinkedMap;
 import ecs.lists.Node;
 
-import flashrush.signatures.BitSign;
-import flashrush.signatures.BitSignManager;
+import flashrush.signatures.ObjectSigner;
+import flashrush.signatures.api.ISignature;
 
 use namespace ecs_core;
 
@@ -20,16 +20,16 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityManager;
 	private var componentManager:IComponentObserver;
 	private var aspectObservers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
-	private var signManager:BitSignManager;
-	private var signTable:Vector.<BitSign>;
+	private var _signer:ObjectSigner;
+	private var signTable:Vector.<ISignature>;
 
 	public function AspectManager( entities:EntityManager, componentManager:IComponentObserver ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
-		
-		signManager = new BitSignManager();
-		signTable = new Vector.<BitSign>( entities.entityCount );
-		
+
+		_signer = new ObjectSigner();
+		signTable = new Vector.<ISignature>( entities.entityCount );
+
 		entities.registerHandler( this );
 	}
 
@@ -45,13 +45,13 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	/** @private **/
 	public function handleAddedEntity( entity:Entity ):void {
 		trace( "[AspectsManager.onEntityAdded]›", entity );
-		//entity.sign = signManager.signKeys( entity.components );
-		
+		//entity.sign = _signer.signKeys( entity.components );
+
 		var id:uint = entity._id;
-		if (signTable.length <= id) {
+		if ( signTable.length <= id ) {
 			signTable.length = id + 1;
 		}
-		var sign:BitSign = signManager.signKeys( entity._components );
+		var sign:ISignature = _signer.signKeys( entity._components );
 		signTable[id] = sign;
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
@@ -63,28 +63,28 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 
 	/** @private **/
 	public function handleRemovedEntity( entity:Entity ):void {
-		var sign:BitSign = signTable[entity._id];
+		var sign:ISignature = signTable[entity._id];
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
 			if ( $signMatchAspect( sign, observer ) ) {
 				observer.unRegisterEntity( entity );
 			}
 		}
-		signManager.recycleSign( sign );
+		_signer.disposeSign( sign );
 		//entity._sign = null;
 	}
 
 	/** @private **/
 	protected final function createObserver( aspectClass:Class ):AspectObserver {
 		var observer:AspectObserver = new AspectObserver( aspectClass );
-		observer.sign = signManager.signKeys( observer.propertyMap );
+		observer.sign = _signer.signKeys( observer.propertyMap );
 		if ( observer.excludedComponents ) {
-			observer.exclusionSign = signManager.signKeys( observer.excludedComponents );
+			observer.exclusionSign = _signer.signKeys( observer.excludedComponents );
 		}
 
 		// check all entities that are already in the list
 		for ( var entity:Entity = entities.first; entity; entity = entity.next ) {
-			var sign:BitSign = signTable[entity._id];
+			var sign:ISignature = signTable[entity._id];
 			if ( $signMatchAspect( sign, observer ) ) {
 				observer.registerEntity( entity );
 			}
@@ -101,8 +101,8 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	}
 
 	[Inline]
-	protected final function $signMatchAspect( sign:BitSign, aspect:AspectObserver ):Boolean {
-		return ( sign.contains( aspect.sign ) && !( aspect.exclusionSign && sign.contains( aspect.exclusionSign ) ) );
+	protected final function $signMatchAspect( sign:ISignature, aspect:AspectObserver ):Boolean {
+		return ( sign.hasAllOf( aspect.sign ) && !( aspect.exclusionSign && sign.hasAllOf( aspect.exclusionSign ) ) );
 		//return ( entity.sign.contains( aspect.sign ) && !( aspect.exclusionSign && entity.sign.contains( aspect.exclusionSign ) ) );
 	}
 }
