@@ -39,7 +39,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function handleAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleAdded( entity );
 		}
@@ -50,7 +50,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function handleRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleRemoved( entity );
 		}

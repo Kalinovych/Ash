@@ -32,7 +32,7 @@ public class ESCtx {
 		var node:Node = entityHandlers.$firstNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.content;
-			handler.handleAddedEntity( entity );
+			handler.handleEntityAdded( entity );
 			node = node.next;
 		}
 		return entity;
@@ -43,7 +43,7 @@ public class ESCtx {
 		var node:Node = entityHandlers.$lastNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.content;
-			handler.handleRemovedEntity( entity );
+			handler.handleEntityRemoved( entity );
 			node = node.prev;
 		}
 		return entity;

@@ -72,7 +72,7 @@ public class Entity {
 		return _componentCount;
 	}
 
-	public function sign():ISignature {
+	public function get sign():ISignature {
 		return _sign;
 	}
 

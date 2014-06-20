@@ -4,6 +4,7 @@
  */
 package ecs.extensions.aspects {
 import ecs.engine.components.IComponentObserver;
+import ecs.extensions.EntitySigner;
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
@@ -14,6 +15,7 @@ import ecs.lists.Node;
 import flashrush.signatures.bitwise.BitwiseSigner;
 import flashrush.signatures.api.ISignature;
 import flashrush.signatures.api.ISigner;
+import flashrush.signatures.utils.SignerFactory;
 
 use namespace ecs_core;
 
@@ -21,16 +23,17 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityManager;
 	private var componentManager:IComponentObserver;
 	private var aspectObservers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
-	private var _signer:ISigner;
-	private var signTable:Vector.<ISignature>;
+	private var _signer:EntitySigner;
+	//private var signTable:Vector.<ISignature>;
 
 	public function AspectManager( entities:EntityManager, componentManager:IComponentObserver ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
 
-		_signer = new BitwiseSigner();
-		signTable = new Vector.<ISignature>( entities.entityCount );
+		_signer = new EntitySigner();
+		//signTable = new Vector.<ISignature>( entities.entityCount );
 
+		entities.registerHandler( _signer );
 		entities.registerHandler( this );
 	}
 
@@ -44,48 +47,51 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	}
 
 	/** @private **/
-	public function handleAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		trace( "[AspectsManager.onEntityAdded]›", entity );
 		//entity.sign = _signer.signKeys( entity.components );
 
 		var id:uint = entity._id;
-		if ( signTable.length <= id ) {
+		/*if ( signTable.length <= id ) {
 			signTable.length = id + 1;
 		}
 		var sign:ISignature = _signer.signKeys( entity._components );
-		signTable[id] = sign;
+		signTable[id] = sign;*/
+		
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
-			if ( $signMatchAspect( sign, observer ) ) {
+			if ( $signMatchAspect( entity._sign, observer ) ) {
 				observer.registerEntity( entity );
 			}
 		}
 	}
 
 	/** @private **/
-	public function handleRemovedEntity( entity:Entity ):void {
-		var sign:ISignature = signTable[entity._id];
+	public function handleEntityRemoved( entity:Entity ):void {
+		//var sign:ISignature = signTable[entity._id];
+		var sign:ISignature = entity._sign;
 		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.content;
 			if ( $signMatchAspect( sign, observer ) ) {
 				observer.unRegisterEntity( entity );
 			}
 		}
-		_signer.disposeSign( sign );
+		//_signer.disposeSign( sign );
 		//entity._sign = null;
 	}
 
 	/** @private **/
 	protected final function createObserver( aspectClass:Class ):AspectObserver {
 		var observer:AspectObserver = new AspectObserver( aspectClass );
-		observer.sign = _signer.signKeys( observer.propertyMap );
+		observer.sign = _signer.signer.signKeys( observer.propertyMap );
 		if ( observer.excludedComponents ) {
-			observer.exclusionSign = _signer.signKeys( observer.excludedComponents );
+			observer.exclusionSign = _signer.signer.signKeys( observer.excludedComponents );
 		}
 
 		// check all entities that are already in the list
 		for ( var entity:Entity = entities.first; entity; entity = entity.next ) {
-			var sign:ISignature = signTable[entity._id];
+			//var sign:ISignature = signTable[entity._id];
+			var sign:ISignature = entity._sign;
 			if ( $signMatchAspect( sign, observer ) ) {
 				observer.registerEntity( entity );
 			}

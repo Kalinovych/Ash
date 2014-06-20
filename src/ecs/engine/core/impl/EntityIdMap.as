@@ -24,7 +24,7 @@ public class EntityIdMap implements IEntityHandler {
 		return ( id < _map.length ? _map[id] : null );
 	}
 
-	public function handleAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		var id:uint = entity.id;
 		if ( _map.length <= id ) {
 			_map.length += 100;
@@ -32,7 +32,7 @@ public class EntityIdMap implements IEntityHandler {
 		_map[id] = entity;
 	}
 
-	public function handleRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		_map[entity.id] = null;
 	}
 }
