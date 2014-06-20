@@ -11,8 +11,9 @@ import ecs.framework.entity.api.IEntityHandler;
 import ecs.lists.LinkedMap;
 import ecs.lists.Node;
 
-import flashrush.signatures.ObjectSigner;
+import flashrush.signatures.bitwise.BitwiseSigner;
 import flashrush.signatures.api.ISignature;
+import flashrush.signatures.api.ISigner;
 
 use namespace ecs_core;
 
@@ -20,14 +21,14 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityManager;
 	private var componentManager:IComponentObserver;
 	private var aspectObservers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
-	private var _signer:ObjectSigner;
+	private var _signer:ISigner;
 	private var signTable:Vector.<ISignature>;
 
 	public function AspectManager( entities:EntityManager, componentManager:IComponentObserver ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
 
-		_signer = new ObjectSigner();
+		_signer = new BitwiseSigner();
 		signTable = new Vector.<ISignature>( entities.entityCount );
 
 		entities.registerHandler( this );
