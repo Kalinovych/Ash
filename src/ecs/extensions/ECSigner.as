@@ -15,12 +15,12 @@ import flashrush.signatures.bitwise.BitwiseSigner;
 
 use namespace ecs_core;
 
-public class EntitySigner implements IEntityHandler, IComponentHandler {
+public class ECSigner implements IEntityHandler, IComponentHandler {
 	ecs_core var signer:ISigner;
 	/** Signature by an Entity id */
 	ecs_core var signatures:Vector.<ISignature>;
 
-	public function EntitySigner( signer:ISigner = null ) {
+	public function ECSigner( signer:ISigner = null ) {
 		this.signer = signer || new BitwiseSigner();
 	}
 

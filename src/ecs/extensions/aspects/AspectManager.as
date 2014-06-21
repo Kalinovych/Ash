@@ -4,7 +4,7 @@
  */
 package ecs.extensions.aspects {
 import ecs.engine.components.IComponentObserver;
-import ecs.extensions.EntitySigner;
+import ecs.extensions.ECSigner;
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
 import ecs.framework.entity.EntityManager;
@@ -23,14 +23,14 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	private var entities:EntityManager;
 	private var componentManager:IComponentObserver;
 	private var aspectObservers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
-	private var _signer:EntitySigner;
+	private var _signer:ECSigner;
 	//private var signTable:Vector.<ISignature>;
 
 	public function AspectManager( entities:EntityManager, componentManager:IComponentObserver ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
 
-		_signer = new EntitySigner();
+		_signer = new ECSigner();
 		//signTable = new Vector.<ISignature>( entities.entityCount );
 
 		entities.registerHandler( _signer );
