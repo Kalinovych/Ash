@@ -5,7 +5,7 @@
 
 package ecs.engine {
 import com.flashrush.signals.ISignal;
-import com.flashrush.signals.SignalPro;
+import com.flashrush.signals.v2.SignalPro;
 
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
@@ -26,19 +26,15 @@ public class ESEngine {
 		_entities = new EntityManager();
 		_systems = new SystemManager();
 	}
-	
+
 	/* Entities */
-	
+
 	public function addEntity( entity:Entity ):Entity {
 		return _entities.add( entity );
 	}
 
-	public function hasEntity( id:uint ):Boolean {
-		return _entities.has( id );
-	}
-
-	public function getEntity( id:uint ):Entity {
-		return _entities.get( id );
+	public function containsEntity( entity:Entity ):Boolean {
+		return _entities.has( entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
@@ -52,9 +48,9 @@ public class ESEngine {
 	ecs_core function get entities():EntityManager {
 		return _entities;
 	}
-	
+
 	/* Systems */
-	
+
 	public function addSystem( system:*, order:int ):ESEngine {
 		_systems.add( system, order );
 	}
@@ -66,10 +62,10 @@ public class ESEngine {
 	public function removeSystem( system:* ):void {
 		_systems.remove( system );
 	}
-	
+
 	/* Processing */
 	public function update( deltaTime:Number ):void {
-		
+
 	}
 }
 }

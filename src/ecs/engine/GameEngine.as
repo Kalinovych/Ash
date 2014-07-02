@@ -4,7 +4,6 @@
  */
 package ecs.engine {
 import com.flashrush.signals.ISignal;
-import com.flashrush.signals.v2.ISignal;
 import com.flashrush.signals.v2.SignalPro;
 
 import ecs.engine.components.ComponentObserver;

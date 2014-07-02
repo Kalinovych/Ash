@@ -193,14 +193,15 @@ public class Entity {
 		//return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
 		//return "Entity(id=" + _id + ")[" + componentsToStr() +"]";
 		//return "Entity_" + _id + "[" + componentsToStr() +"]";
-		return "[Entity_" + _id + "{" + componentsToStr() + "})";
+		//return "[Entity_" + _id + "{" + componentsToStr() + "})";
+		return "{Entity" + _id + "[" + componentsToStr() + "]}"; // {Entity123[Pos,Body,Graphics]}
 	}
 
 	private function componentsToStr():String {
 		var result:String = "";
 		for ( var type:Class in _components ) {
-			result && (result += ", ");
-			result += ClassUtil.getClassLocalName( type );
+			result && (result += ",");
+			result += ClassUtil.getLocalName( type );
 		}
 		return result;
 	}
