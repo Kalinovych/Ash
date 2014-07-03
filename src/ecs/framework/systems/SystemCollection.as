@@ -18,26 +18,30 @@ use namespace ecs_core;
 /**
  * Simple node-based system list implementation with observers
  */
-public class SystemManager extends NodeList implements ISystemManager {
-	protected var nodeBySystemType:Dictionary = new Dictionary();
-	protected var handlers:LinkedSet = new LinkedSet();
+public class SystemCollection extends NodeList implements ISystemManager {
+	protected var _nodeMap:Dictionary/*<SystemClass, Node>*/ = new Dictionary();
+	protected var _handlers:LinkedSet = new LinkedSet();
 
-	public function SystemManager() {
+	public function SystemCollection() {
 		super();
+	}
+
+	public function get length():uint {
+		return _length;
 	}
 
 	public function add( system:ISystem, order:int = 0 ):void {
 		var type:Class = system.constructor;
-		if ( nodeBySystemType[type] ) {
+		if ( _nodeMap[type] ) {
 			remove( type );
 		}
 
 		var node:Node = $createNode( system );
-		nodeBySystemType[type] = node;
+		_nodeMap[type] = node;
 		$attachOrdered( node, order );
 
 		// notify observers
-		var handlerNode:Node = handlers.$firstNode;
+		var handlerNode:Node = _handlers.$firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.content;
 			handler.onSystemAdded( system );
@@ -46,38 +50,25 @@ public class SystemManager extends NodeList implements ISystemManager {
 	}
 
 	public function get( systemType:Class ):* {
-		var node:Node = nodeBySystemType[systemType];
+		var node:Node = _nodeMap[systemType];
 		return ( node ? node.content : null );
-	}
-
-	public function getList( result:Vector.<ISystem> = null ):Vector.<ISystem> {
-		if ( result ) {
-			result.length = _length;
-		} else {
-			result = new Vector.<ISystem>( _length );
-		}
-		var i:uint = 0;
-		for ( var node:Node = _firstNode; node; node = node.next, i++ ) {
-			result[i] = node.content
-		}
-		return result;
 	}
 
 	public function remove( system:* ):* {
 		var type:Class = ( system is Class ? system : system.constructor );
-		var systemNode:Node = nodeBySystemType[type];
+		var systemNode:Node = _nodeMap[type];
 		if ( !systemNode ) {
 			return null;
 		}
 
 		system = systemNode.content;
-		delete nodeBySystemType[type];
+		delete _nodeMap[type];
 		$detach( systemNode );
 		systemNode.content = null;
 		system.removed();
 
 		// notify observers
-		var handlerNode:Node = handlers.$firstNode;
+		var handlerNode:Node = _handlers.$firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.content;
 			handler.onSystemRemoved( system );
@@ -93,12 +84,25 @@ public class SystemManager extends NodeList implements ISystemManager {
 		}
 	}
 
-	public function registerHandler( handler:ISystemHandler ):void {
-		handlers.add( handler );
+	public function getList( result:Vector.<ISystem> = null ):Vector.<ISystem> {
+		if ( result ) {
+			result.length = _length;
+		} else {
+			result = new Vector.<ISystem>( _length );
+		}
+		var i:uint = 0;
+		for ( var node:Node = _firstNode; node; node = node.next, i++ ) {
+			result[i] = node.content
+		}
+		return result;
 	}
 
-	public function unregisterHandler( handler:ISystemHandler ):void {
-		handlers.remove( handler );
+	public function registerHandler( handler:ISystemHandler ):void {
+		_handlers.add( handler );
+	}
+
+	public function unRegisterHandler( handler:ISystemHandler ):void {
+		_handlers.remove( handler );
 	}
 }
 }

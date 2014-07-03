@@ -9,8 +9,8 @@ import com.flashrush.signals.v2.SignalPro;
 
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityManager;
-import ecs.framework.systems.SystemManager;
+import ecs.framework.entity.EntityCollection;
+import ecs.framework.systems.SystemCollection;
 
 use namespace ecs_core;
 
@@ -19,12 +19,12 @@ public class ESEngine {
 	protected var _onUpdate:ISignal = new SignalPro( Number );
 	protected var _onPostUpdate:ISignal = new SignalPro( Number );
 
-	protected var _entities:EntityManager;
-	protected var _systems:SystemManager;
+	protected var _entities:EntityCollection;
+	protected var _systems:SystemCollection;
 
 	public function ESEngine() {
-		_entities = new EntityManager();
-		_systems = new SystemManager();
+		_entities = new EntityCollection();
+		_systems = new SystemCollection();
 	}
 
 	/* Entities */
@@ -45,7 +45,7 @@ public class ESEngine {
 		_entities.removeAll();
 	}
 
-	ecs_core function get entities():EntityManager {
+	public function get entities():EntityCollection {
 		return _entities;
 	}
 
@@ -63,9 +63,13 @@ public class ESEngine {
 		_systems.remove( system );
 	}
 
+	public function get systems():SystemCollection {
+		return _systems;
+	}
+
 	/* Processing */
 	public function update( deltaTime:Number ):void {
-
+		
 	}
 }
 }

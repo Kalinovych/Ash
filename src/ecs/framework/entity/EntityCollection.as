@@ -13,15 +13,15 @@ import flash.utils.Dictionary;
 
 use namespace ecs_core;
 
-public class EntityManager extends ListBase /*implements IEntityManager*/ {
+public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 	protected var _registry:Dictionary = new Dictionary();
 	protected var _handlers:LinkedSet = new LinkedSet();
 
-	public function EntityManager() {
+	public function EntityCollection() {
 		super();
 	}
 
-	public function get entityCount():uint {
+	public function get length():uint {
 		return _length;
 	}
 
@@ -76,7 +76,7 @@ public class EntityManager extends ListBase /*implements IEntityManager*/ {
 		return _handlers.add( handler );
 	}
 
-	public function unregisterHandler( handler:IEntityHandler ):Boolean {
+	public function unRegisterHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.remove( handler );
 	}
 	

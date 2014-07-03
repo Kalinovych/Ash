@@ -7,7 +7,7 @@ import ecs.engine.components.IComponentObserver;
 import ecs.extensions.ECSigner;
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityManager;
+import ecs.framework.entity.EntityCollection;
 import ecs.framework.entity.api.IEntityHandler;
 import ecs.lists.LinkedMap;
 import ecs.lists.Node;
@@ -20,13 +20,13 @@ import flashrush.signatures.utils.SignerFactory;
 use namespace ecs_core;
 
 public class AspectManager implements IAspectManager, IEntityHandler {
-	private var entities:EntityManager;
+	private var entities:EntityCollection;
 	private var componentManager:IComponentObserver;
 	private var aspectObservers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
 	private var _signer:ECSigner;
 	//private var signTable:Vector.<ISignature>;
 
-	public function AspectManager( entities:EntityManager, componentManager:IComponentObserver ) {
+	public function AspectManager( entities:EntityCollection, componentManager:IComponentObserver ) {
 		this.entities = entities;
 		this.componentManager = componentManager;
 

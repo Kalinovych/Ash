@@ -18,6 +18,6 @@ public interface ISystemManager {
 
 	function registerHandler( handler:ISystemHandler ):void;
 
-	function unregisterHandler( handler:ISystemHandler ):void;
+	function unRegisterHandler( handler:ISystemHandler ):void;
 }
 }

@@ -4,7 +4,6 @@
  */
 package ecs.extensions.aspects {
 import avmplus.HIDE_OBJECT;
-import avmplus.INCLUDE_ACCESSORS;
 import avmplus.INCLUDE_METADATA;
 import avmplus.INCLUDE_TRAITS;
 import avmplus.INCLUDE_VARIABLES;
@@ -14,18 +13,6 @@ import com.flashrush.utils.DescribeTypeJSONCached;
 
 import flash.utils.Dictionary;
 import flash.utils.getDefinitionByName;
-
-use namespace HIDE_OBJECT;
-
-use namespace USE_ITRAITS;
-
-use namespace INCLUDE_TRAITS;
-
-use namespace INCLUDE_METADATA;
-
-use namespace INCLUDE_VARIABLES;
-
-use namespace INCLUDE_ACCESSORS;
 
 public class AspectUtil {
 	// cached data, shared between aspect observers

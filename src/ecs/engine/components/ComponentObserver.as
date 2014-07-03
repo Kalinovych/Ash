@@ -6,7 +6,7 @@ package ecs.engine.components {
 import ecs.framework.api.ecs_core;
 import ecs.framework.components.api.IComponentHandler;
 import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityManager;
+import ecs.framework.entity.EntityCollection;
 import ecs.framework.entity.api.IEntityHandler;
 import ecs.lists.LinkedSet;
 import ecs.lists.Node;
@@ -19,10 +19,10 @@ use namespace ecs_core;
  * Global observer of components
  */
 public class ComponentObserver implements IComponentObserver, IEntityHandler, IComponentHandler {
-	private var entities:EntityManager;
+	private var entities:EntityCollection;
 	private var handlersByComponent:Dictionary/*<LinkedSet>*/ = new Dictionary();
 
-	public function ComponentObserver( entities:EntityManager ) {
+	public function ComponentObserver( entities:EntityCollection ) {
 		this.entities = entities;
 		entities.registerHandler( this );
 	}

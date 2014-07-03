@@ -13,8 +13,8 @@ import ecs.extensions.aspects.AspectManager;
 import ecs.extensions.entityNames.EntityMap;
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityManager;
-import ecs.framework.systems.SystemManager;
+import ecs.framework.entity.EntityCollection;
+import ecs.framework.systems.SystemCollection;
 
 use namespace ecs_core;
 
@@ -27,8 +27,8 @@ public class GameEngine {
 	public static const RENDERING:int = sStateEnum++;
 	public static const DISPOSED:int = sStateEnum++;
 
-	protected var _entityManager:EntityManager;
-	protected var _systemManager:SystemManager;
+	protected var _entityManager:EntityCollection;
+	protected var _systemManager:SystemCollection;
 
 	protected var _componentManager:ComponentObserver;
 	protected var _aspectManager:AspectManager;
@@ -101,8 +101,8 @@ public class GameEngine {
 
 
 	protected function initCore():void {
-		_entityManager = new EntityManager();
-		_systemManager = new SystemManager();
+		_entityManager = new EntityCollection();
+		_systemManager = new SystemCollection();
 	}
 
 	protected function initManagers():void {

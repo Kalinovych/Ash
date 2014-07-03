@@ -5,9 +5,9 @@
 package ecs.engine {
 import ecs.framework.api.ecs_core;
 import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityManager;
+import ecs.framework.entity.EntityCollection;
 import ecs.framework.entity.api.IEntityManager;
-import ecs.framework.systems.SystemManager;
+import ecs.framework.systems.SystemCollection;
 import ecs.framework.systems.api.ISystem;
 import ecs.framework.systems.api.ISystemManager;
 
@@ -76,8 +76,8 @@ public class ESContext extends ContextBase {
 	/* Internal */
 
 	protected function initES():void {
-		entities = new EntityManager();
-		systems = new SystemManager();
+		entities = new EntityCollection();
+		systems = new SystemCollection();
 	}
 	
 	// Pure handlers version //
