@@ -1,8 +1,8 @@
 package ash.io.objectcodecs
 {
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-	internal class ObjectReflectionFactory
+internal class ObjectReflectionFactory
 	{
 		private static var reflections : Dictionary = new Dictionary();
 

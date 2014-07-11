@@ -3,17 +3,19 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.components {
-import ecs.framework.api.ecs_core;
-import ecs.framework.components.api.IComponentHandler;
-import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityCollection;
-import ecs.framework.entity.api.IEntityHandler;
-import ecs.lists.LinkedSet;
-import ecs.lists.Node;
-
 import flash.utils.Dictionary;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.components.api.IComponentHandler;
+import flashrush.asentity.framework.entity.Entity;
+import flashrush.asentity.framework.entity.EntityCollection;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.gdf.api.gdf_core;
+import flashrush.gdf.ds.LinkedSet;
+import flashrush.gdf.ds.Node;
+
+use namespace asentity;
+use namespace gdf_core;
 
 /**
  * Global observer of components
@@ -36,7 +38,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		handlerList.add( handler );
 	}
 
-	public function unregisterHandler( componentType:Class, handler:IComponentHandler ):void {
+	public function unRegisterHandler( componentType:Class, handler:IComponentHandler ):void {
 		var handlerList:LinkedSet = handlersByComponent[componentType];
 		if ( handlerList ) {
 			handlerList.remove( handler );
@@ -70,7 +72,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
 			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
-				var handler:IComponentHandler = node.content;
+				var handler:IComponentHandler = node.item;
 				handler.onComponentAdded( entity, componentType, component );
 			}
 		}
@@ -81,7 +83,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
 			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
-				var handler:IComponentHandler = node.content;
+				var handler:IComponentHandler = node.item;
 				handler.onComponentRemoved( entity, componentType, component );
 			}
 		}

@@ -1,8 +1,8 @@
 package ash.io.enginecodecs
 {
-	import ash.core.Engine;
+import ash.core.Engine;
 
-	public class JsonEngineCodec extends ObjectEngineCodec implements IEngineCodec
+public class JsonEngineCodec extends ObjectEngineCodec implements IEngineCodec
 	{
 		override public function encodeEngine( engine : Engine ) : Object
 		{

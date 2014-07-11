@@ -1,9 +1,9 @@
 package ash.io.objectcodecs
 {
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
+import flash.utils.getDefinitionByName;
+import flash.utils.getQualifiedClassName;
 
-	public class ArrayObjectCodec implements IObjectCodec
+public class ArrayObjectCodec implements IObjectCodec
 	{
 		public function encode( object : Object, codecManager : CodecManager ) : Object
 		{

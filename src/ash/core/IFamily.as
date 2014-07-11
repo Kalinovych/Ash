@@ -1,6 +1,6 @@
 package ash.core
 {
-import ecs.framework.entity.Entity;
+import flashrush.asentity.framework.entity.Entity;
 
 /**
 	 * The interface for classes that are used to manage NodeLists (set as the familyClass property 

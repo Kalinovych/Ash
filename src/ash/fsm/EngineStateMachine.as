@@ -1,10 +1,10 @@
 package ash.fsm
 {
-	import ash.core.Engine;
+import ash.core.Engine;
 
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-	/**
+/**
 	 * This is a state machine for the Engine. The state machine manages a set of states,
 	 * each of which has a set of System providers. When the state machine changes the state, it removes
 	 * Systems associated with the previous state and adds Systems associated with the new state.

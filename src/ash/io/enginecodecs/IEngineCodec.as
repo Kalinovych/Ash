@@ -1,10 +1,10 @@
 package ash.io.enginecodecs
 {
-	import ash.core.Engine;
-	import ash.io.objectcodecs.IObjectCodec;
-	import ash.signals.Signal1;
+import ash.core.Engine;
+import ash.io.objectcodecs.IObjectCodec;
+import ash.signals.Signal1;
 
-	public interface IEngineCodec
+public interface IEngineCodec
 	{
 		function addCustomCodec( codec : IObjectCodec, ...types ) : void;
 

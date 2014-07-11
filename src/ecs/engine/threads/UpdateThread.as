@@ -3,17 +3,18 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
-import ecs.framework.api.ecs_core;
-import ecs.engine.processes.api.IUpdateProcess;
-import ecs.lists.Node;
+import ecs.engine.processes.api.IUpdateable;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.gdf.ds.Node;
+
+use namespace asentity;
 
 public class UpdateThread extends AbstractThread {
 	
 	public function process( deltaTime:Number ):void {
 		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
-			var process:IUpdateProcess = node.content;
+			var process:IUpdateable = node.item;
 			process.update( deltaTime );
 		}
 	}

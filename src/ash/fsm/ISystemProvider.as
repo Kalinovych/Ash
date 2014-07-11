@@ -1,8 +1,8 @@
 package ash.fsm
 {
-	import ash.core.System;
+import ash.core.System;
 
-	public interface ISystemProvider
+public interface ISystemProvider
 	{
 		function getSystem() : System;
 

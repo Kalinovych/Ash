@@ -1,10 +1,11 @@
 package ash.tick
 {
-	import ash.signals.Signal1;
-	import flash.display.DisplayObject;
-	import flash.events.Event;
+import ash.signals.Signal1;
 
-	/**
+import flash.display.DisplayObject;
+import flash.events.Event;
+
+/**
 	 * Uses the enter frame event to provide a frame tick with a fixed frame duration. This tick ignores the length of
 	 * the frame and dispatches the same time period for each tick.
 	 */

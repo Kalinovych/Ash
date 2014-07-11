@@ -1,6 +1,6 @@
 package ash.core
 {
-import ecs.framework.entity.Entity;
+import flashrush.asentity.framework.entity.Entity;
 
 /**
 	 * The base class for a node.

@@ -3,6 +3,10 @@
  * @author Alexander Kalinovych
  */
 package ecs.lists.api {
+
+/**
+ * A node properties template
+ */
 public interface INode {
 	/**  property prev:INode; **/
 

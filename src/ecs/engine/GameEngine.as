@@ -9,14 +9,15 @@ import com.flashrush.signals.v2.SignalPro;
 import ecs.engine.components.ComponentObserver;
 import ecs.engine.threads.RenderThread;
 import ecs.engine.threads.UpdateThread;
-import ecs.extensions.aspects.AspectManager;
-import ecs.extensions.entityNames.EntityMap;
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityCollection;
-import ecs.framework.systems.SystemCollection;
+import flashrush.asentity.extensions.aspects.AspectManager;
+import flashrush.asentity.extensions.entityMapExtension.EntityMap;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
+import flashrush.asentity.framework.entity.EntityCollection;
+import flashrush.asentity.framework.systems.SystemCollection;
+
+use namespace asentity;
 
 public class GameEngine {
 	private static var sStateEnum:int = 0;
@@ -67,12 +68,8 @@ public class GameEngine {
 		return _entityManager.add( entity );
 	}
 
-	public function hasEntity( id:uint ):Boolean {
-		return _entityManager.has( id );
-	}
-
-	public function getEntity( id:uint ):Entity {
-		return _entityManager.get( id );
+	public function hasEntity( entity:Entity ):Boolean {
+		return _entityManager.has( entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {

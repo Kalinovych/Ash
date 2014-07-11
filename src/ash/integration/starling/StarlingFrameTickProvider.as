@@ -1,11 +1,12 @@
 package ash.integration.starling
 {
-	import ash.signals.Signal1;
-	import ash.tick.ITickProvider;
-	import starling.animation.IAnimatable;
-	import starling.animation.Juggler;
+import ash.signals.Signal1;
+import ash.tick.ITickProvider;
 
-	/**
+import starling.animation.IAnimatable;
+import starling.animation.Juggler;
+
+/**
 	 * Uses a Starling juggler to provide a frame tick where the frame duration is the time since the previous frame.
 	 * There is a maximum frame time parameter in the constructor that can be used to limit
 	 * the longest period a frame can be.

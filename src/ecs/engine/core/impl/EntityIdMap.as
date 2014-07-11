@@ -3,20 +3,21 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.core.impl {
-import ecs.engine.core.ESCtx;
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
-import ecs.framework.entity.api.IEntityHandler;
+import ecs.engine.core.ESContext;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
+
+use namespace asentity;
 
 public class EntityIdMap implements IEntityHandler {
-	private var _context:ESCtx;
+	private var _context:ESContext;
 	private var _map:Vector.<Entity> = new <Entity>[];
 
-	public function EntityIdMap( context:ESCtx ) {
+	public function EntityIdMap( context:ESContext ) {
 		this._context = context;
-		context.ecs_core::registerHandler( this );
+		context.asentity::registerHandler( this );
 	}
 
 	[Inline]

@@ -1,13 +1,13 @@
 package ash.core {
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
 
 /**
  * An internal class for a linked list of entities. Used inside the framework for
  * managing the entities.
  */
 	
-use namespace ecs_core;
+use namespace asentity;
 
 internal class EntityList {
 	internal var head:Entity;

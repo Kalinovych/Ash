@@ -1,8 +1,8 @@
 package ash.tools
 {
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-	/**
+/**
 	 * An object pool for re-using components. This is not integrated in to Ash but is used dierectly by 
 	 * the developer. It expects components to not require any parameters in their constructor.
 	 * 

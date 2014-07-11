@@ -1,12 +1,14 @@
 package ash.io.enginecodecs
 {
-	import ash.core.Engine;
-	import ecs.framework.entity.Entity;
-	import ash.io.objectcodecs.CodecManager;
-	import ash.io.objectcodecs.IObjectCodec;
-	import flash.utils.getDefinitionByName;
+import ash.core.Engine;
+import ash.io.objectcodecs.CodecManager;
+import ash.io.objectcodecs.IObjectCodec;
 
-	internal class EngineDecoder
+import flash.utils.getDefinitionByName;
+
+import flashrush.asentity.framework.entity.Entity;
+
+internal class EngineDecoder
 	{
 		private var codecManager : CodecManager;
 		private var componentMap : Array;

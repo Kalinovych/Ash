@@ -2,17 +2,15 @@
  * @author Alexander Kalinovych @ 2013
  */
 package ash.core {
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
-
-import flashrush.signatures.BitSign;
-
 import flash.system.System;
 import flash.utils.Dictionary;
 import flash.utils.describeType;
 import flash.utils.getDefinitionByName;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
+
+use namespace asentity;
 
 /**
  * Family designed to identify entities as defined node and add or remove that node to the NodeList.

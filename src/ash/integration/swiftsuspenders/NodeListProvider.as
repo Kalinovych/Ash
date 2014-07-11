@@ -1,12 +1,11 @@
 package ash.integration.swiftsuspenders
 {
-	import ash.core.Engine;
-	import flash.utils.Dictionary;
-	import flash.utils.getDefinitionByName;
-	import org.swiftsuspenders.Injector;
-	import org.swiftsuspenders.dependencyproviders.DependencyProvider;
+import ash.core.Engine;
 
-	/**
+import flash.utils.Dictionary;
+import flash.utils.getDefinitionByName;
+
+/**
 	 * A custom dependency provider for SwiftSuspenders to allow injection
 	 * of NodeList objects based on the node class they contain.
 	 * 

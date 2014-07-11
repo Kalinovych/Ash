@@ -4,9 +4,9 @@
 
 package ash.signals
 {
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-	/**
+/**
 	 * The base class for all the signal classes.
 	 */
 	public class SignalBase

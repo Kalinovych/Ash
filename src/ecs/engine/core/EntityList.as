@@ -3,17 +3,17 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.core {
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
 
-use namespace ecs_core;
+use namespace asentity;
 
 public class EntityList {
-	ecs_core var first:Entity;
-	ecs_core var last:Entity;
-	ecs_core var length:uint = 0;
+	asentity var first:Entity;
+	asentity var last:Entity;
+	asentity var length:uint = 0;
 
-	ecs_core function attach( node:Entity ):void {
+	asentity function attach( node:Entity ):void {
 		if ( !first ) {
 			first = node;
 			last = node;
@@ -28,7 +28,7 @@ public class EntityList {
 		length++;
 	}
 
-	ecs_core function detach( node:Entity ):void {
+	asentity function detach( node:Entity ):void {
 		if ( first == node ) {
 			first = first.next as Entity;
 		}
@@ -48,7 +48,7 @@ public class EntityList {
 		length--;
 	}
 
-	ecs_core function detachAll():void {
+	asentity function detachAll():void {
 		while ( first ) {
 			var node:Entity = first;
 			first = first.next as Entity;

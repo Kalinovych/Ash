@@ -3,12 +3,13 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
-import ecs.framework.api.ecs_core;
 import ecs.engine.processes.api.IProcess;
-import ecs.lists.LinkedSet;
-import ecs.lists.Node;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.gdf.ds.LinkedSet;
+import flashrush.gdf.ds.Node;
+
+use namespace asentity;
 
 public class AbstractThread implements IProcessThread {
 	protected var processList:LinkedSet = new LinkedSet();
@@ -16,7 +17,7 @@ public class AbstractThread implements IProcessThread {
 	[Inline]
 	protected final function $forEach( callback:Function ):void {
 		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
-			callback( node.content );
+			callback( node.item );
 		}
 	}
 

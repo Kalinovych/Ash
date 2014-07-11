@@ -1,8 +1,8 @@
 package ash.fsm
 {
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
-	/**
+/**
 	 * Represents a state for an EntityStateMachine. The state contains any number of ComponentProviders which
 	 * are used to add components to the entity when this state is entered.
 	 */

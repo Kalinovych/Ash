@@ -1,8 +1,8 @@
 package ash.core
 {
-	import ash.signals.Signal1;
-	
-	/**
+import ash.signals.Signal1;
+
+/**
 	 * A collection of nodes.
 	 * 
 	 * <p>Systems within the engine access the components of entities via NodeLists. A NodeList contains

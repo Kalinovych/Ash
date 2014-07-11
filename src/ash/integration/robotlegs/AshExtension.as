@@ -1,16 +1,11 @@
 package ash.integration.robotlegs
 {
-	import ash.core.Engine;
-	import ash.integration.swiftsuspenders.SwiftSuspendersEngine;
+import ash.core.Engine;
+import ash.integration.swiftsuspenders.SwiftSuspendersEngine;
 
 import com.genome2d.context.IContext;
 
-import robotlegs.bender.framework.api.IContext;
-	import robotlegs.bender.framework.api.IExtension;
-	import robotlegs.bender.framework.impl.UID;
-
-
-	/**
+/**
 	 * A Robotlegs extension to enable the use of Ash inside a Robotlegs project. This
 	 * wraps the SwiftSuspenders integration, passing the Robotlegs context's injector to
 	 * the engine for injecting into systems.

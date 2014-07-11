@@ -3,15 +3,15 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
-import ecs.framework.api.ecs_core;
-
 import flash.utils.Dictionary;
 
-use namespace ecs_core;
+import flashrush.asentity.framework.api.asentity;
+
+use namespace asentity;
 
 public class ContextBase {
-	ecs_core var extensions:Dictionary = new Dictionary();
-	ecs_core var sharedInstances:Dictionary = new Dictionary();
+	asentity var extensions:Dictionary = new Dictionary();
+	asentity var sharedInstances:Dictionary = new Dictionary();
 
 	public function install( ...extensions ):void {
 		for each( var ext:* in extensions ) {

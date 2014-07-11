@@ -1,10 +1,10 @@
 package ash.fsm
 {
-	import ecs.framework.entity.Entity;
-	import flash.utils.Dictionary;
+import flash.utils.Dictionary;
 
+import flashrush.asentity.framework.entity.Entity;
 
-	/**
+/**
 	 * This is a state machine for an entity. The state machine manages a set of states,
 	 * each of which has a set of component providers. When the state machine changes the state, it removes
 	 * components associated with the previous state and adds components associated with the new state.

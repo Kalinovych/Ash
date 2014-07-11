@@ -1,11 +1,11 @@
 package ash.tools
 {
-	import ash.core.Engine;
-	import ash.core.Node;
-	import ash.core.NodeList;
-	import ash.core.System;
+import ash.core.Engine;
+import ash.core.Node;
+import ash.core.NodeList;
+import ash.core.System;
 
-	/**
+/**
 	 * A useful class for systems which simply iterate over a set of nodes, performing the same action on each node. This
 	 * class removes the need for a lot of boilerplate code in such systems. Extend this class and pass the node type and
 	 * a node update method into the constructor. The node update method will be called once per node on the update cycle

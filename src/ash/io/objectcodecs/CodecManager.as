@@ -1,10 +1,10 @@
 package ash.io.objectcodecs
 {
-	import flash.utils.Dictionary;
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
+import flash.utils.Dictionary;
+import flash.utils.getDefinitionByName;
+import flash.utils.getQualifiedClassName;
 
-	public class CodecManager
+public class CodecManager
 	{
 		private var codecs : Dictionary;
 		private var reflectionCodec : ReflectionObjectCodec;

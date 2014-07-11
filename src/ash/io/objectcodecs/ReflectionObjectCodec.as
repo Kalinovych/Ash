@@ -1,8 +1,8 @@
 package ash.io.objectcodecs
 {
-	import flash.utils.getDefinitionByName;
+import flash.utils.getDefinitionByName;
 
-	public class ReflectionObjectCodec implements IObjectCodec
+public class ReflectionObjectCodec implements IObjectCodec
 	{
 		public function encode( object : Object, codecManager : CodecManager ) : Object
 		{

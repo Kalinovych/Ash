@@ -1,11 +1,12 @@
 package ash.tick
 {
-	import ash.signals.Signal1;
-	import flash.display.DisplayObject;
-	import flash.events.Event;
-	import flash.utils.getTimer;
+import ash.signals.Signal1;
 
-	/**
+import flash.display.DisplayObject;
+import flash.events.Event;
+import flash.utils.getTimer;
+
+/**
 	 * Uses the enter frame event to provide a frame tick where the frame duration is the time since the previous frame.
 	 * There is a maximum frame time parameter in the constructor that can be used to limit
 	 * the longest period a frame can be.

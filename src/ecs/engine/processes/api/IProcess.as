@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.processes.api {
-public interface IProcess {
+public interface IProcess extends IUpdateable {
 	function onAdded():void;
 
 	function onRemoved():void;

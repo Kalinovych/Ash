@@ -1,11 +1,10 @@
 package ash.integration.swiftsuspenders
 {
-	import ash.core.Engine;
-	import ash.core.NodeList;
-	import ash.core.System;
-	import org.swiftsuspenders.Injector;
+import ash.core.Engine;
+import ash.core.NodeList;
+import ash.core.System;
 
-	/**
+/**
 	 * A custom engine class for games that use SwiftSuspenders for dependency injection.
 	 * Pass a SwiftSuspenders injector to the constructor, and the engine will automatically
 	 * apply injection rules to the systems when they are added to the engine.

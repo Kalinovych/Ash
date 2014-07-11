@@ -1,11 +1,11 @@
 package ash.io.enginecodecs
 {
-	import ash.core.Engine;
-	import ash.io.objectcodecs.CodecManager;
-	import ash.io.objectcodecs.IObjectCodec;
-	import ash.signals.Signal1;
+import ash.core.Engine;
+import ash.io.objectcodecs.CodecManager;
+import ash.io.objectcodecs.IObjectCodec;
+import ash.signals.Signal1;
 
-	public class ObjectEngineCodec implements IEngineCodec
+public class ObjectEngineCodec implements IEngineCodec
 	{
 		private var encoder : EngineEncoder;
 		private var decoder : EngineDecoder;

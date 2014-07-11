@@ -1,10 +1,8 @@
 package ash.io.objectcodecs
 {
-	import flash.utils.getQualifiedClassName;
-	import ash.io.objectcodecs.IObjectCodec;
-	import ash.io.objectcodecs.CodecManager;
+import flash.utils.getQualifiedClassName;
 
-	public class NativeObjectCodec implements IObjectCodec
+public class NativeObjectCodec implements IObjectCodec
 	{
 		public function encode( object : Object, codecManager : CodecManager ) : Object
 		{

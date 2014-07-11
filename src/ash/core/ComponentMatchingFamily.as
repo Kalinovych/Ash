@@ -1,12 +1,12 @@
 package ash.core
 {
-import ecs.framework.entity.Entity;
-
 import flash.utils.Dictionary;
-	import flash.utils.describeType;
-	import flash.utils.getDefinitionByName;
+import flash.utils.describeType;
+import flash.utils.getDefinitionByName;
 
-	/**
+import flashrush.asentity.framework.entity.Entity;
+
+/**
 	 * The default class for managing a NodeList. This class creates the NodeList and adds and removes
 	 * nodes to/from the list as the entities and the components in the engine change.
 	 * 

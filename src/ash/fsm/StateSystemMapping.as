@@ -1,8 +1,8 @@
 package ash.fsm
 {
-	import ash.core.System;
+import ash.core.System;
 
-	/**
+/**
 	 * Used by the SystemState class to create the mappings of Systems to providers via a fluent interface.
 	 */
 	internal class StateSystemMapping

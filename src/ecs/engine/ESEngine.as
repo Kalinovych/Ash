@@ -7,12 +7,12 @@ package ecs.engine {
 import com.flashrush.signals.ISignal;
 import com.flashrush.signals.v2.SignalPro;
 
-import ecs.framework.api.ecs_core;
-import ecs.framework.entity.Entity;
-import ecs.framework.entity.EntityCollection;
-import ecs.framework.systems.SystemCollection;
+import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.entity.Entity;
+import flashrush.asentity.framework.entity.EntityCollection;
+import flashrush.asentity.framework.systems.SystemCollection;
 
-use namespace ecs_core;
+use namespace asentity;
 
 public class ESEngine {
 	protected var _onPreUpdate:ISignal = new SignalPro( Number );
@@ -33,7 +33,7 @@ public class ESEngine {
 		return _entities.add( entity );
 	}
 
-	public function containsEntity( entity:Entity ):Boolean {
+	public function hasEntity( entity:Entity ):Boolean {
 		return _entities.has( entity );
 	}
 
