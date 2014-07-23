@@ -6,7 +6,7 @@ package ecs.engine.threads {
 import ecs.engine.processes.api.IUpdateable;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.Node;
 
 use namespace asentity;
 

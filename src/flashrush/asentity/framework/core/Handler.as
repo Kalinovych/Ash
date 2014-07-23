@@ -2,7 +2,7 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ecs.utils {
+package flashrush.asentity.framework.core {
 public class Handler {
 	public var target:*;
 	public var prev:Handler;
@@ -43,16 +43,10 @@ public class Handler {
 	}
 
 	public function detach():void {
-		if ( prev ) {
-			prev.next = next;
-		}
-
-		if ( next ) {
-			next.prev = prev;
-		}
-
-		this.prev = null;
-		this.next = null;
+		prev && ( prev.next = next );
+		next && ( next.prev = prev );
+		prev = null;
+		next = null;
 	}
 
 	public function dispose():void {

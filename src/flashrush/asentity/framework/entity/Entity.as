@@ -6,8 +6,8 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.api.IComponentHandler;
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.Node;
 import flashrush.signatures.api.ISignature;
 
 use namespace asentity;
@@ -111,7 +111,7 @@ public class Entity {
 		_componentCount++;
 
 		// notify handlers
-		var node:Node = _componentHandlers.$firstNode;
+		var node:Node = _componentHandlers.firstNode;
 		while ( node ) {
 			var handler:IComponentHandler = node.item;
 			handler.onComponentAdded( this, type, component );
@@ -134,7 +134,7 @@ public class Entity {
 			_componentCount--;
 
 			// notify handlers
-			var node:Node = _componentHandlers.$firstNode;
+			var node:Node = _componentHandlers.firstNode;
 			while ( node ) {
 				var handler:IComponentHandler = node.item;
 				handler.onComponentRemoved( this, type, component );

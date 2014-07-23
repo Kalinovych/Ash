@@ -6,8 +6,9 @@ package ecs.engine.threads {
 import ecs.engine.processes.api.IProcess;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.Node;
+import flashrush.ds.ds_internal;
 
 use namespace asentity;
 
@@ -16,8 +17,8 @@ public class AbstractThread implements IProcessThread {
 
 	[Inline]
 	protected final function $forEach( callback:Function ):void {
-		for ( var node:Node = processList.$firstNode; node; node = node.next ) {
-			callback( node.item );
+		for ( var node:Node = processList.firstNode; node; node = node.ds_internal::_next ) {
+			callback( node.ds_internal::_item );
 		}
 	}
 

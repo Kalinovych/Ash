@@ -8,9 +8,9 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.ListBase;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.ListBase;
+import flashrush.ds.Node;
 
 use namespace asentity;
 use namespace gdf_core;
@@ -35,7 +35,7 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		entity._alive = true;
 
 		// notify handlers
-		for ( var node:Node = _handlers.$firstNode; node; node = node.next ) {
+		for ( var node:Node = _handlers.firstNode; node; node = node.next ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityAdded( entity );
 		}
@@ -57,7 +57,7 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		entity._alive = false;
 
 		// notify handlers in backward order
-		for ( var node:Node = _handlers.$lastNode; node; node = node.prev ) {
+		for ( var node:Node = _handlers.firstNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityRemoved( entity );
 		}

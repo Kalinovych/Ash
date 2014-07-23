@@ -11,8 +11,8 @@ public class RenderThread extends AbstractThread {
 		$forEach( $callRender );
 	}
 
-	protected final function $callRender( process:IRenderProcess ):void {
-		process.render();
+	protected final function $callRender( renderProcess:IRenderProcess ):void {
+		renderProcess.render();
 	}
 
 }

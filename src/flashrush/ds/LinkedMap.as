@@ -2,10 +2,12 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.gdf.ds {
+package flashrush.ds {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
+
+use namespace ds_internal;
 
 use namespace asentity;
 
@@ -24,7 +26,7 @@ public class LinkedMap extends InternalList {
 			nodeByKey[key] = node;
 			$attach( node );
 		}
-		node.item = item;
+		node._item = item;
 		return node;
 	}
 
@@ -41,7 +43,7 @@ public class LinkedMap extends InternalList {
 		if ( node ) {
 			delete nodeByKey[key];
 			$detach( node );
-			return node.item;
+			return node._item;
 		}
 		return null;
 	}
@@ -68,7 +70,7 @@ public class LinkedMap extends InternalList {
 	[Inline]
 	protected final function $valueOf( key:* ):* {
 		var node:Node = nodeByKey[key];
-		return (node ? node.item : undefined );
+		return (node ? node._item : undefined );
 	}
 }
 }

@@ -5,8 +5,8 @@
 package flashrush.asentity.extensions.instanceRegistry {
 
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.Node;
 
 use namespace gdf_core;
 

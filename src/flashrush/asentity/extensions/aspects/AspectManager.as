@@ -11,8 +11,8 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedMap;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedMap;
+import flashrush.ds.Node;
 import flashrush.signatures.api.ISignature;
 
 use namespace asentity;

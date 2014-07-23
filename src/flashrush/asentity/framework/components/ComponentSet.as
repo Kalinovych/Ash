@@ -8,8 +8,8 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.api.IComponentHandler;
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.Node;
 import flashrush.signatures.api.ISignature;
 
 use namespace asentity;

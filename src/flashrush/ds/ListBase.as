@@ -2,7 +2,15 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.gdf.ds {
+package flashrush.ds {
+
+use namespace ds_internal;
+
+/**
+ * Provides inline-able protected methods for a linked list
+ * 
+ * A node should have properties "prev" and "next" for linking to the list
+ */
 public class ListBase {
 	protected var _firstNode:* = null;
 	protected var _lastNode:* = null;
@@ -10,7 +18,7 @@ public class ListBase {
 
 	public function ListBase() {
 	}
-	
+
 	/**
 	 * Adds a node to the end of the list.
 	 * @param node The node to add to this list.
@@ -66,17 +74,17 @@ public class ListBase {
 	 */
 	[Inline]
 	protected final function $attachBefore( nodeToAdd:*, nodeInList:* = null ):* {
-		// if list is empty or the node need to add before head or nodeInList is not set, add node as first
+		// if the list is empty or the node need to add before the head or nodeInList is not set, add node as first
 		if ( _firstNode == null || nodeInList == null/* || nodeInList == _firstNode*/ ) {
 			return $attachFirst( nodeToAdd );
 		}
 
-		/* Here this list contains at least two nodes */
+		/* Here the list contains at least two nodes */
 
-		nodeToAdd.prev = nodeInList.prev;
 		nodeToAdd.next = nodeInList;
+		nodeToAdd.prev = nodeInList.prev;
 		nodeInList.prev = nodeToAdd;
-		(nodeToAdd.prev) && (nodeToAdd.prev.next = nodeToAdd);
+		nodeToAdd.prev && (nodeToAdd.prev.next = nodeToAdd);
 		++_length;
 
 		return nodeToAdd;
@@ -101,17 +109,16 @@ public class ListBase {
 		nodeToAdd.prev = nodeInList;
 		nodeToAdd.next = nodeInList.next;
 		nodeInList.next = nodeToAdd;
-		(nodeToAdd.next) && (nodeToAdd.next.prev = nodeToAdd);
-		//nodeToAdd.prev.next = nodeToAdd;
-		//nodeToAdd.next.prev = nodeToAdd;
+		nodeToAdd.next && (nodeToAdd.next.prev = nodeToAdd);
 		++_length;
 
 		return nodeToAdd;
 	}
 
 	/**
-	 * Loop thought this list to find a node with specified index and than to add new node before
-	 * Adds a node at the index position specified.
+	 * Loop thought the list to find a node with specified index and adds new node before it.
+	 * If index under 0 or greater then last node index, a node will be added as first or as last.
+	 * 
 	 * @param node New node to add to this list.
 	 * @param index The index position to which the node is added.
 	 * If index <= 0 a node added as first node. If index >= list length, a node added to the end.
@@ -146,21 +153,12 @@ public class ListBase {
 	 */
 	[Inline]
 	protected final function $detach( node:* ):* {
-		if ( node == _firstNode ) {
-			_firstNode = _firstNode.next;
-		}
+		( node == _firstNode ) && ( _firstNode = _firstNode.next );
+		( node == _lastNode ) && ( _lastNode = _lastNode.prev );
 
-		if ( node == _lastNode ) {
-			_lastNode = _lastNode.prev;
-		}
-
-		if ( node.next ) {
-			node.next.prev = node.prev;
-		}
-
-		if ( node.prev ) {
-			node.prev.next = node.next;
-		}
+		node.next && ( node.next.prev = node.prev );
+		node.prev && ( node.prev.next = node.next );
+		
 		--_length;
 		return node;
 	}

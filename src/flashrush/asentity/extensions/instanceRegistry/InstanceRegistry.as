@@ -89,8 +89,8 @@ public class InstanceRegistry implements IInstanceRegistry {
 }
 
 import flashrush.asentity.extensions.instanceRegistry.InstanceList;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.ListBase;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.ListBase;
 
 class BindingNode {
 	public var type:Class;

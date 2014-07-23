@@ -3,9 +3,10 @@
  * @author Alexander Kalinovych
  */
 
-package flashrush.gdf.ds {
+package flashrush.ds {
 import flashrush.gdf.api.gdf_core;
 
+use namespace ds_internal;
 use namespace gdf_core;
 
 public class Iterator {

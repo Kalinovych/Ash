@@ -11,8 +11,8 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.LinkedSet;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.LinkedSet;
+import flashrush.ds.Node;
 
 use namespace asentity;
 use namespace gdf_core;

@@ -2,10 +2,10 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.gdf.ds {
+package flashrush.ds {
 import flashrush.gdf.api.gdf_core;
-import flashrush.gdf.ds.InternalList;
-import flashrush.gdf.ds.Node;
+import flashrush.ds.InternalList;
+import flashrush.ds.Node;
 
 use namespace gdf_core;
 
