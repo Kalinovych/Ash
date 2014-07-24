@@ -32,12 +32,6 @@ public class InternalList extends ListBase {
 	}
 
 	[Inline]
-	ds_internal final function iterator():Iterator {
-		//TODO: return _iteratorFactory.get( this );
-		return new Iterator( this );
-	}
-
-	[Inline]
 	protected final function $attachOrdered( node:Node, order:int ):Node {
 		node._order = order;
 
