@@ -23,18 +23,14 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		super();
 	}
 
-	public function get length():uint {
-		return _length;
-	}
-
 	public function add( entity:Entity ):Entity {
 		if ( _registry[entity] ) return entity;
 
+		entity._alive = true;
 		_registry[entity] = true;
 		$attach( entity );
-		entity._alive = true;
 
-		// notify handlers
+		// (inline) notify handlers
 		for ( var node:Node = _handlers.firstNode; node; node = node.next ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityAdded( entity );
@@ -43,7 +39,7 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		return entity;
 	}
 
-	public function has( entity:Entity ):Boolean {
+	public function contains( entity:Entity ):Boolean {
 		return _registry[entity];
 	}
 
@@ -52,11 +48,11 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 			return null;
 		}
 
+		entity._alive = false;
 		delete _registry[entity];
 		$detach( entity );
-		entity._alive = false;
 
-		// notify handlers in backward order
+		// (inline) notify handlers in backward order
 		for ( var node:Node = _handlers.firstNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityRemoved( entity );
@@ -83,13 +79,19 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 	}
 
 	[Inline]
-	asentity final function get first():Entity {
+	public final function get first():Entity {
 		return _firstNode;
 	}
 
 	[Inline]
-	asentity final function get last():Entity {
+	public final function get last():Entity {
 		return _lastNode;
 	}
+
+	[Inline]
+	public final function get length():uint {
+		return _length;
+	}
+
 }
 }

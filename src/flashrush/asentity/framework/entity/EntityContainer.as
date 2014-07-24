@@ -23,7 +23,7 @@ public class EntityContainer extends Entity {
 	}
 
 	public function contains( entity:Entity ):Boolean {
-		return _children.has( entity );
+		return _children.contains( entity );
 	}
 
 }

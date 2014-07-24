@@ -34,7 +34,7 @@ public class ESEngine {
 	}
 
 	public function hasEntity( entity:Entity ):Boolean {
-		return _entities.has( entity );
+		return _entities.contains( entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {

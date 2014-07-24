@@ -12,6 +12,7 @@ public class Node {
 	ds_internal var _next:Node;
 	ds_internal var _order:int;
 
+	/** For a pool and other transitional queues */
 	internal var anchor:Node;
 
 	public function Node( item:* = null ) {

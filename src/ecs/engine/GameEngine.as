@@ -69,7 +69,7 @@ public class GameEngine {
 	}
 
 	public function hasEntity( entity:Entity ):Boolean {
-		return _entityManager.has( entity );
+		return _entityManager.contains( entity );
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
