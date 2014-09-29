@@ -27,6 +27,7 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		if ( _registry[entity] ) return entity;
 
 		entity._alive = true;
+		
 		_registry[entity] = true;
 		$attach( entity );
 

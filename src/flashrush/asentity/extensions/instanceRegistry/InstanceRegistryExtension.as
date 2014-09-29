@@ -4,6 +4,7 @@
  */
 package flashrush.asentity.extensions.instanceRegistry {
 import ecs.engine.ESContext;
+import ecs.engine.core.ESContext;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.api.IComponentHandler;

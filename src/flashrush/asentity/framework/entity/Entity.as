@@ -48,7 +48,7 @@ public class Entity {
 	asentity var next:Entity;
 
 	/**
-	 * The constructor
+	 * Constructor
 	 */
 	public function Entity() {
 		idIndex++;
@@ -69,11 +69,13 @@ public class Entity {
 		return _alive;
 	}
 
-	public function get componentCount():uint {
+	[Inline]
+	public final function get componentCount():uint {
 		return _componentCount;
 	}
 
-	public function get sign():ISignature {
+	[Inline]
+	public final function get sign():ISignature {
 		return _sign;
 	}
 
@@ -168,14 +170,14 @@ public class Entity {
 	 *
 	 * @return An array containing all the components that are on the entity.
 	 */
-	public function getAll( result:Array = null ):Array {
-		result ||= [];
-		var i:int = result.length;
+	public function getAll( output:Array = null ):Array {
+		output ||= [];
+		var i:int = output.length;
 		for each( var component:* in _components ) {
-			result[i] = component;
+			output[i] = component;
 			i++;
 		}
-		return result;
+		return output;
 	}
 
 	/**
