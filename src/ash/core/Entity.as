@@ -176,6 +176,10 @@ import flash.utils.Dictionary;
 			return components[ componentClass ] != null;
 		}
 
+		public function removeFromEngine():void {
+			_engine && _engine.removeEntity( this );
+		}
+
 		/**
 		 * Determines whether the entity was added and wasn't removed from engine.
 		 */
