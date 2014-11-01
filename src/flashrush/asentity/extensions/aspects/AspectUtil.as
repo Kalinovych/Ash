@@ -18,10 +18,67 @@ public class AspectUtil {
 	private static const OPTIONAL_META_TAG:String = "Optional";
 	private static const EXCLUDE_META_TAG:String = "Without";
 	
-	private static const skipProperties:Object = {entity: true, prev: true, next: true};
+	private static const SKIP_FIELDS:Object = {"entity": true, "prev": true, "next": true};
+	
+	private static const infoLib:Dictionary = new Dictionary();
+	
+	public static function getInfo( aspectClass:Class ):AspectInfo {
+		var info:AspectInfo = infoLib[aspectClass];
+		if ( !info ) {
+			info = reflectInfo( aspectClass );
+			infoLib[aspectClass] = info;
+		}
+		return info;
+	}
+	
+	private static function reflectInfo( aspectClass:Class ):AspectInfo {
+		const info:AspectInfo = new AspectInfo( aspectClass );
+		
+		// describe type
+		const typeData:Object = DescribeTypeJSONCached.describe( aspectClass, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
+		
+		// list of fields description
+		var fieldDataList:Array = [];
+		
+		const varsData:Array = typeData.traits.variables;
+		if ( varsData ) {
+			fieldDataList = fieldDataList.concat( varsData );
+		}
+		
+		// reflect fields to info
+		const fieldCount:uint = fieldDataList.length;
+		for ( var i:int = 0; i < fieldCount; i++ ) {
+			const property:Object = fieldDataList[i];
+			const propertyName:String = property.name;
+			if ( SKIP_FIELDS[propertyName] ) {
+				continue;
+			}
+			
+			const componentClass:Class = getDefinitionByName( property.type ) as Class;
+			const inclusionKind:int = getInclusionKind( property.metadata );
+			info.addTrait( componentClass, propertyName, inclusionKind );
+		}
+		
+		return info;
+	}
+	
+	private static function getInclusionKind( metadata:Array ):int {
+		const annotationCount:uint = ( metadata ? metadata.length : 0 );
+		for ( var i:int = 0; i < annotationCount; i++ ) {
+			const tagName:String = metadata[i].name;
+			if ( tagName == EXCLUDE_META_TAG ) {
+				return AspectInfo.EXCLUDED_KIND;
+			}
+			if ( tagName == OPTIONAL_META_TAG ) {
+				return AspectInfo.OPTIONAL_KIND;
+			}
+		}
+		return AspectInfo.REQUIRED_KIND;
+	}
+	
 	
 	// cached data, shared between aspect observers
-	private static var propertyMapByType:Dictionary = new Dictionary();
+	/*private static var propertyMapByType:Dictionary = new Dictionary();
 	private static var componentInterestsByType:Dictionary = new Dictionary();
 	private static var excludedComponentsByType:Dictionary = new Dictionary();
 	private static var optionalComponentsByType:Dictionary = new Dictionary();
@@ -50,7 +107,7 @@ public class AspectUtil {
 				var property:Object = propList[i];
 				var propertyName:String = property.name;
 				//if ( propertyName == "entity" || propertyName == "prev" || propertyName == "next" ) {
-				if ( skipProperties[propertyName] ) {
+				if ( SKIP_FIELDS[propertyName] ) {
 					continue;
 				}
 				
@@ -89,6 +146,7 @@ public class AspectUtil {
 		observer.componentInterests = componentInterests;
 		observer.excludedComponents = excludedComponents;
 		observer.optionalComponents = optionalComponents;
-	}
+	}*/
+	
 }
 }

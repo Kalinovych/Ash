@@ -22,7 +22,7 @@ use namespace gdf_core;
  */
 public class ComponentObserver implements IComponentObserver, IEntityHandler, IComponentHandler {
 	private var entities:EntityCollection;
-	private var handlersByComponent:Dictionary/*<LinkedSet>*/ = new Dictionary();
+	private var handlersByComponent:Dictionary/*<Class, LinkedSet>*/ = new Dictionary();
 
 	public function ComponentObserver( entities:EntityCollection ) {
 		this.entities = entities;
@@ -71,7 +71,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
-			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
+			for ( var node:Node = handlerList.firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;
 				handler.onComponentAdded( entity, componentType, component );
 			}
@@ -82,7 +82,7 @@ public class ComponentObserver implements IComponentObserver, IEntityHandler, IC
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		var handlerList:LinkedSet = handlersByComponent[component];
 		if ( handlerList ) {
-			for ( var node:Node = handlerList.$firstNode; node; node = node.next ) {
+			for ( var node:Node = handlerList.firstNode; node; node = node.next ) {
 				var handler:IComponentHandler = node.item;
 				handler.onComponentRemoved( entity, componentType, component );
 			}

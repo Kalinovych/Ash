@@ -82,10 +82,13 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 
 	/** @private **/
 	protected final function createObserver( aspectClass:Class ):AspectObserver {
-		var observer:AspectObserver = new AspectObserver( aspectClass );
-		observer.sign = _signer.signer.signKeys( observer.propertyMap );
-		if ( observer.excludedComponents ) {
-			observer.exclusionSign = _signer.signer.signKeys( observer.excludedComponents );
+		const info:AspectInfo = AspectUtil.getInfo( aspectClass );
+		const observer:AspectObserver = new AspectObserver( info );
+		
+		observer.sign = _signer.signer.signKeys( info.requiredMap );
+		
+		if ( info.excludedMap ) {
+			observer.exclusionSign = _signer.signer.signKeys( info.excludedMap );
 		}
 
 		// check all entities that are already in the list
@@ -98,9 +101,8 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		}
 
 		// add observer as observer of each component in the node
-		var interests:Vector.<Class> = observer.componentInterests;
-		for ( var i:int = 0, len:int = interests.length; i < len; i++ ) {
-			var componentClass:Class = interests[i];
+		for ( var i:int = 0; i < info.interestCount; i++ ) {
+			var componentClass:Class = info.interests[i];
 			componentManager.registerHandler( componentClass, observer );
 		}
 

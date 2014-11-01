@@ -10,52 +10,67 @@ import ash.signals.Signal1;
  *
  */
 public class AspectList {
-	/**
-	 * The first item in the node list, or null if the list contains no nodes.
-	 */
-	public var head:*;
-	/**
-	 * The last item in the node list, or null if the list contains no nodes.
-	 */
-	public var tail:*;
+	//-------------------------------------------
+	// Events
+	//-------------------------------------------
 	
 	/**
 	 * A signal that is dispatched whenever a node is added to the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was added.</p>
 	 */
-	public const nodeAdded:Signal1 = new Signal1( Aspect );
+	public const OnItemAdded:Signal1 = new Signal1( Aspect );
 	
 	/**
 	 * A signal that is dispatched whenever a node is removed from the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was removed.</p>
 	 */
-	public const nodeRemoved:Signal1 = new Signal1( Aspect );
+	public const OnItemRemoved:Signal1 = new Signal1( Aspect );
 	
 	/**
 	 * List of nodes that was added in the current update
 	 */
-	public const addedNodes:Vector.<Aspect> = new Vector.<Aspect>();
+	public const addedItems:Vector.<Aspect> = new Vector.<Aspect>();
 	
 	/**
 	 * List of nodes that was removed in the current update
 	 */
-	public const removedNodes:Vector.<Aspect> = new Vector.<Aspect>();
+	public const removedItems:Vector.<Aspect> = new Vector.<Aspect>();
+	
+	//-------------------------------------------
+	// Properties
+	//-------------------------------------------
+	
+	/**
+	 * The first item in the node list, or null if the list contains no nodes.
+	 */
+	public var first:*;
+	/**
+	 * The last item in the node list, or null if the list contains no nodes.
+	 */
+	public var last:*;
 	
 	protected var _length:int = 0;
 	
-	public function AspectList() {}
+	/**
+	 * @private
+	 * Constructor
+	 */
+	function AspectList() {}
 	
+	/**
+	 * The number of aspects in the list.
+	 */
 	public final function get length():int {
 		return _length;
 	}
 	
 	/**
-	 * true if the list is empty, false otherwise.
+	 * Determines whether the list is empty or not. false if the list contains at lease one element.
 	 */
 	public final function get empty():Boolean {
-		return (head == null);
+		return (first == null);
 	}
 	
 	/**
@@ -82,15 +97,19 @@ public class AspectList {
 	public function forEach( callback:Function, arg:* = null ):void {
 		var aspect:Aspect;
 		if ( arg ) {
-			for ( aspect = head; aspect; aspect = aspect.next ) {
+			for ( aspect = first; aspect; aspect = aspect.next ) {
 				callback( aspect, arg );
 			}
 		} else {
-			for ( aspect = head; aspect; aspect = aspect.next ) {
+			for ( aspect = first; aspect; aspect = aspect.next ) {
 				callback( aspect );
 			}
 		}
 	}
+	
+	//-------------------------------------------
+	// Sorting methods
+	//-------------------------------------------
 	
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
@@ -116,17 +135,17 @@ public class AspectList {
 			node1.next = node2.next;
 			node2.next = temp;
 		}
-		if ( head == node1 ) {
-			head = node2;
+		if ( first == node1 ) {
+			first = node2;
 		}
-		else if ( head == node2 ) {
-			head = node1;
+		else if ( first == node2 ) {
+			first = node1;
 		}
-		if ( tail == node1 ) {
-			tail = node2;
+		if ( last == node1 ) {
+			last = node2;
 		}
-		else if ( tail == node2 ) {
-			tail = node1;
+		else if ( last == node2 ) {
+			last = node1;
 		}
 		if ( node1.prev ) {
 			node1.prev.next = node1;
@@ -157,10 +176,10 @@ public class AspectList {
 	 * <p>This insertion sort implementation runs in place so no objects are created during the sort.</p>
 	 */
 	public function insertionSort( sortFunction:Function ):void {
-		if ( head == tail ) {
+		if ( first == last ) {
 			return;
 		}
-		var remains:Aspect = head.next;
+		var remains:Aspect = first.next;
 		for ( var node:Aspect = remains; node; node = remains ) {
 			remains = node.next;
 			for ( var other:Aspect = node.prev; other; other = other.prev ) {
@@ -168,8 +187,8 @@ public class AspectList {
 					// move node to after other
 					if ( node != other.next ) {
 						// remove from place
-						if ( tail == node ) {
-							tail = node.prev;
+						if ( last == node ) {
+							last = node.prev;
 						}
 						node.prev.next = node.next;
 						if ( node.next ) {
@@ -187,18 +206,18 @@ public class AspectList {
 			if ( !other ) // the node belongs at the start of the list
 			{
 				// remove from place
-				if ( tail == node ) {
-					tail = node.prev;
+				if ( last == node ) {
+					last = node.prev;
 				}
 				node.prev.next = node.next;
 				if ( node.next ) {
 					node.next.prev = node.prev;
 				}
 				// insert at head
-				node.next = head;
-				head.prev = node;
+				node.next = first;
+				first.prev = node;
 				node.prev = null;
-				head = node;
+				first = node;
 			}
 		}
 	}
@@ -217,12 +236,12 @@ public class AspectList {
 	 * <p>This merge sort implementation creates and uses a single Vector during the sort operation.</p>
 	 */
 	public function mergeSort( sortFunction:Function ):void {
-		if ( head == tail ) {
+		if ( first == last ) {
 			return;
 		}
 		var lists:Vector.<Aspect> = new Vector.<Aspect>;
 		// disassemble the list
-		var start:Aspect = head;
+		var start:Aspect = first;
 		var end:Aspect;
 		while ( start ) {
 			end = start;
@@ -239,9 +258,9 @@ public class AspectList {
 			lists.push( merge( lists.shift(), lists.shift(), sortFunction ) );
 		}
 		// find the tail
-		tail = head = lists[0];
-		while ( tail.next ) {
-			tail = tail.next;
+		last = first = lists[0];
+		while ( last.next ) {
+			last = last.next;
 		}
 	}
 	

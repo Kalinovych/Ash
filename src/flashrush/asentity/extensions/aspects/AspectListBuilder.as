@@ -13,34 +13,34 @@ internal class AspectListBuilder extends AspectList {
 	}
 	
 	public function beginStep():void {
-		addedNodes.length = 0;
-		removedNodes.length = 0;
+		addedItems.length = 0;
+		removedItems.length = 0;
 	}
 	
 	public function add( node:Aspect ):void {
-		if ( !head ) {
-			head = node;
-			tail = node;
+		if ( !first ) {
+			first = node;
+			last = node;
 			node.prev = null;
 			node.next = null;
 		}
 		else {
-			tail.next = node;
-			node.prev = tail;
+			last.next = node;
+			node.prev = last;
 			node.next = null;
-			tail = node;
+			last = node;
 		}
 		_length++;
-		addedNodes[addedNodes.length] = node;
-		nodeAdded.dispatch( node );
+		addedItems[addedItems.length] = node;
+		OnItemAdded.dispatch( node );
 	}
 	
 	public function remove( node:Aspect ):void {
-		if ( head == node ) {
-			head = head.next;
+		if ( first == node ) {
+			first = first.next;
 		}
-		if ( tail == node ) {
-			tail = tail.prev;
+		if ( last == node ) {
+			last = last.prev;
 		}
 		
 		if ( node.prev ) {
@@ -51,20 +51,20 @@ internal class AspectListBuilder extends AspectList {
 			node.next.prev = node.prev;
 		}
 		_length--;
-		removedNodes[removedNodes.length] = node;
-		nodeRemoved.dispatch( node );
+		removedItems[removedItems.length] = node;
+		OnItemRemoved.dispatch( node );
 		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 	}
 	
 	public function removeAll():void {
-		while ( head ) {
-			var node:Aspect = head;
-			head = node.next;
+		while ( first ) {
+			var node:Aspect = first;
+			first = node.next;
 			node.prev = null;
 			node.next = null;
-			nodeRemoved.dispatch( node );
+			OnItemRemoved.dispatch( node );
 		}
-		tail = null;
+		last = null;
 		_length = 0;
 	}
 	
