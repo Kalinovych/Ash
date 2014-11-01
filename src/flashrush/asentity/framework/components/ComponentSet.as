@@ -58,7 +58,7 @@ public class ComponentSet {
 		_componentCount++;
 
 		// notify handlers
-		var node:Node = _handlers.$firstNode;
+		var node:Node = _handlers.firstNode;
 		while ( node ) {
 			var handler:IComponentHandler = node.item;
 			//handler.onComponentAdded( this, type, component );
@@ -81,7 +81,7 @@ public class ComponentSet {
 			_componentCount--;
 
 			// notify handlers
-			var node:Node = _handlers.$firstNode;
+			var node:Node = _handlers.firstNode;
 			while ( node ) {
 				var handler:IComponentHandler = node.item;
 				//handler.onComponentRemoved( this, type, component );

@@ -157,12 +157,12 @@ public class Entity {
 	/**
 	 * Get a component from the entity.
 	 *
-	 * @param componentClass The class of the component requested.
+	 * @param type The class of the component requested.
 	 * @return The component, or null if none was found.
 	 */
 	[Inline]
-	public final function get( componentClass:Class ):* {
-		return _components[ componentClass ];
+	public final function get( type:Class ):* {
+		return _components[ type ];
 	}
 
 	/**
@@ -170,41 +170,37 @@ public class Entity {
 	 *
 	 * @return An array containing all the components that are on the entity.
 	 */
-	public function getAll( output:Array = null ):Array {
-		output ||= [];
-		var i:int = output.length;
+	public function getAll( dest:Array = null ):Array {
+		dest
+			? dest.length = _componentCount
+			: dest = [];
+		var i:int = 0;
 		for each( var component:* in _components ) {
-			output[i] = component;
-			i++;
+			dest[i++] = component;
 		}
-		return output;
+		return dest;
 	}
 
 	/**
 	 * Does the entity have a component of a particular type.
 	 *
-	 * @param componentClass The class of the component sought.
+	 * @param type The class of the component sought.
 	 * @return true if the entity has a component of the type, false if not.
 	 */
 	[Inline]
-	public final function has( componentClass:Class ):Boolean {
-		return _components[ componentClass ] != null;
+	public final function has( type:Class ):Boolean {
+		return _components[ type ] != null;
 	}
 
 	public function toString():String {
-		//return "Entity(id=" + id.toString() + ")";
-		//return "Entity(name=\"" + name + "\", id=" + id.toString() + ")";
-		//return "Entity(id=" + _id + ")[" + componentsToStr() +"]";
-		//return "Entity_" + _id + "[" + componentsToStr() +"]";
-		//return "[Entity_" + _id + "{" + componentsToStr() + "})";
-		return "{Entity" + _id + "[" + componentsToStr() + "]}"; // {Entity123[Pos,Body,Graphics]}
+		return "[Entity" + _id + "{" + componentsToStr() + "}]"; // [Entity3248{Pos,Body,Graphics}]
 	}
 
 	private function componentsToStr():String {
 		var result:String = "";
 		for ( var type:Class in _components ) {
 			result && (result += ",");
-			result += ClassUtil.getLocalName( type );
+			result += ClassUtil.getClassName( type );
 		}
 		return result;
 	}

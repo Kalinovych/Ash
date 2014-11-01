@@ -10,6 +10,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.ds.ds_internal;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedMap;
 import flashrush.ds.Node;
@@ -57,7 +58,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		var sign:ISignature = _signer.signKeys( entity._components );
 		signTable[id] = sign;*/
 
-		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
+		for ( var node:Node = aspectObservers.ds_internal::$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.item;
 			if ( $signMatchAspect( entity._sign, observer ) ) {
 				observer.registerEntity( entity );
@@ -69,7 +70,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	public function handleEntityRemoved( entity:Entity ):void {
 		//var sign:ISignature = signTable[entity._id];
 		var sign:ISignature = entity._sign;
-		for ( var node:Node = aspectObservers.$firstNode; node; node = node.next ) {
+		for ( var node:Node = aspectObservers.ds_internal::$firstNode; node; node = node.next ) {
 			var observer:AspectObserver = node.item;
 			if ( $signMatchAspect( sign, observer ) ) {
 				observer.unRegisterEntity( entity );

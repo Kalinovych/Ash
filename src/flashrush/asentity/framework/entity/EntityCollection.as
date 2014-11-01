@@ -22,6 +22,21 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 	public function EntityCollection() {
 		super();
 	}
+	
+	[Inline]
+	public final function get first():Entity {
+		return _firstNode;
+	}
+	
+	[Inline]
+	public final function get last():Entity {
+		return _lastNode;
+	}
+	
+	[Inline]
+	public final function get length():uint {
+		return _length;
+	}
 
 	public function add( entity:Entity ):Entity {
 		if ( _registry[entity] ) return entity;
@@ -77,21 +92,6 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 
 	public function unRegisterHandler( handler:IEntityHandler ):Boolean {
 		return _handlers.remove( handler );
-	}
-
-	[Inline]
-	public final function get first():Entity {
-		return _firstNode;
-	}
-
-	[Inline]
-	public final function get last():Entity {
-		return _lastNode;
-	}
-
-	[Inline]
-	public final function get length():uint {
-		return _length;
 	}
 
 }

@@ -6,6 +6,9 @@ package flashrush.asentity.extensions.aspects {
 import ash.core.Node;
 import ash.signals.Signal1;
 
+/**
+ *
+ */
 public class AspectList {
 	/**
 	 * The first item in the node list, or null if the list contains no nodes.
@@ -15,103 +18,80 @@ public class AspectList {
 	 * The last item in the node list, or null if the list contains no nodes.
 	 */
 	public var tail:*;
-
+	
 	/**
 	 * A signal that is dispatched whenever a node is added to the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was added.</p>
 	 */
-	public var nodeAdded:Signal1;
+	public const nodeAdded:Signal1 = new Signal1( Aspect );
+	
 	/**
 	 * A signal that is dispatched whenever a node is removed from the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was removed.</p>
 	 */
-	public var nodeRemoved:Signal1;
-
+	public const nodeRemoved:Signal1 = new Signal1( Aspect );
+	
 	/**
 	 * List of nodes that was added in the current update
 	 */
-	public var addedNodes:Vector.<Aspect>;
-
+	public const addedNodes:Vector.<Aspect> = new Vector.<Aspect>();
+	
 	/**
 	 * List of nodes that was removed in the current update
 	 */
-	public var removedNodes:Vector.<Aspect>;
-
-	private var _length:int = 0;
-
-	public function AspectList() {
-		nodeAdded = new Signal1( Aspect );
-		nodeRemoved = new Signal1( Aspect );
-
-		addedNodes = new Vector.<Aspect>();
-		removedNodes = new Vector.<Aspect>();
+	public const removedNodes:Vector.<Aspect> = new Vector.<Aspect>();
+	
+	protected var _length:int = 0;
+	
+	public function AspectList() {}
+	
+	public final function get length():int {
+		return _length;
 	}
-
-	public function beginStep():void {
-		addedNodes.length = 0;
-		removedNodes.length = 0;
-	}
-
-	public function add( node:Aspect ):void {
-		if ( !head ) {
-			head = node;
-			tail = node;
-			node.prev = null;
-			node.next = null;
-		}
-		else {
-			tail.next = node;
-			node.prev = tail;
-			node.next = null;
-			tail = node;
-		}
-		_length++;
-		addedNodes[addedNodes.length] = node;
-		nodeAdded.dispatch( node );
-	}
-
-	public function remove( node:Aspect ):void {
-		if ( head == node ) {
-			head = head.next;
-		}
-		if ( tail == node ) {
-			tail = tail.prev;
-		}
-
-		if ( node.prev ) {
-			node.prev.next = node.next;
-		}
-
-		if ( node.next ) {
-			node.next.prev = node.prev;
-		}
-		_length--;
-		removedNodes[removedNodes.length] = node;
-		nodeRemoved.dispatch( node );
-		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
-	}
-
-	public function removeAll():void {
-		while ( head ) {
-			var node:Aspect = head;
-			head = node.next;
-			node.prev = null;
-			node.next = null;
-			nodeRemoved.dispatch( node );
-		}
-		tail = null;
-		_length = 0;
-	}
-
+	
 	/**
 	 * true if the list is empty, false otherwise.
 	 */
-	public function get empty():Boolean {
-		return head == null;
+	public final function get empty():Boolean {
+		return (head == null);
 	}
-
+	
+	/**
+	 * Executes a function on each node in the NodeList.
+	 * <code>
+	 *     function processNode(node:MyNode):void {
+		 *         // your code here
+		 *     }
+	 *     nodeList.forEach( processNode );
+	 * </code>
+	 * <code>
+	 *     function updateNode(node:MyNode, deltaTime:Number):void {
+		 *          // your code here
+		 *     }
+	 *     nodeList.forEach(updateNode, deltaTime);
+	 * </code>
+	 * @param callback The function to run on each node in the NodeList.
+	 * This function is invoked with one or more arguments:
+	 * the current node from the NodeList and other arguments passed in the args parameter:
+	 * <code>function callback(node:MyNode):void</code>
+	 * <code>function callback(node:MyNode, someValue:SomeType ):void</code>
+	 * @param arg An optional advanced one argument that should be passes as second argument to the callback.
+	 */
+	public function forEach( callback:Function, arg:* = null ):void {
+		var aspect:Aspect;
+		if ( arg ) {
+			for ( aspect = head; aspect; aspect = aspect.next ) {
+				callback( aspect, arg );
+			}
+		} else {
+			for ( aspect = head; aspect; aspect = aspect.next ) {
+				callback( aspect );
+			}
+		}
+	}
+	
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 	 */
@@ -161,7 +141,7 @@ public class AspectList {
 			node2.next.prev = node2;
 		}
 	}
-
+	
 	/**
 	 * Performs an insertion sort on the node list. In general, insertion sort is very efficient with short lists
 	 * and with lists that are mostly sorted, but is inefficient with large lists that are randomly ordered.
@@ -222,7 +202,7 @@ public class AspectList {
 			}
 		}
 	}
-
+	
 	/**
 	 * Performs a merge sort on the node list. In general, merge sort is more efficient than insertion sort
 	 * with long lists that are very unsorted.
@@ -264,7 +244,7 @@ public class AspectList {
 			tail = tail.next;
 		}
 	}
-
+	
 	private function merge( head1:Aspect, head2:Aspect, sortFunction:Function ):Aspect {
 		var node:Aspect;
 		var head:Aspect;
@@ -300,40 +280,6 @@ public class AspectList {
 		}
 		return head;
 	}
-
-	/**
-	 * Executes a function on each node in the NodeList.
-	 * <code>
-	 *     function processNode(node:MyNode):void {
-		 *         // your code here
-		 *     }
-	 *     nodeList.forEach( processNode );
-	 * </code>
-	 * <code>
-	 *     function updateNode(node:MyNode, deltaTime:Number):void {
-		 *          // your code here
-		 *     }
-	 *     nodeList.forEach(updateNode, deltaTime);
-	 * </code>
-	 * @param callback The function to run on each node in the NodeList.
-	 * This function is invoked with one or more arguments:
-	 * the current node from the NodeList and other arguments passed in the args parameter:
-	 * <code>function callback(node:MyNode):void</code>
-	 * <code>function callback(node:MyNode, someValue:SomeType ):void</code>
-	 * @param args An optional list of one or more comma-separated values to pass as arguments into callback function call.
-	 */
-	public function forEach( callback:Function, ...args ):void {
-		if ( head ) {
-			args.unshift( null );
-			for ( var node:Aspect = head; node; node = node.next ) {
-				args[0] = node;
-				callback.apply( null, args );
-			}
-		}
-	}
-
-	public function get length():int {
-		return _length;
-	}
+	
 }
 }

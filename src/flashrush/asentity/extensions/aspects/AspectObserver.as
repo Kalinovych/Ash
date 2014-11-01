@@ -19,7 +19,7 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 	private var aspectClass:Class;
 	//private var nodePool:NodePool;
 
-	private var _aspects:AspectList = new AspectList();
+	private var _aspects:AspectListBuilder = new AspectListBuilder();
 
 	/** Map of this family nodes by entity */
 	internal var nodeByEntity:Dictionary = new Dictionary();
@@ -170,14 +170,14 @@ internal class AspectObserver implements IComponentHandler/*, IEntityObserver */
 		}*/
 
 		nodeByEntity[entity] = node;
-		aspects.add( node );
+		_aspects.add( node );
 	}
 
 	[Inline]
 	private final function $removeNodeOf( entity:Entity ):void {
 		var node:Aspect = nodeByEntity[entity];
 		delete nodeByEntity[entity];
-		aspects.remove( node );
+		_aspects.remove( node );
 
 		/*if ( engine.updating ) {
 			nodePool.cache( node );

@@ -3,8 +3,9 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
+
 import com.flashrush.signals.ISignal;
-import com.flashrush.signals.v2.SignalPro;
+import com.flashrush.signals.Signal;
 
 import ecs.engine.components.ComponentObserver;
 import ecs.engine.threads.RenderThread;
@@ -40,7 +41,7 @@ public class GameEngine {
 	protected var updateThread:UpdateThread;
 	protected var renderThread:RenderThread;
 
-	protected var _onUpdate:SignalPro = new SignalPro();
+	protected var _onUpdate:Signal = new Signal();
 
 	public function get onUpdate():ISignal {
 		return _onUpdate;
