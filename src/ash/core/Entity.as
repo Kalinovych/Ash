@@ -165,6 +165,10 @@ import flash.utils.Dictionary;
 			return componentArray;
 		}
 
+		public function removeFromEngine():void {
+			_engine && _engine.removeEntity( this );
+		}
+		
 		/**
 		 * Does the entity have a component of a particular type.
 		 * 
