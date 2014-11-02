@@ -11,10 +11,7 @@ use namespace asentity;
 
 public class EntityFactory {
 	asentity var idIndex:uint = 0;
-
-	public function EntityFactory() {
-	}
-
+	
 	public function create():Entity {
 		var entity:Entity = new Entity();
 		idIndex++;
@@ -23,7 +20,7 @@ public class EntityFactory {
 	}
 
 	public function dispose( entity:Entity ):void {
-		if ( entity._alive ) {
+		if ( entity.isInSpace ) {
 			throw new IllegalOperationError( "Can't recycle alive entity" );
 		}
 	}

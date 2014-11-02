@@ -6,6 +6,6 @@ package flashrush.asentity.framework.systems.api {
 public interface ISystem {
 	function onAdded():void;
 
-	function removed():void;
+	function onRemoved():void;
 }
 }

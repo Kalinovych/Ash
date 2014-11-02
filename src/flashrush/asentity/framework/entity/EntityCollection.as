@@ -7,6 +7,7 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.collections.base.LinkedNodeListBase;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
 import flashrush.ds.ListBase;
@@ -15,7 +16,7 @@ import flashrush.ds.Node;
 use namespace asentity;
 use namespace gdf_core;
 
-public class EntityCollection extends ListBase /*implements IEntityManager*/ {
+public class EntityCollection extends LinkedNodeListBase {
 	protected var _registry:Dictionary = new Dictionary();
 	protected var _handlers:LinkedSet = new LinkedSet();
 
@@ -39,12 +40,12 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 	}
 
 	public function add( entity:Entity ):Entity {
-		if ( _registry[entity] ) return entity;
+		if ( _registry[entity] ) {
+			return entity;
+		}
 
-		entity._alive = true;
-		
 		_registry[entity] = true;
-		$attach( entity );
+		base::attach( entity );
 
 		// (inline) notify handlers
 		for ( var node:Node = _handlers.firstNode; node; node = node.next ) {
@@ -59,14 +60,13 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 		return _registry[entity];
 	}
 
-	public function remove( entity:Entity ):Entity {
+	public function remove( entity:Entity ):Boolean {
 		if ( !_registry[entity] ) {
-			return null;
+			return false;
 		}
 
-		entity._alive = false;
 		delete _registry[entity];
-		$detach( entity );
+		base::detach( entity );
 
 		// (inline) notify handlers in backward order
 		for ( var node:Node = _handlers.firstNode; node; node = node.prev ) {
@@ -74,12 +74,12 @@ public class EntityCollection extends ListBase /*implements IEntityManager*/ {
 			handler.handleEntityRemoved( entity );
 		}
 
-		return entity;
+		return true;
 	}
 
 	public function removeAll():void {
 		while ( _firstNode ) {
-			var entity:Entity = first;
+			var entity:Entity = _firstNode;
 			remove( entity );
 			entity.prev = null;
 			entity.next = null;

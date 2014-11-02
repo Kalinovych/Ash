@@ -31,7 +31,7 @@ public class ESContext {
 
 	public function addEntity( entity:Entity ):Entity {
 		entityList.attach( entity );
-		var node:Node = entityHandlers.$firstNode;
+		var node:Node = entityHandlers.firstNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityAdded( entity );
@@ -42,7 +42,7 @@ public class ESContext {
 
 	public function removeEntity( entity:Entity ):Entity {
 		entityList.detach( entity );
-		var node:Node = entityHandlers.$lastNode;
+		var node:Node = entityHandlers.lastNode;
 		while ( node ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityRemoved( entity );
@@ -53,7 +53,7 @@ public class ESContext {
 
 	public function addSystem( system:ISystem, order:int = 0 ):* {
 		systemList.add( system, order );
-		var node:Node = systemHandlers.$firstNode;
+		var node:Node = systemHandlers.firstNode;
 		while ( node ) {
 			var handler:ISystemHandler = node.item;
 			handler.onSystemAdded( system );
@@ -64,7 +64,7 @@ public class ESContext {
 
 	public function removeSystem( system:ISystem ):* {
 		systemList.remove( system );
-		var node:Node = systemHandlers.$lastNode;
+		var node:Node = systemHandlers.lastNode;
 		while ( node ) {
 			var handler:ISystemHandler = node.item;
 			handler.onSystemRemoved( system );

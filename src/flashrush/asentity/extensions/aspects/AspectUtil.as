@@ -37,7 +37,7 @@ public class AspectUtil {
 		// describe type
 		const typeData:Object = DescribeTypeJSONCached.describe( aspectClass, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
 		
-		// list of fields description
+		// list of field descriptions
 		var fieldDataList:Array = [];
 		
 		const varsData:Array = typeData.traits.variables;
