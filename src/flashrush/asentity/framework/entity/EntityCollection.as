@@ -7,7 +7,7 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
-import flashrush.collections.base.LinkedNodeListBase;
+import flashrush.collections.base.LinkedListBase;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
 import flashrush.ds.ListBase;
@@ -16,39 +16,36 @@ import flashrush.ds.Node;
 use namespace asentity;
 use namespace gdf_core;
 
-public class EntityCollection extends LinkedNodeListBase {
-	protected var _registry:Dictionary = new Dictionary();
-	protected var _handlers:LinkedSet = new LinkedSet();
+public class EntityCollection extends LinkedListBase {
+	protected var registry:Dictionary = new Dictionary();
+	protected var handlers:LinkedSet = new LinkedSet();
 
 	public function EntityCollection() {
 		super();
 	}
 	
-	[Inline]
 	public final function get first():Entity {
-		return _firstNode;
+		return base::firstNode;
 	}
 	
-	[Inline]
 	public final function get last():Entity {
-		return _lastNode;
+		return base::lastNode;
 	}
 	
-	[Inline]
 	public final function get length():uint {
-		return _length;
+		return base::length;
 	}
 
 	public function add( entity:Entity ):Entity {
-		if ( _registry[entity] ) {
+		if ( registry[entity] ) {
 			return entity;
 		}
 
-		_registry[entity] = true;
-		base::attach( entity );
+		registry[entity] = true;
+		base::linkLast( entity );
 
-		// (inline) notify handlers
-		for ( var node:Node = _handlers.firstNode; node; node = node.next ) {
+		// inline notify handlers
+		for ( var node:Node = handlers.firstNode; node; node = node.next ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityAdded( entity );
 		}
@@ -57,19 +54,19 @@ public class EntityCollection extends LinkedNodeListBase {
 	}
 
 	public function contains( entity:Entity ):Boolean {
-		return _registry[entity];
+		return registry[entity];
 	}
 
 	public function remove( entity:Entity ):Boolean {
-		if ( !_registry[entity] ) {
+		if ( !registry[entity] ) {
 			return false;
 		}
 
-		delete _registry[entity];
-		base::detach( entity );
+		delete registry[entity];
+		base::unlink( entity );
 
-		// (inline) notify handlers in backward order
-		for ( var node:Node = _handlers.firstNode; node; node = node.prev ) {
+		// inline notify handlers in backward order
+		for ( var node:Node = handlers.firstNode; node; node = node.prev ) {
 			var handler:IEntityHandler = node.item;
 			handler.handleEntityRemoved( entity );
 		}
@@ -78,8 +75,8 @@ public class EntityCollection extends LinkedNodeListBase {
 	}
 
 	public function removeAll():void {
-		while ( _firstNode ) {
-			var entity:Entity = _firstNode;
+		while ( base::firstNode ) {
+			var entity:Entity = base::firstNode;
 			remove( entity );
 			entity.prev = null;
 			entity.next = null;
@@ -87,11 +84,11 @@ public class EntityCollection extends LinkedNodeListBase {
 	}
 
 	public function registerHandler( handler:IEntityHandler ):Boolean {
-		return _handlers.add( handler );
+		return handlers.add( handler );
 	}
 
 	public function unRegisterHandler( handler:IEntityHandler ):Boolean {
-		return _handlers.remove( handler );
+		return handlers.remove( handler );
 	}
 
 }

@@ -82,13 +82,13 @@ public class Entity {
 		return _sign;
 	}
 	
-	public final function get prev():Entity {
+	/*public final function get prev():Entity {
 		return asentity::prev;
 	}
 	
 	public final function get next():Entity {
 		return asentity::next;
-	}
+	}*/
 	
 	/**
 	 * Add a component to the entity.
