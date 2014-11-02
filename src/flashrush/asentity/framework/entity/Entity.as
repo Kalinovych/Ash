@@ -1,17 +1,14 @@
 package flashrush.asentity.framework.entity {
-import com.flashrush.utils.ClassUtil;
-
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.Space;
-
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.api.IComponentHandler;
-import flashrush.collections.base.Linkable;
-import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
 import flashrush.ds.Node;
+import flashrush.gdf.api.gdf_core;
 import flashrush.signatures.api.ISignature;
+import flashrush.utils.getClassName;
 
 use namespace asentity;
 use namespace gdf_core;
@@ -278,9 +275,7 @@ public class Entity {
 	 * @return An array containing all the components that are on the entity.
 	 */
 	public function getAll( dest:Array = null ):Array {
-		dest
-				? dest.length = _componentCount
-				: dest = [];
+		dest ? dest.length = _componentCount	: dest = [];
 		var i:int = 0;
 		for each( var component:* in _components ) {
 			dest[i++] = component;
@@ -307,7 +302,7 @@ public class Entity {
 		var result:String = "";
 		for ( var type:Class in _components ) {
 			result && (result += ",");
-			result += ClassUtil.getClassName( type );
+			result += getClassName( type );
 		}
 		return result;
 	}

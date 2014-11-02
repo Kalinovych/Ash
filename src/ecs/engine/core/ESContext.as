@@ -26,8 +26,7 @@ public class ESContext {
 	asentity var entityHandlers:LinkedSet = new LinkedSet();
 	asentity var systemHandlers:LinkedSet = new LinkedSet();
 
-	public function ESContext() {
-	}
+	public function ESContext() {}
 
 	public function addEntity( entity:Entity ):Entity {
 		entityList.attach( entity );

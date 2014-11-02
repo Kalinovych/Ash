@@ -29,12 +29,12 @@ public class EntityList {
 	}
 
 	asentity function detach( node:Entity ):void {
-		if ( first == node ) {
-			first = first.next as Entity;
+		if ( node == first ) {
+			first = first.next;
 		}
 
-		if ( last == node ) {
-			last = last.prev as Entity;
+		if ( node == last ) {
+			last = last.prev;
 		}
 
 		if ( node.prev ) {
@@ -51,7 +51,7 @@ public class EntityList {
 	asentity function detachAll():void {
 		while ( first ) {
 			var node:Entity = first;
-			first = first.next as Entity;
+			first = first.next;
 			node.prev = null;
 			node.next = null;
 		}

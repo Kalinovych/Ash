@@ -3,6 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems {
+import flashrush.asentity.extensions.aspects.Aspect;
 import flashrush.asentity.framework.systems.api.ISystem;
 
 public class System implements ISystem {
@@ -25,7 +26,14 @@ public class System implements ISystem {
 	public function destroy():void {
 	}
 	
-	// new struct
+	// v2 design
+	
+	public namespace callback;
+	
+	[AspectHandler(Aspect1,Aspect2)]
+	callback function onAspectAdded( aspect:Aspect ):void {
+		
+	}
 	
 	/*
 		Engine callbacks under namespace

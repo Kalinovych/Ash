@@ -16,7 +16,7 @@ public class Space {
 	protected var _activities:Vector.<Activity>;
 	
 	public function Space() {
-		_entities.registerHandler( new EntityDispatcher( OnEntityAdded.dispatch, OnEntityRemoved.dispatch ) );
+		_entities.registerHandler( new EntityRout( OnEntityAdded.dispatch, OnEntityRemoved.dispatch ) );
 	}
 	
 	public function get entities():EntityCollection {
@@ -52,11 +52,11 @@ public class Space {
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 
-class EntityDispatcher implements IEntityHandler {
+class EntityRout implements IEntityHandler {
 	private var addedCallback:Function;
 	private var removedCallback:Function;
 	
-	public function EntityDispatcher( addedCallback:Function, removedCallback:Function ) {
+	public function EntityRout( addedCallback:Function, removedCallback:Function ) {
 		this.addedCallback = addedCallback;
 		this.removedCallback = removedCallback;
 	}
