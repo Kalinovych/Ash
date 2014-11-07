@@ -51,7 +51,7 @@ public class AspectList {
 	 */
 	public var last:*;
 	
-	protected var _length:int = 0;
+	internal var _length:int = 0;
 	
 	/**
 	 * @private

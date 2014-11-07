@@ -11,5 +11,7 @@ public class Aspect {
 	public var prev/*<Aspect>*/:*;
 
 	public var next/*<Aspect>*/:*;
+	
+	internal var cacheNext:Aspect;
 }
 }

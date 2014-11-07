@@ -4,7 +4,6 @@
  */
 package flashrush.asentity.framework {
 import ecs.engine.core.EntityList;
-import ecs.engine.core.LinkedEntityList;
 
 import flash.errors.IllegalOperationError;
 
@@ -18,9 +17,18 @@ import flashrush.signals.Signal1;
 use namespace asentity;
 
 public class ESpace {
-	protected var _entities:LinkedEntityList = new LinkedEntityList();
-	protected var _list:EntityList = new EntityList( _entities );
-	protected var _activities:Vector.<Activity> = new <Activity>[];
+	/*
+		Design:
+		
+		Requirements:
+			- add/remove entities
+			- notification about added/removed entities
+			//- ability to iterate over the entities
+	 */
+	
+	
+	protected var _entities:EntityList = new EntityList();
+	//protected var _activities:Vector.<Activity> = new <Activity>[];
 	protected var _aspectManager:AspectManager;
 	
 	protected var _OnEntityAdded:Signal1 = new Signal1( Entity );
@@ -39,8 +47,8 @@ public class ESpace {
 		return _OnEntityRemoved;
 	}
 	
-	public final function get entities():EntityList {
-		return _list;
+	asentity final function get entities():EntityList {
+		return _entities;
 	}
 	
 	public function addEntity( entity:Entity ):Entity {
@@ -64,7 +72,7 @@ public class ESpace {
 	public function removeEntity( entity:Entity ):Entity {
 		CONFIG::debug{
 			if ( entity._space && entity._space != this ) {
-				throw new IllegalOperationError( "The entity do not belong to this space" );
+				throw new IllegalOperationError( "The entity belongs to an other space and can't be removed from this one." );
 			}
 		}
 		
@@ -80,10 +88,10 @@ public class ESpace {
 		_entities.detachAll();
 	}
 	
-	public function update( delta:Number ):void {
+	/*public function update( delta:Number ):void {
 		for each( var activity:Activity in _activities ) {
 			activity.update( delta );
 		}
-	}
+	}*/
 }
 }

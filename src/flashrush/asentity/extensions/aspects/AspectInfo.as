@@ -26,17 +26,17 @@ public class AspectInfo {
 	/**
 	 * The map of property field names of the Aspect class by the component types.
 	 */
-	public var requiredMap:Dictionary/*<Class, fieldName:String>*/ = new Dictionary();
-	
-	/**
-	 * The components that discard the aspect of an entity
-	 */
-	public var excludedMap:Dictionary/*<Class, fieldName:String>*/;
+	public var requiredMap:Dictionary/*<Class, String fieldName>*/ = new Dictionary();
 	
 	/**
 	 * The components that do not affect the aspect on an entity.
 	 */
-	public var optionalMap:Dictionary/*<Class, fieldName:String>*/;
+	public var optionalMap:Dictionary/*<Class, String fieldName>*/;
+	
+	/**
+	 * The components that discard the aspect of an entity
+	 */
+	public var excludedMap:Dictionary/*<Class, String fieldName>*/;
 	
 	/**
 	 * The list of components the aspect interested in.

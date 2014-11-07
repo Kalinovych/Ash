@@ -20,7 +20,7 @@ use namespace gdf_core;
  * Scoped collection of entities and systems
  */
 public class ESContext {
-	asentity var entityList:LinkedEntityList = new LinkedEntityList();
+	asentity var entityList:EntityList = new EntityList();
 	asentity var systemList:SystemList = new SystemList();
 
 	asentity var entityHandlers:LinkedSet = new LinkedSet();

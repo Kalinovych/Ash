@@ -7,40 +7,43 @@ package flashrush.asentity.extensions.aspects {
 /**
  * Internal interface to manage the AspectList items
  */
-internal class AspectListBuilder extends AspectList {
+internal class AspectListBuilder {
+	internal var list:AspectList = new AspectList();
+	
 	public function AspectListBuilder() {
 		super();
 	}
 	
-	public function beginStep():void {
-		addedItems.length = 0;
-		removedItems.length = 0;
+	public function begin():void {
+		this.list = list;
+		list.addedItems.length = 0;
+		list.removedItems.length = 0;
 	}
 	
 	public function add( node:Aspect ):void {
-		if ( !first ) {
-			first = node;
-			last = node;
+		if ( !list.first ) {
+			list.first = node;
+			list.last = node;
 			node.prev = null;
 			node.next = null;
 		}
 		else {
-			last.next = node;
-			node.prev = last;
+			list.last.next = node;
+			node.prev = list.last;
 			node.next = null;
-			last = node;
+			list.last = node;
 		}
-		_length++;
-		addedItems[addedItems.length] = node;
-		OnItemAdded.dispatch( node );
+		list._length++;
+		list.addedItems[list.addedItems.length] = node;
+		list.OnItemAdded.dispatch( node );
 	}
 	
 	public function remove( node:Aspect ):void {
-		if ( first == node ) {
-			first = first.next;
+		if ( list.first == node ) {
+			list.first = list.first.next;
 		}
-		if ( last == node ) {
-			last = last.prev;
+		if ( list.last == node ) {
+			list.last = list.last.prev;
 		}
 		
 		if ( node.prev ) {
@@ -50,22 +53,22 @@ internal class AspectListBuilder extends AspectList {
 		if ( node.next ) {
 			node.next.prev = node.prev;
 		}
-		_length--;
-		removedItems[removedItems.length] = node;
-		OnItemRemoved.dispatch( node );
+		list._length--;
+		list.removedItems[list.removedItems.length] = node;
+		list.OnItemRemoved.dispatch( node );
 		// N.B. Don't set node.next and node.prev to null because that will break the list iteration if node is the current node in the iteration.
 	}
 	
 	public function removeAll():void {
-		while ( first ) {
-			var node:Aspect = first;
-			first = node.next;
+		while ( list.first ) {
+			var node:Aspect = list.first;
+			list.first = node.next;
 			node.prev = null;
 			node.next = null;
-			OnItemRemoved.dispatch( node );
+			list.OnItemRemoved.dispatch( node );
 		}
-		last = null;
-		_length = 0;
+		list.last = null;
+		list._length = 0;
 	}
 	
 }
