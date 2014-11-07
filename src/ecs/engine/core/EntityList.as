@@ -3,60 +3,26 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.core {
-import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 
-use namespace asentity;
-
 public class EntityList {
-	asentity var first:Entity;
-	asentity var last:Entity;
-	asentity var length:uint = 0;
-
-	asentity function attach( node:Entity ):void {
-		if ( !first ) {
-			first = node;
-			last = node;
-			node.prev = null;
-			node.next = null;
-		} else {
-			last.next = node;
-			node.prev = last;
-			node.next = null;
-			last = node;
-		}
-		length++;
+	private var entities:LinkedEntityList;
+	
+	public function EntityList( entities:LinkedEntityList ) {
+		this.entities = entities;
 	}
-
-	asentity function detach( node:Entity ):void {
-		if ( node == first ) {
-			first = first.next;
-		}
-
-		if ( node == last ) {
-			last = last.prev;
-		}
-
-		if ( node.prev ) {
-			node.prev.next = node.next;
-		}
-
-		if ( node.next ) {
-			node.next.prev = node.prev;
-		}
-
-		length--;
+	
+	public final function get first():Entity {
+		return entities.first;
 	}
-
-	asentity function detachAll():void {
-		while ( first ) {
-			var node:Entity = first;
-			first = first.next;
-			node.prev = null;
-			node.next = null;
-		}
-		last = null;
-		length = 0;
+	
+	public final function get last():Entity {
+		return entities.last;
 	}
+	
+	public function get length():uint {
+		return entities.length;
+	}
+	
 }
 }

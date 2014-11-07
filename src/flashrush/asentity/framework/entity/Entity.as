@@ -36,7 +36,7 @@ public class Entity {
 	
 	asentity var _id:uint;
 	
-	asentity var _space:Space;
+	asentity var _space:*;
 	//asentity var _inSpace:Boolean = false;
 	
 	asentity var _components:Dictionary = new Dictionary();
@@ -46,6 +46,7 @@ public class Entity {
 	
 	asentity var prev:Entity;
 	asentity var next:Entity;
+	asentity var list:*;
 	
 	/**
 	 * Constructor
