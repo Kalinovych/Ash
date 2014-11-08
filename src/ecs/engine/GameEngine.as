@@ -7,7 +7,7 @@ package ecs.engine {
 import com.flashrush.signals.ISignal;
 import com.flashrush.signals.Signal;
 
-import ecs.engine.components.ComponentObserver;
+import flashrush.asentity.framework.core.ComponentHandler;
 import ecs.engine.threads.RenderThread;
 import ecs.engine.threads.UpdateThread;
 import flashrush.asentity.extensions.aspects.AspectManager;
@@ -32,7 +32,7 @@ public class GameEngine {
 	protected var _entityManager:EntityCollection;
 	protected var _systemManager:SystemCollection;
 
-	protected var _componentManager:ComponentObserver;
+	protected var _componentManager:ComponentHandler;
 	protected var _aspectManager:AspectManager;
 	protected var _entityMap:EntityMap;
 
@@ -104,7 +104,7 @@ public class GameEngine {
 	}
 
 	protected function initManagers():void {
-		_componentManager = new ComponentObserver( _entityManager );
+		_componentManager = new ComponentHandler( _entityManager );
 		_aspectManager = new AspectManager( _entityManager, _componentManager );
 	}
 

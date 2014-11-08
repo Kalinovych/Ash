@@ -5,7 +5,7 @@
 package ecs.engine.core {
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.asentity.framework.systems.SystemList;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
@@ -32,8 +32,8 @@ public class ESContext {
 		entityList.attach( entity );
 		var node:Node = entityHandlers.firstNode;
 		while ( node ) {
-			var handler:IEntityHandler = node.item;
-			handler.handleEntityAdded( entity );
+			var handler:IEntityObserver = node.item;
+			handler.onEntityAdded( entity );
 			node = node.next;
 		}
 		return entity;
@@ -43,8 +43,8 @@ public class ESContext {
 		entityList.detach( entity );
 		var node:Node = entityHandlers.lastNode;
 		while ( node ) {
-			var handler:IEntityHandler = node.item;
-			handler.handleEntityRemoved( entity );
+			var handler:IEntityObserver = node.item;
+			handler.onEntityRemoved( entity );
 			node = node.prev;
 		}
 		return entity;
@@ -75,7 +75,7 @@ public class ESContext {
 	asentity function registerHandler( handler:* ):Boolean {
 		var registered:Boolean = false;
 
-		if ( handler is IEntityHandler ) {
+		if ( handler is IEntityObserver ) {
 			registered ||= entityHandlers.add( handler );
 		}
 
@@ -91,7 +91,7 @@ public class ESContext {
 	}
 
 	asentity function unRegisterHandler( handler:* ):void {
-		if ( handler is IEntityHandler ) {
+		if ( handler is IEntityObserver ) {
 			entityHandlers.remove( handler );
 		}
 

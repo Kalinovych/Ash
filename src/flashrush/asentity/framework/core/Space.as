@@ -2,7 +2,7 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework {
+package flashrush.asentity.framework.core {
 import flashrush.asentity.framework.core.Activity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
@@ -50,9 +50,9 @@ public class Space {
 }
 
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 
-class EntityRout implements IEntityHandler {
+class EntityRout implements IEntityObserver {
 	private var addedCallback:Function;
 	private var removedCallback:Function;
 	
@@ -61,11 +61,11 @@ class EntityRout implements IEntityHandler {
 		this.removedCallback = removedCallback;
 	}
 	
-	public function handleEntityAdded( entity:Entity ):void {
+	public function onEntityAdded( entity:Entity ):void {
 		addedCallback( entity );
 	}
 	
-	public function handleEntityRemoved( entity:Entity ):void {
+	public function onEntityRemoved( entity:Entity ):void {
 		removedCallback( entity );
 	}
 }

@@ -3,81 +3,71 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
+import flashrush.asentity.framework.core.IComponentNotifier;
+
 import flashrush.asentity.extensions.ECSigner;
+import flashrush.asentity.framework.core.ESpace;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ProcessingLock;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.EntityCollection;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.collections.LLNode;
 import flashrush.collections.LinkedMap;
-import flashrush.collections.cl_internal;
-import flashrush.gdf.api.gdf_core;
-import flashrush.signatures.api.ISignature;
-
-use namespace cl_internal;
+import flashrush.collections.list_internal;
+import flashrush.signatures.bitwise.api.IBitSignature;
 
 use namespace asentity;
-use namespace gdf_core;
 
-public class AspectManager implements IAspectManager, IEntityHandler {
-	private var entities:EntityCollection;
+public class AspectManager implements IAspectManager, IEntityObserver {
+	private var space:ESpace;
 	private var processingLock:ProcessingLock;
-	//private var componentManager:IComponentObserver;
-	private var mappers:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
+	private var families:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
 	private var _signer:ECSigner;
-	//private var signTable:Vector.<ISignature>;
 	
-	public function AspectManager( entities:*, processingLock:ProcessingLock ) {
-		this.entities = entities;
+	public function AspectManager( space:ESpace, processingLock:ProcessingLock ) {
+		this.space = space;
 		this.processingLock = processingLock;
-		//this.componentManager = componentManager;
 		
 		_signer = new ECSigner();
-		//signTable = new Vector.<ISignature>( entities.entityCount );
 		
-		entities.registerHandler( _signer );
-		entities.registerHandler( this );
+		space.OnEntityAdded.add( onEntityAdded );
+		space.OnEntityRemoved.add( onEntityRemoved );
+		
+		//entitySpace.registerHandler( _signer );
+		//entitySpace.registerHandler( this );
 	}
 	
 	public function getAspects( aspectDefinition:Class ):AspectList {
-		var mapper:AspectMapper = mappers.get( aspectDefinition );
-		if ( !mapper ) {
-			mapper = createMapper( aspectDefinition );
-			mappers.put( aspectDefinition, mapper );
+		var family:AspectFamily = families.get( aspectDefinition );
+		if ( !family ) {
+			family = createFamily( aspectDefinition );
+			families.put( aspectDefinition, family );
 		}
-		return mapper.aspects;
+		return family.aspects;
 	}
 	
 	/** @private **/
-	public function handleEntityAdded( entity:Entity ):void {
+	public function onEntityAdded( entity:Entity ):void {
 		trace( "[AspectsManager.onEntityAdded]›", entity );
-		//entity.sign = _signer.signKeys( entity.components );
 		
-		var id:uint = entity._id;
-		/*if ( signTable.length <= id ) {
-			signTable.length = id + 1;
-		}
-		var sign:ISignature = _signer.signKeys( entity._components );
-		signTable[id] = sign;*/
-		
-		for ( var node:LLNode = mappers.firstNode; node; node = node.nextNode ) {
-			var observer:AspectMapper = node.item;
-			if ( $signMatchesAspect( entity._sign, observer ) ) {
-				observer.registerEntity( entity );
+		for ( var node:LLNode = families.firstNode; node; node = node.nextNode ) {
+			const family:AspectFamily = node.list_internal::item;
+			if ( $entityMatchAspect( entity, family ) ) {
+				family.addQualifiedEntity( entity );
 			}
 		}
 	}
 	
 	/** @private **/
-	public function handleEntityRemoved( entity:Entity ):void {
-		//var sign:ISignature = signTable[entity._id];
-		var sign:ISignature = entity._sign;
-		for ( var node:LLNode = mappers.firstNode; node; node = node.cl_internal::next ) {
-			var observer:AspectMapper = node.item;
-			if ( $signMatchesAspect( sign, observer ) ) {
-				observer.unRegisterEntity( entity );
+	public function onEntityRemoved( entity:Entity ):void {
+		for ( var node:LLNode = families.firstNode; node; node = node.list_internal::next ) {
+			const family:AspectFamily = node.list_internal::item;
+			if ( entity in family.aspectByEntity ) {
+				family.removeQualifiedEntity( entity );
 			}
+			/*if ( $entityMatchAspect( entity, family ) ) {
+				family.removeQualifiedEntity( entity );
+			}*/
 		}
 		//_signer.disposeSign( sign );
 		//entity._sign = null;
@@ -88,39 +78,45 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	//-------------------------------------------
 	
 	/** @private **/
-	protected final function createMapper( aspectDefinition:Class ):AspectMapper {
+	protected final function createFamily( aspectDefinition:Class ):AspectFamily {
 		const aspectInfo:AspectInfo = AspectUtil.getInfo( aspectDefinition );
-		const mapper:AspectMapper = new AspectMapper( aspectInfo, processingLock );
+		const family:AspectFamily = new AspectFamily( aspectInfo, processingLock );
 		
-		mapper.sign = _signer.signer.signKeys( aspectInfo.requiredMap );
+		// helpers
+		var field:AspectField;
+		var i:int;
 		
-		if ( aspectInfo.excludedMap ) {
-			mapper.exclusionSign = _signer.signer.signKeys( aspectInfo.excludedMap );
+		// sign
+		const sign:IBitSignature = _signer.signer.signEmpty() as IBitSignature;
+		const excludedSign:IBitSignature = ( aspectInfo.hasExcluded ? _signer.signer.signEmpty() as IBitSignature : null );
+		for ( i = 0; i < aspectInfo.fieldCount; i++ ) {
+			field = aspectInfo.fieldList[i];
+			const flag:int = _signer.signer.provideFlag( field.type );
+			field.isExcluded ? excludedSign.set( flag ) : sign.set( flag );
 		}
+		family.sign = sign;
+		family.excludedSign = excludedSign;
 		
-		// check all entities that are already in the list
-		for ( var entity:Entity = entities.first; entity; entity = entity.next ) {
-			//var sign:ISignature = signTable[entity._id];
-			var sign:ISignature = entity._sign;
-			if ( $signMatchesAspect( sign, mapper ) ) {
-				mapper.registerEntity( entity );
+		// scan space for an entities that match the aspect
+		for ( var entity:Entity = space.entities.first; entity; entity = entity.next ) {
+			if ( $entityMatchAspect( entity, family ) ) {
+				family.addQualifiedEntity( entity );
 			}
 		}
 		
-		// register the mapper as handler of each interested component
-		for ( var i:int = 0; i < aspectInfo.interestCount; i++ ) {
-			var componentClass:Class = aspectInfo.interests[i];
-			// TODO: impl it without componentManager
-			//componentManager.registerHandler( componentClass, mapper );
+		// register family as an observer of components of described types.
+		const componentNotifier:IComponentNotifier = space.componentNotifier;
+		for ( i = 0; i < aspectInfo.fieldCount; i++ ) {
+			field = aspectInfo.fieldList[i];
+			componentNotifier.addObserver( field.type, family );
 		}
 		
-		return mapper;
+		return family;
 	}
 	
 	[Inline]
-	protected final function $signMatchesAspect( sign:ISignature, aspect:AspectMapper ):Boolean {
-		return ( sign.hasAllOf( aspect.sign ) && !( aspect.exclusionSign && sign.hasAllOf( aspect.exclusionSign ) ) );
-		//return ( entity.sign.contains( aspect.sign ) && !( aspect.exclusionSign && entity.sign.contains( aspect.exclusionSign ) ) );
+	protected final function $entityMatchAspect( entity:Entity, aspect:AspectFamily ):Boolean {
+		return ( entity._sign.hasAllOf( aspect.sign ) && !( aspect.excludedSign && entity._sign.hasAllOf( aspect.excludedSign ) ) );
 	}
 }
 }

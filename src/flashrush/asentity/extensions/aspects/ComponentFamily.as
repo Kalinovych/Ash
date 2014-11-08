@@ -5,56 +5,60 @@
 package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
+import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.core.ProcessingLock;
-
 import flashrush.asentity.framework.entity.Entity;
 
 /**
- * Groups entities containing specified component type into single AspectList<Aspect>.
+ * Groups entities containing specified component type into a single linked list.
  */
-public class ComponentMapper {
+public class ComponentFamily implements IComponentObserver {
 	internal var mappingType:Class;
-	internal var aspectByEntity:Dictionary = new Dictionary();
-	private var _aspects:AspectListBuilder = new AspectListBuilder();
+	internal var aspectByEntity:Dictionary/*<Entity,Aspect>*/ = new Dictionary();
+	private var _aspects:AspectList = new AspectList();
 	private var processingLock:ProcessingLock;
 	
 	private var disposeCacheHead:Aspect;
 	private static var poolHead:Aspect;
 	
-	public function ComponentMapper( componentType:Class, processingLock:ProcessingLock ) {
+	public function ComponentFamily( componentType:Class, processingLock:ProcessingLock ) {
 		this.mappingType = componentType;
 		this.processingLock = processingLock;
 	}
 	
 	public final function get aspects():AspectList {
-		return _aspects.list;
+		return _aspects;
 	}
 	
-	public function onComponentAddedToEntity( entity:Entity, componentType:Class, component:* ):void {
+	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		if ( componentType == mappingType && !aspectByEntity[entity] ) {
 			$createAspectOf( entity );
 		}
 	}
 	
-	public function onComponentRemovedFromEntity( entity:Entity, componentType:Class, component:* ):void {
-		if ( componentType == mappingType && !aspectByEntity[entity] ) {
+	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+		if ( componentType == mappingType && aspectByEntity[entity] ) {
 			$removeAspectOf( entity );
 		}
 	}
 	
 	/** Adds an Entity containing the component of the mapping type to the aspect list*/
-	public function includeEntity( entity:Entity ):void {
+	public function addQualifiedEntity( entity:Entity ):void {
 		if ( !aspectByEntity[entity] ) {
 			$createAspectOf( entity );
 		}
 	}
 	
 	/** Removes an Entity containing the component of the mapping type from the aspects list */
-	public function excludeEntity( entity:Entity ):void {
+	public function removeQualifiedEntity( entity:Entity ):void {
 		if ( aspectByEntity[entity] ) {
 			$removeAspectOf( entity );
 		}
 	}
+	
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
 	
 	/**
 	 * Creates new family's aspect for the matched entity
@@ -63,8 +67,6 @@ public class ComponentMapper {
 	 */
 	[Inline]
 	private final function $createAspectOf( entity:Entity ):void {
-		// Create new aspect node and assign components from the entity to the aspect variables
-		//var aspect:Node = nodePool.get();
 		var aspect:Aspect;
 		if ( poolHead ) {
 			aspect = poolHead;
@@ -93,6 +95,15 @@ public class ComponentMapper {
 		}
 	}
 	
+	private final function $disposeAspect( aspect:Aspect ):void {
+		aspect.entity = null;
+		aspect.prev = null;
+		aspect.next = null;
+		
+		aspect.cacheNext = poolHead;
+		poolHead = aspect;
+	}
+	
 	private function releaseCache():void {
 		while ( disposeCacheHead ) {
 			const aspect:Aspect = disposeCacheHead;
@@ -103,13 +114,5 @@ public class ComponentMapper {
 		}
 	}
 	
-	private final function $disposeAspect( aspect:Aspect ):void {
-		aspect.entity = null;
-		aspect.prev = null;
-		aspect.next = null;
-		
-		aspect.cacheNext = poolHead;
-		poolHead = aspect;
-	}
 }
 }

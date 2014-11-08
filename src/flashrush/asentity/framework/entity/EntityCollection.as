@@ -6,7 +6,7 @@ package flashrush.asentity.framework.entity {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.collections.base.LinkedListBase;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
@@ -25,11 +25,11 @@ public class EntityCollection extends LinkedListBase {
 	}
 	
 	public final function get first():Entity {
-		return base::firstNode;
+		return base::first;
 	}
 	
 	public final function get last():Entity {
-		return base::lastNode;
+		return base::last;
 	}
 	
 	public final function get length():uint {
@@ -46,8 +46,8 @@ public class EntityCollection extends LinkedListBase {
 
 		// inline notify handlers
 		for ( var node:Node = handlers.firstNode; node; node = node.next ) {
-			var handler:IEntityHandler = node.item;
-			handler.handleEntityAdded( entity );
+			var handler:IEntityObserver = node.item;
+			handler.onEntityAdded( entity );
 		}
 
 		return entity;
@@ -67,27 +67,27 @@ public class EntityCollection extends LinkedListBase {
 
 		// inline notify handlers in backward order
 		for ( var node:Node = handlers.firstNode; node; node = node.prev ) {
-			var handler:IEntityHandler = node.item;
-			handler.handleEntityRemoved( entity );
+			var handler:IEntityObserver = node.item;
+			handler.onEntityRemoved( entity );
 		}
 
 		return true;
 	}
 
 	public function removeAll():void {
-		while ( base::firstNode ) {
-			var entity:Entity = base::firstNode;
+		while ( base::first ) {
+			var entity:Entity = base::first;
 			remove( entity );
 			entity.prev = null;
 			entity.next = null;
 		}
 	}
 
-	public function registerHandler( handler:IEntityHandler ):Boolean {
+	public function registerHandler( handler:IEntityObserver ):Boolean {
 		return handlers.add( handler );
 	}
 
-	public function unRegisterHandler( handler:IEntityHandler ):Boolean {
+	public function unRegisterHandler( handler:IEntityObserver ):Boolean {
 		return handlers.remove( handler );
 	}
 

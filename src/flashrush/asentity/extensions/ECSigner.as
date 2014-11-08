@@ -4,16 +4,16 @@
  */
 package flashrush.asentity.extensions {
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.components.api.IComponentHandler;
+import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.signatures.api.ISignature;
 import flashrush.signatures.api.ISigner;
 import flashrush.signatures.bitwise.BitwiseSigner;
 
 use namespace asentity;
 
-public class ECSigner implements IEntityHandler, IComponentHandler {
+public class ECSigner implements IEntityObserver, IComponentObserver {
 	asentity var signer:ISigner;
 	/** Signature by an Entity id */
 	asentity var signatures:Vector.<ISignature>;
@@ -22,7 +22,7 @@ public class ECSigner implements IEntityHandler, IComponentHandler {
 		this.signer = signer || new BitwiseSigner();
 	}
 
-	public function handleEntityAdded( entity:Entity ):void {
+	public function onEntityAdded( entity:Entity ):void {
 		entity._sign = signer.signKeys( entity._components );
 		/*var id:uint = entity._id;
 		if ( id >= signTable.length ) {
@@ -31,7 +31,7 @@ public class ECSigner implements IEntityHandler, IComponentHandler {
 		signTable[id] = signManager.signKeys( entity._components );*/
 	}
 
-	public function handleEntityRemoved( entity:Entity ):void {
+	public function onEntityRemoved( entity:Entity ):void {
 		signer.disposeSign( entity._sign );
 		entity._sign = null;
 		/*var sign:BitSign = signTable[entity._id];

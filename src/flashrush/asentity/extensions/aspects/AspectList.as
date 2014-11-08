@@ -6,6 +6,8 @@ package flashrush.asentity.extensions.aspects {
 import ash.core.Node;
 import ash.signals.Signal1;
 
+import flashrush.collections.Linker;
+
 /**
  *
  */
@@ -39,19 +41,10 @@ public class AspectList {
 	public const removedItems:Vector.<Aspect> = new Vector.<Aspect>();
 	
 	//-------------------------------------------
-	// Properties
+	// Internal fields
 	//-------------------------------------------
 	
-	/**
-	 * The first item in the node list, or null if the list contains no nodes.
-	 */
-	public var first:*;
-	/**
-	 * The last item in the node list, or null if the list contains no nodes.
-	 */
-	public var last:*;
-	
-	internal var _length:int = 0;
+	internal var linker:Linker = new Linker();
 	
 	/**
 	 * @private
@@ -59,18 +52,30 @@ public class AspectList {
 	 */
 	function AspectList() {}
 	
+	//-------------------------------------------
+	// Properties
+	//-------------------------------------------
+	
+	public final function get first():* {
+		return linker.first;
+	}
+	
+	public final function get last():* {
+		return linker.last;
+	}
+	
 	/**
 	 * The number of aspects in the list.
 	 */
 	public final function get length():int {
-		return _length;
+		return linker.length;
 	}
 	
 	/**
 	 * Determines whether the list is empty or not. false if the list contains at lease one element.
 	 */
 	public final function get empty():Boolean {
-		return (first == null);
+		return !linker.first;
 	}
 	
 	/**
@@ -97,68 +102,25 @@ public class AspectList {
 	public function forEach( callback:Function, arg:* = null ):void {
 		var aspect:Aspect;
 		if ( arg ) {
-			for ( aspect = first; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first; aspect; aspect = aspect.next ) {
 				callback( aspect, arg );
 			}
 		} else {
-			for ( aspect = first; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first; aspect; aspect = aspect.next ) {
 				callback( aspect );
 			}
 		}
 	}
 	
 	//-------------------------------------------
-	// Sorting methods
+	// Public: Sorting methods
 	//-------------------------------------------
 	
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 	 */
 	public function swap( node1:Aspect, node2:Aspect ):void {
-		if ( node1.prev == node2 ) {
-			node1.prev = node2.prev;
-			node2.prev = node1;
-			node2.next = node1.next;
-			node1.next = node2;
-		}
-		else if ( node2.prev == node1 ) {
-			node2.prev = node1.prev;
-			node1.prev = node2;
-			node1.next = node2.next;
-			node2.next = node1;
-		}
-		else {
-			var temp:Node = node1.prev;
-			node1.prev = node2.prev;
-			node2.prev = temp;
-			temp = node1.next;
-			node1.next = node2.next;
-			node2.next = temp;
-		}
-		if ( first == node1 ) {
-			first = node2;
-		}
-		else if ( first == node2 ) {
-			first = node1;
-		}
-		if ( last == node1 ) {
-			last = node2;
-		}
-		else if ( last == node2 ) {
-			last = node1;
-		}
-		if ( node1.prev ) {
-			node1.prev.next = node1;
-		}
-		if ( node2.prev ) {
-			node2.prev.next = node2;
-		}
-		if ( node1.next ) {
-			node1.next.prev = node1;
-		}
-		if ( node2.next ) {
-			node2.next.prev = node2;
-		}
+		linker.swap( node1, node2 );
 	}
 	
 	/**
@@ -176,50 +138,7 @@ public class AspectList {
 	 * <p>This insertion sort implementation runs in place so no objects are created during the sort.</p>
 	 */
 	public function insertionSort( sortFunction:Function ):void {
-		if ( first == last ) {
-			return;
-		}
-		var remains:Aspect = first.next;
-		for ( var node:Aspect = remains; node; node = remains ) {
-			remains = node.next;
-			for ( var other:Aspect = node.prev; other; other = other.prev ) {
-				if ( sortFunction( node, other ) >= 0 ) {
-					// move node to after other
-					if ( node != other.next ) {
-						// remove from place
-						if ( last == node ) {
-							last = node.prev;
-						}
-						node.prev.next = node.next;
-						if ( node.next ) {
-							node.next.prev = node.prev;
-						}
-						// insert after other
-						node.next = other.next;
-						node.prev = other;
-						node.next.prev = node;
-						other.next = node;
-					}
-					break; // exit the inner for loop
-				}
-			}
-			if ( !other ) // the node belongs at the start of the list
-			{
-				// remove from place
-				if ( last == node ) {
-					last = node.prev;
-				}
-				node.prev.next = node.next;
-				if ( node.next ) {
-					node.next.prev = node.prev;
-				}
-				// insert at head
-				node.next = first;
-				first.prev = node;
-				node.prev = null;
-				first = node;
-			}
-		}
+		linker.insertionSort( sortFunction );
 	}
 	
 	/**
@@ -236,69 +155,34 @@ public class AspectList {
 	 * <p>This merge sort implementation creates and uses a single Vector during the sort operation.</p>
 	 */
 	public function mergeSort( sortFunction:Function ):void {
-		if ( first == last ) {
-			return;
-		}
-		var lists:Vector.<Aspect> = new Vector.<Aspect>;
-		// disassemble the list
-		var start:Aspect = first;
-		var end:Aspect;
-		while ( start ) {
-			end = start;
-			while ( end.next && sortFunction( end, end.next ) <= 0 ) {
-				end = end.next;
-			}
-			var next:Aspect = end.next;
-			start.prev = end.next = null;
-			lists.push( start );
-			start = next;
-		}
-		// reassemble it in order
-		while ( lists.length > 1 ) {
-			lists.push( merge( lists.shift(), lists.shift(), sortFunction ) );
-		}
-		// find the tail
-		last = first = lists[0];
-		while ( last.next ) {
-			last = last.next;
-		}
+		linker.mergeSort( sortFunction );
 	}
 	
-	private function merge( head1:Aspect, head2:Aspect, sortFunction:Function ):Aspect {
-		var node:Aspect;
-		var head:Aspect;
-		if ( sortFunction( head1, head2 ) <= 0 ) {
-			head = node = head1;
-			head1 = head1.next;
-		}
-		else {
-			head = node = head2;
-			head2 = head2.next;
-		}
-		while ( head1 && head2 ) {
-			if ( sortFunction( head1, head2 ) <= 0 ) {
-				node.next = head1;
-				head1.prev = node;
-				node = head1;
-				head1 = head1.next;
-			}
-			else {
-				node.next = head2;
-				head2.prev = node;
-				node = head2;
-				head2 = head2.next;
-			}
-		}
-		if ( head1 ) {
-			node.next = head1;
-			head1.prev = node;
-		}
-		else {
-			node.next = head2;
-			head2.prev = node;
-		}
-		return head;
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
+	
+	internal function resetSession():void {
+		addedItems.length = 0;
+		removedItems.length = 0;
 	}
 	
+	internal function add( node:Aspect ):void {
+		linker.linkLast( node );
+		addedItems[addedItems.length] = node;
+		OnItemAdded.dispatch( node );
+	}
+	
+	internal function remove( node:Aspect ):void {
+		linker.unlink( node );
+		removedItems[removedItems.length] = node;
+		OnItemRemoved.dispatch( node );
+		// N.B. Don't set node.next and node.prev to null
+		// because that can break an iteration that uses next/prev properties.
+	}
+	
+	internal function removeAll():void {
+		linker.unlinkAll( OnItemRemoved.dispatch );
+	}
 }
 }

@@ -9,50 +9,18 @@ import flash.utils.Dictionary;
  * Contains the information that describes an aspect of an entity.
  */
 public class AspectInfo {
-	
-	/**
-	 * Enum kinds of interest
-	 */
-	public static const NONE_KIND:int = 0;
-	public static const REQUIRED_KIND:int = 1;
-	public static const OPTIONAL_KIND:int = 2;
-	public static const EXCLUDED_KIND:int = 3;
-	
 	/**
 	 * The Class of described aspect
 	 */
 	public var type:Class;
 	
-	/**
-	 * The map of property field names of the Aspect class by the component types.
-	 */
-	public var requiredMap:Dictionary/*<Class, String fieldName>*/ = new Dictionary();
+	public const fieldList:Vector.<AspectField> = new <AspectField>[];
 	
-	/**
-	 * The components that do not affect the aspect on an entity.
-	 */
-	public var optionalMap:Dictionary/*<Class, String fieldName>*/;
+	public const fieldMap:Dictionary/*<Class, String fieldName>*/ = new Dictionary();
 	
-	/**
-	 * The components that discard the aspect of an entity
-	 */
-	public var excludedMap:Dictionary/*<Class, String fieldName>*/;
+	public var fieldCount:uint = 0;
 	
-	/**
-	 * The list of components the aspect interested in.
-	 */
-	public var interests:Vector.<Class> = new <Class>[];
-	
-	/**
-	 * The map of kind of interest to a component types/
-	 */
-	public var interestKindMap:Dictionary/*<Class, int>*/ = new Dictionary();
-	
-	/**
-	 * The total number of components that describes an aspect.
-	 * It is equals to the interests.length.
-	 */
-	public var interestCount:uint = 0;
+	public var hasExcluded:Boolean = false;
 	
 	/**
 	 * Constructor
@@ -65,26 +33,12 @@ public class AspectInfo {
 	/**
 	 * @internal
 	 */
-	internal function addTrait( type:Class, fieldName:String, kind:int ):void {
-		switch (kind) {
-			case REQUIRED_KIND:
-				requiredMap[type] = fieldName;
-				break;
-			case OPTIONAL_KIND:
-				optionalMap ||= new Dictionary();
-				optionalMap[type] = fieldName;
-				break;
-			case EXCLUDED_KIND:
-				excludedMap ||= new Dictionary();
-				excludedMap[type] = fieldName;
-				break;
-			default:
-				throw new ArgumentError("A component info " + type + " with kind '" + kind + "' can't be added!");
-				break;
-		}
-		
-		interests[interestCount++] = type;
-		interestKindMap[type] = kind;
+	internal function addField( type:Class, name:String, kind:int ):void {
+		const field:AspectField = new AspectField(type, name, kind );
+		fieldList[fieldCount] = field;
+		fieldMap[type] = field;
+		fieldCount++;
+		hasExcluded = (kind == AspectField.EXCLUDED);
 	}
 }
 }

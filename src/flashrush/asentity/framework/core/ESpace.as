@@ -2,14 +2,12 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework {
+package flashrush.asentity.framework.core {
 import ecs.engine.core.EntityList;
 
 import flash.errors.IllegalOperationError;
 
-import flashrush.asentity.extensions.aspects.AspectManager;
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.Activity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.signals.ICallbacks;
 import flashrush.signals.Signal1;
@@ -28,15 +26,15 @@ public class ESpace {
 	
 	
 	protected var _entities:EntityList = new EntityList();
+	protected var componentHandler:ComponentHandler = new ComponentHandler();
 	//protected var _activities:Vector.<Activity> = new <Activity>[];
-	protected var _aspectManager:AspectManager;
 	
 	protected var _OnEntityAdded:Signal1 = new Signal1( Entity );
 	protected var _OnEntityRemoved:Signal1 = new Signal1( Entity );
 	
 	public function ESpace() {
 		super();
-		//_aspectManager = new AspectManager( _entities, null );
+		_entities.space = this;
 	}
 	
 	public final function get OnEntityAdded():ICallbacks {
@@ -45,6 +43,10 @@ public class ESpace {
 	
 	public final function get OnEntityRemoved():ICallbacks {
 		return _OnEntityRemoved;
+	}
+	
+	public final function get componentNotifier():IComponentNotifier {
+		return componentHandler;
 	}
 	
 	asentity final function get entities():EntityList {
@@ -60,7 +62,8 @@ public class ESpace {
 		
 		if ( !entity._space ) {
 			_entities.attach( entity );
-			entity._space = this;
+			componentHandler.onEntityAdded( entity );
+			_OnEntityAdded.dispatch( entity );
 		}
 		return entity;
 	}
@@ -78,14 +81,14 @@ public class ESpace {
 		
 		if ( entity._space == this ) {
 			_entities.detach( entity );
+			componentHandler.onEntityRemoved( entity );
 			_OnEntityRemoved.dispatch( entity );
-			entity._space = null;
 		}
 		return entity;
 	}
 	
 	public function removeAllEntities():void {
-		_entities.detachAll();
+		_entities.detachAll( _OnEntityRemoved.dispatch );
 	}
 	
 	/*public function update( delta:Number ):void {

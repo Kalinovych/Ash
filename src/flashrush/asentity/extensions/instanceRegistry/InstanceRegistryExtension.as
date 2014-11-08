@@ -7,15 +7,15 @@ import ecs.engine.ESContext;
 import ecs.engine.core.ESContext;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.components.api.IComponentHandler;
+import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityHandler;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
 
 use namespace asentity;
 
-public class InstanceRegistryExtension implements IEntityHandler, IComponentHandler, ISystemHandler {
+public class InstanceRegistryExtension implements IEntityObserver, IComponentObserver, ISystemHandler {
 	asentity var instanceRegistry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
@@ -41,7 +41,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function handleEntityAdded( entity:Entity ):void {
+	public function onEntityAdded( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleAdded( entity );
 		}
@@ -52,7 +52,7 @@ public class InstanceRegistryExtension implements IEntityHandler, IComponentHand
 		}
 	}
 
-	public function handleEntityRemoved( entity:Entity ):void {
+	public function onEntityRemoved( entity:Entity ):void {
 		if ( observeEntities ) {
 			instanceRegistry.handleRemoved( entity );
 		}

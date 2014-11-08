@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.components {
-import flashrush.asentity.framework.components.api.IComponentHandler;
+import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
 
-public class ComponentHandlerToCallbacks implements IComponentHandler {
+public class ComponentHandlerToCallbacks implements IComponentObserver {
 	public var addedCallback:Function;
 	public var removedCallback:Function;
 	

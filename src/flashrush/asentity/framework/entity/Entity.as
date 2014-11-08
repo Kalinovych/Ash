@@ -1,17 +1,17 @@
 package flashrush.asentity.framework.entity {
 import flash.utils.Dictionary;
 
-import flashrush.asentity.framework.Space;
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.components.api.IComponentHandler;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.Node;
-import flashrush.gdf.api.gdf_core;
+import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.core.Space;
+import flashrush.collections.LLNode;
+import flashrush.collections.LinkedSet;
+import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.list_internal;
 import flashrush.signatures.api.ISignature;
 import flashrush.utils.getClassName;
 
 use namespace asentity;
-use namespace gdf_core;
 
 /**
  * An entity is composed from components. As such, it is essentially a collection object for components.
@@ -38,7 +38,7 @@ public class Entity {
 	
 	asentity var _components:Dictionary = new Dictionary();
 	asentity var _componentCount:uint = 0;
-	asentity var _componentHandlers:LinkedSet = new LinkedSet();
+	asentity var observers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
 	asentity var _sign:ISignature;
 	
 	asentity var _space:*;
@@ -118,15 +118,45 @@ public class Entity {
 		_components[type] = component;
 		_componentCount++;
 		
-		// notify handlers
-		var node:Node = _componentHandlers.firstNode;
-		while ( node ) {
-			var handler:IComponentHandler = node.item;
-			handler.onComponentAdded( this, type, component );
-			node = node.next;
+		// notify observers
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+			const observer:IComponentObserver = node.item;
+			observer.onComponentAdded( this, type, component );
+		}
+		return this;
+	}
+	
+	/**
+	 * Remove a component from the entity.
+	 *
+	 * @param type The class of the component to be removed.
+	 * @return the component, or null if the component doesn't exist in the entity
+	 */
+	public function remove( type:Class ):* {
+		var component:* = _components[type];
+		if ( !component ) {
+			return null;
 		}
 		
-		return this;
+		delete _components[type];
+		_componentCount--;
+		
+		// notify observers
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+			const observer:IComponentObserver = node.item;
+			observer.onComponentRemoved( this, type, component );
+		}
+		return component;
+	}
+	
+	public function removeAll():void {
+		for ( var componentId:Class in _components ) {
+			remove( componentId );
+		}
 	}
 	
 	/**
@@ -226,37 +256,6 @@ public class Entity {
 	}
 	
 	/**
-	 * Remove a component from the entity.
-	 *
-	 * @param type The class of the component to be removed.
-	 * @return the component, or null if the component doesn't exist in the entity
-	 */
-	public function remove( type:Class ):* {
-		var component:* = _components[type];
-		if ( component ) {
-			delete _components[type];
-			_componentCount--;
-			
-			// notify handlers
-			var node:Node = _componentHandlers.firstNode;
-			while ( node ) {
-				var handler:IComponentHandler = node.item;
-				handler.onComponentRemoved( this, type, component );
-				node = node.next;
-			}
-			
-			return component;
-		}
-		return null;
-	}
-	
-	public function removeAll():void {
-		for ( var componentId:Class in _components ) {
-			remove( componentId );
-		}
-	}
-	
-	/**
 	 * Get a component from the entity.
 	 *
 	 * @param type The class of the component requested.
@@ -273,7 +272,7 @@ public class Entity {
 	 * @return An array containing all the components that are on the entity.
 	 */
 	public function getAll( dest:Array = null ):Array {
-		dest ? dest.length = _componentCount	: dest = [];
+		dest ? dest.length = _componentCount : dest = [];
 		var i:int = 0;
 		for each( var component:* in _components ) {
 			dest[i++] = component;
@@ -306,12 +305,12 @@ public class Entity {
 	}
 	
 	
-	asentity function addComponentHandler( handler:IComponentHandler ):void {
-		_componentHandlers.add( handler );
+	asentity function addComponentObserver( observer:IComponentObserver ):void {
+		observers.add( observer );
 	}
 	
-	asentity function removeComponentHandler( handler:IComponentHandler ):void {
-		_componentHandlers.remove( handler );
+	asentity function removeComponentObserver( observer:IComponentObserver ):void {
+		observers.remove( observer );
 	}
 }
 }

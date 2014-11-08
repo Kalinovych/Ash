@@ -56,7 +56,7 @@ public class AspectUtil {
 			
 			const componentClass:Class = getDefinitionByName( property.type ) as Class;
 			const inclusionKind:int = getInclusionKind( property.metadata );
-			info.addTrait( componentClass, propertyName, inclusionKind );
+			info.addField( componentClass, propertyName, inclusionKind );
 		}
 		
 		return info;

@@ -5,9 +5,9 @@
 package flashrush.asentity.framework.entity.api {
 import flashrush.asentity.framework.entity.Entity;
 
-public interface IEntityHandler {
-	function handleEntityAdded( entity:Entity ):void;
+public interface IEntityObserver {
+	function onEntityAdded( entity:Entity ):void;
 
-	function handleEntityRemoved( entity:Entity ):void;
+	function onEntityRemoved( entity:Entity ):void;
 }
 }
