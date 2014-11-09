@@ -67,13 +67,13 @@ public class AspectUtil {
 		for ( var i:int = 0; i < annotationCount; i++ ) {
 			const tagName:String = metadata[i].name;
 			if ( tagName == EXCLUDE_META_TAG ) {
-				return AspectInfo.EXCLUDED_KIND;
+				return AspectField.EXCLUDED;
 			}
 			if ( tagName == OPTIONAL_META_TAG ) {
-				return AspectInfo.OPTIONAL_KIND;
+				return AspectField.OPTIONAL;
 			}
 		}
-		return AspectInfo.REQUIRED_KIND;
+		return AspectField.REQUIRED;
 	}
 	
 	

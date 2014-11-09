@@ -15,42 +15,42 @@ import flashrush.collections.list_internal;
 use namespace asentity;
 
 /**
- * Single entity component handler for a space.
+ * A space entity component notifier
  */
-public class ComponentHandler implements IComponentNotifier, IEntityObserver, IComponentObserver {
+public class ComponentManager implements IComponentNotifier, IEntityObserver, IComponentObserver {
 	private var observersMap:Dictionary/*<Class, LinkedSet>*/ = new Dictionary();
 	
-	public function ComponentHandler() {}
+	public function ComponentManager() {}
 	
 //-------------------------------------------
 // IComponentNotifier methods
 //-------------------------------------------
 	
 	public function addObserver( componentType:Class, observer:IComponentObserver ):void {
-		var typeObservers:LinkedSet = observersMap[componentType];
-		if ( !typeObservers ) {
-			typeObservers = new LinkedSet();
-			observersMap[componentType] = typeObservers;
+		var componentObservers:LinkedSet = observersMap[componentType];
+		if ( !componentObservers ) {
+			componentObservers = new LinkedSet();
+			observersMap[componentType] = componentObservers;
 		}
-		typeObservers.add( observer );
+		componentObservers.add( observer );
 	}
 
 	public function removeObserver( componentType:Class, observer:IComponentObserver ):void {
-		var typeObservers:LinkedSet = observersMap[componentType];
-		if ( typeObservers ) {
-			typeObservers.remove( observer );
+		var componentObservers:LinkedSet = observersMap[componentType];
+		if ( componentObservers ) {
+			componentObservers.remove( observer );
 		}
 	}
 
 //-------------------------------------------
-// Internals
+//  Internals: IEntityObserver
 //-------------------------------------------
 	
 	/** @private */
 	public function onEntityAdded( entity:Entity ):void {
 		entity.addComponentObserver( this );
 		
-		const components:* = entity._components;
+		const components:Dictionary = entity._components;
 		for ( var componentType:* in components ) {
 			onComponentAdded( entity, componentType, components[componentType] );
 		}
@@ -58,20 +58,25 @@ public class ComponentHandler implements IComponentNotifier, IEntityObserver, IC
 
 	/** @private */
 	public function onEntityRemoved( entity:Entity ):void {
-		const components:* = entity._components;
+		const components:Dictionary = entity._components;
 		for ( var componentType:* in components ) {
 			onComponentRemoved( entity, componentType, components[componentType] );
 		}
 		
 		entity.removeComponentObserver( this );
 	}
-
+	
+//-------------------------------------------
+//  Internals: IComponentObserver
+//-------------------------------------------
+	
 	/** @private */
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+		use namespace list_internal;
 		const observers:LinkedSet = observersMap[componentType];
 		if ( observers ) {
-			for ( var node:LLNodeBase = observers.firstNode; node; node = node.list_internal::next ) {
-				var observer:IComponentObserver = node.list_internal::item;
+			for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+				const observer:IComponentObserver = node.item;
 				observer.onComponentAdded( entity, componentType, component );
 			}
 		}
@@ -79,10 +84,11 @@ public class ComponentHandler implements IComponentNotifier, IEntityObserver, IC
 
 	/** @private */
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+		use namespace list_internal;
 		const observers:LinkedSet = observersMap[componentType];
 		if ( observers ) {
-			for ( var node:LLNodeBase = observers.firstNode; node; node = node.list_internal::next ) {
-				var observer:IComponentObserver = node.list_internal::item;
+			for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+				const observer:IComponentObserver = node.item;
 				observer.onComponentRemoved( entity, componentType, component );
 			}
 		}

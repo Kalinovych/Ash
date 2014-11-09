@@ -2,8 +2,7 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package ecs.engine.core {
-import flashrush.asentity.framework.core.ESpace;
+package flashrush.asentity.framework.core {
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 
@@ -14,13 +13,13 @@ public class EntityList {
 	public var last:Entity;
 	public var length:uint = 0;
 	
-	public var space:ESpace;
+	public var space:Space;
 	
-	public function EntityList( space:ESpace = null ) {
+	public function EntityList( space:Space = null ) {
 		this.space = space;
 	}
 	
-	public function attach( node:Entity ):void {
+	public function add( node:Entity ):void {
 		node._space = space;
 		node.prev = last;
 		node.next = null;
@@ -29,7 +28,7 @@ public class EntityList {
 		length++;
 	}
 	
-	public function detach( node:Entity ):void {
+	public function remove( node:Entity ):void {
 		if ( node == first ) {
 			first = first.next;
 		}
@@ -51,7 +50,7 @@ public class EntityList {
 		length--;
 	}
 	
-	public function detachAll( eachCallback:Function = null ):void {
+	public function removeAll( eachCallback:Function = null ):void {
 		while ( first ) {
 			var node:Entity = first;
 			first = first.next;

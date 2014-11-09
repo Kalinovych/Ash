@@ -3,69 +3,114 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.core {
-import flashrush.asentity.framework.core.Activity;
+import flash.errors.IllegalOperationError;
+
+import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.EntityCollection;
+import flashrush.signals.ICallbacks;
 import flashrush.signals.Signal1;
 
+use namespace asentity;
+
 public class Space {
-	public const OnEntityAdded:Signal1 = new Signal1( Entity );
-	public const OnEntityRemoved:Signal1 = new Signal1( Entity );
+	protected var _entities:EntityList = new EntityList( this );
+	protected var _componentManager:ComponentManager = new ComponentManager();
 	
-	protected var _entities:EntityCollection = new EntityCollection();
-	protected var _activities:Vector.<Activity>;
+	protected var _OnEntityAdded:Signal1 = new Signal1( Entity );
+	protected var _OnEntityRemoved:Signal1 = new Signal1( Entity );
 	
 	public function Space() {
-		_entities.registerHandler( new EntityRout( OnEntityAdded.dispatch, OnEntityRemoved.dispatch ) );
+		super();
+	}
+
+//-------------------------------------------
+// Properties
+//-------------------------------------------
+	
+	public final function get OnEntityAdded():ICallbacks {
+		return _OnEntityAdded;
 	}
 	
-	public function get entities():EntityCollection {
-		return _entities;
+	public final function get OnEntityRemoved():ICallbacks {
+		return _OnEntityRemoved;
 	}
+	
+	public final function get firstEntity():Entity {
+		return _entities.first;
+	}
+	
+	public final function get lastEntity():Entity {
+		return _entities.last;
+	}
+	
+	public final function get entityCount():uint {
+		return _entities.length;
+	}
+	
+	public final function get componentNotifier():IComponentNotifier {
+		return _componentManager;
+	}
+
+//-------------------------------------------
+// Public methods
+//-------------------------------------------
 	
 	public function addEntity( entity:Entity ):Entity {
-		_entities.add( entity );
+		CONFIG::debug{
+			if ( entity._space && entity._space != this ) {
+				throw new IllegalOperationError( "The entity belongs to an other space and can't be added!" );
+			}
+		}
+		
+		if ( !entity._space ) {
+			_entities.add( entity );
+			$notifyEntityAdded( entity );
+		}
 		return entity;
 	}
 	
-	public function contains( entity:Entity ):Boolean {
-		return _entities.contains( entity );
+	public function containsEntity( entity:Entity ):Boolean {
+		return (entity._space == this);
 	}
 	
 	public function removeEntity( entity:Entity ):Entity {
-		_entities.remove( entity );
+		CONFIG::debug{
+			if ( entity._space && entity._space != this ) {
+				throw new IllegalOperationError( "The entity belongs to an other space and can't be removed from this one." );
+			}
+		}
+		
+		if ( entity._space == this ) {
+			_entities.remove( entity );
+			$notifyEntityRemoved( entity );
+		}
 		return entity;
 	}
 	
-	public function clear():void {
-		_entities.removeAll();
+	public function removeAllEntities():void {
+		_entities.removeAll( $notifyEntityRemoved );
 	}
 	
-	public function update( delta:Number ):void {
+//-------------------------------------------
+// Internals
+//-------------------------------------------
+	
+	[Inline]
+	protected final function $notifyEntityAdded( entity:Entity ):void {
+		_componentManager.onEntityAdded( entity );
+		_OnEntityAdded.dispatch( entity );
+	}
+	
+	[Inline]
+	protected final function $notifyEntityRemoved( entity:Entity ):void {
+		_componentManager.onEntityRemoved( entity );
+		_OnEntityRemoved.dispatch( entity );
+	}
+	
+	/*public function update( delta:Number ):void {
 		for each( var activity:Activity in _activities ) {
 			activity.update( delta );
 		}
-	}
+	}*/
 }
-}
-
-import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
-
-class EntityRout implements IEntityObserver {
-	private var addedCallback:Function;
-	private var removedCallback:Function;
-	
-	public function EntityRout( addedCallback:Function, removedCallback:Function ) {
-		this.addedCallback = addedCallback;
-		this.removedCallback = removedCallback;
-	}
-	
-	public function onEntityAdded( entity:Entity ):void {
-		addedCallback( entity );
-	}
-	
-	public function onEntityRemoved( entity:Entity ):void {
-		removedCallback( entity );
-	}
 }

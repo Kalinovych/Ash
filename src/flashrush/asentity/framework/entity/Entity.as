@@ -4,7 +4,6 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.core.Space;
-import flashrush.collections.LLNode;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -32,7 +31,7 @@ use namespace asentity;
  * position component. Systems operate on entities based on the components they have.</p>
  */
 public class Entity {
-	asentity static var idIndex:uint = 0;
+	private static var idIndex:uint = 0;
 	
 	asentity var _id:uint;
 	
@@ -49,9 +48,7 @@ public class Entity {
 	 * Constructor
 	 */
 	public function Entity() {
-		idIndex++;
-		_id = idIndex;
-		super();
+		_id = ++idIndex;
 	}
 	
 	public final function get id():uint {
@@ -154,8 +151,8 @@ public class Entity {
 	}
 	
 	public function removeAll():void {
-		for ( var componentId:Class in _components ) {
-			remove( componentId );
+		for ( var component:Class in _components ) {
+			remove( component );
 		}
 	}
 	

@@ -4,6 +4,7 @@
  */
 package ecs.engine.core {
 import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.core.EntityList;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.asentity.framework.systems.SystemList;
@@ -29,7 +30,7 @@ public class ESContext {
 	public function ESContext() {}
 
 	public function addEntity( entity:Entity ):Entity {
-		entityList.attach( entity );
+		entityList.add( entity );
 		var node:Node = entityHandlers.firstNode;
 		while ( node ) {
 			var handler:IEntityObserver = node.item;
@@ -40,7 +41,7 @@ public class ESContext {
 	}
 
 	public function removeEntity( entity:Entity ):Entity {
-		entityList.detach( entity );
+		entityList.remove( entity );
 		var node:Node = entityHandlers.lastNode;
 		while ( node ) {
 			var handler:IEntityObserver = node.item;
