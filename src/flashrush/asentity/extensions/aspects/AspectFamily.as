@@ -7,7 +7,7 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentObserver;
-import flashrush.asentity.framework.core.ProcessingLock;
+import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.signatures.api.ISignature;
 
@@ -30,15 +30,15 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	/** Bit representation of the family's excluded components for fast matching */
 	internal var excludedSign:ISignature;
 	
-	private var processingLock:ProcessingLock;
+	private var consistencyLock:ConsistencyLock;
 	
 	private var disposeCacheHead:Aspect;
 	
 	private var poolHead:Aspect;
 	
-	public function AspectFamily( aspectInfo:AspectInfo, processingLock:ProcessingLock ) {
+	public function AspectFamily( aspectInfo:AspectInfo, consistencyLock:ConsistencyLock = null ) {
 		this.mappingInfo = aspectInfo;
-		this.processingLock = processingLock;
+		this.consistencyLock = consistencyLock;
 	}
 	
 	/** The list of aspects that belongs to the family. */
@@ -65,13 +65,14 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		const field:AspectField = mappingInfo.fieldMap[componentType];
 		
 		switch ( field.kind ) {
-			case AspectField.REQUIRED: // added required component of the aspect
+			case AspectField.REQUIRED:
+				// some entity obtains one of the aspect traits
 				if ( !aspect ) {
 					$createAspectOf( entity );
 				}
 				break;
 			
-			case AspectField.OPTIONAL: // added optional component of the aspect
+			case AspectField.OPTIONAL:
 				if ( aspect ) {
 					aspect[field.name] = component;
 				}
@@ -96,20 +97,23 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		const field:AspectField = mappingInfo.fieldMap[componentType];
 		
 		switch ( field.kind ) {
-			case AspectField.REQUIRED: // removed required component of the aspect
+			case AspectField.REQUIRED:
+				// aspect lost it trait
 				if ( aspect ) {
 					$removeAspectOf( entity );
 				}
 				break;
 			
-			case AspectField.OPTIONAL: // removed optional component of the aspect
+			case AspectField.OPTIONAL:
+				// just clear the reference
 				if ( aspect ) {
 					aspect[field.name] = null;
 				}
 				break;
 			
-			case AspectField.EXCLUDED: // removed aspect exclusion component
-				// check is the entity match the aspect now
+			case AspectField.EXCLUDED:
+				// removed component that denies the aspect
+				// check is the entity fits the aspect now
 				if ( !entity._sign.hasAllOf( excludedSign ) ) {
 					addQualifiedEntity( entity );
 				}
@@ -121,8 +125,12 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		}
 	}
 	
+	//-------------------------------------------
+	// Protected
+	//-------------------------------------------
+	
 	/**
-	 * Creates new family's aspect for the matched entity
+	 * Command to create new family's aspect for the matched entity
 	 * createNode() should be called after verification of existence all required components in the entity.
 	 * @param entity
 	 */
@@ -157,10 +165,10 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		delete aspectByEntity[entity];
 		_aspects.remove( aspect );
 		
-		if ( processingLock.isLocked ) {
+		if ( consistencyLock && consistencyLock.isLocked ) {
 			aspect.cacheNext = disposeCacheHead;
 			disposeCacheHead = aspect;
-			processingLock.onUnlocks( releaseCache );
+			consistencyLock.onUnlocks( releaseCache );
 		} else {
 			$disposeAspect( aspect )
 		}

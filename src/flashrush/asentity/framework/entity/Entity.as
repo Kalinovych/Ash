@@ -168,9 +168,44 @@ public class Entity {
 	 *  and it should not burden it.
 	 *
 	 *
-	 * Stackable component props:
-	 *  prev:T
-	 *  next:T
+	 *****
+	 * Regular solution - component aggregator.
+	 * Pros:
+	 *   + Do not require to modify the framework.
+	 *   + Personal specific implementations.
+	 *   + Aggregated control of sub-component properties.
+	 * Cons:
+	 *   - Manual(out of engine) aggregator implementation for each component type that can be added multiple
+	 *   - Require solution to notify about added/removed sub-component. 
+	 *   
+	 * Explanation sample:
+	 *   component Armor {
+	 *     value:Number;
+	 *     
+	 *     items:[Armor];
+	 *     
+	 *     add(Armor)->{add...; updateValue();}
+	 *     remove(Armor)->{remove...; updateValue();};
+	 *   }
+	 *
+	 *   var bonusArmor = new Armor(10);
+	 *   unitArmor = entity.get(Armor);
+	 *   unitArmor
+	 *      ? unitArmor.add(bonusArmor)
+	 *      : entity.add(bonusArmor);
+	 *      
+	 *   
+	 *
+	 *****
+	 * Stackable component solution.
+	 * Pros: Auto-managed by Entity
+	 * Cons: one-to-one component-entity relation, e.g. not able to use shared/singleton components.
+	 * 
+	 * Component interface:
+	 * component T {
+	 *   prev:T
+	 *   next:T
+	 * }
 	 *
 	 * ADD:
 	 *  If the component is stackable and another component with such type already exists

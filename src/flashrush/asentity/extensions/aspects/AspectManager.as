@@ -6,7 +6,7 @@ package flashrush.asentity.extensions.aspects {
 import flashrush.asentity.extensions.ECSigner;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentNotifier;
-import flashrush.asentity.framework.core.ProcessingLock;
+import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.Space;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
@@ -19,13 +19,13 @@ use namespace asentity;
 
 public class AspectManager implements IAspectManager, IEntityObserver {
 	private var space:Space;
-	private var processingLock:ProcessingLock;
-	private var families:LinkedMap/*<NodeClass, AspectObserver>*/ = new LinkedMap();
+	private var consistencyLock:ConsistencyLock;
+	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
 	private var signer:ECSigner = new ECSigner();
 	
-	public function AspectManager( space:Space, processingLock:ProcessingLock ) {
+	public function AspectManager( space:Space, consistencyLock:ConsistencyLock = null ) {
 		this.space = space;
-		this.processingLock = processingLock;
+		this.consistencyLock = consistencyLock;
 		
 		space.OnEntityAdded.add( signer.onEntityAdded );
 		space.OnEntityRemoved.add( signer.onEntityRemoved );
@@ -81,7 +81,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	/** @private **/
 	protected final function createFamily( aspectDefinition:Class ):AspectFamily {
 		const aspectInfo:AspectInfo = AspectUtil.getInfo( aspectDefinition );
-		const family:AspectFamily = new AspectFamily( aspectInfo, processingLock );
+		const family:AspectFamily = new AspectFamily( aspectInfo, consistencyLock );
 		
 		// helpers
 		var field:AspectField;

@@ -6,7 +6,7 @@ package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.core.IComponentObserver;
-import flashrush.asentity.framework.core.ProcessingLock;
+import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.entity.Entity;
 
 /**
@@ -16,12 +16,12 @@ public class ComponentFamily implements IComponentObserver {
 	internal var mappingType:Class;
 	internal var aspectByEntity:Dictionary/*<Entity,Aspect>*/ = new Dictionary();
 	private var _aspects:AspectList = new AspectList();
-	private var processingLock:ProcessingLock;
+	private var processingLock:ConsistencyLock;
 	
 	private var disposeCacheHead:Aspect;
 	private static var poolHead:Aspect;
 	
-	public function ComponentFamily( componentType:Class, processingLock:ProcessingLock ) {
+	public function ComponentFamily( componentType:Class, processingLock:ConsistencyLock ) {
 		this.mappingType = componentType;
 		this.processingLock = processingLock;
 	}

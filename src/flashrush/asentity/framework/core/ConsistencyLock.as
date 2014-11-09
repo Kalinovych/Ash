@@ -4,18 +4,22 @@
  */
 package flashrush.asentity.framework.core {
 
-public class ProcessingLock {
+public class ConsistencyLock {
 	public var isLocked:Boolean = false;
 	
-	private var unlockCallbacks:Vector.<Function> = new Vector.<Function>( 1e3 );
+	private var unlockCallbacks:Vector.<Function> = new Vector.<Function>( 1e3, true );
 	private var cbCount:uint = 0;
 	
-	public function ProcessingLock() {}
+	public function ConsistencyLock() {}
 	
 	/** Registers a callback to be executed once when processing unlocks. */
 	public function onUnlocks( callback:Function ):void {
 		unlockCallbacks[cbCount++] = callback;
 	}
+	
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
 	
 	internal function lock():void {
 		isLocked = true;

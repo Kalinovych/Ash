@@ -4,16 +4,17 @@
  */
 package flashrush.asentity.extensions.aspects {
 public class AspectField {
-	public static const NONE:int = 0;
 	public static const REQUIRED:int = 1;
 	public static const OPTIONAL:int = 2;
 	public static const EXCLUDED:int = 3;
 	
-	public var type:Class;
-	public var name:String;
-	public var kind:int;
+	public/* readonly */var type:Class;
+	public/* readonly */var name:String;
+	public/* readonly */var kind:int;
 	
 	public function AspectField( type:Class, name:String, kind:int ) {
+		CONFIG::debug{ $verifyKind(kind); }
+		
 		this.type = type;
 		this.name = name;
 		this.kind = kind;
@@ -33,6 +34,14 @@ public class AspectField {
 	
 	public final function get isRequiredOrOptional():Boolean {
 		return (kind == REQUIRED || kind == OPTIONAL);
+	}
+	
+	CONFIG::debug
+	[Inline]
+	protected final function $verifyKind( kind:int ):void {
+		if ( kind < REQUIRED || kind > EXCLUDED ) {
+			throw new ArgumentError( "Incorrect AspectField kind value passed: " + kind );
+		}
 	}
 }
 }
