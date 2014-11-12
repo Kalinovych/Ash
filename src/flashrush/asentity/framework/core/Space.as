@@ -9,6 +9,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.signals.ICallbacks;
 import flashrush.signals.Signal1;
+import flashrush.signals.Signal3;
 
 use namespace asentity;
 
@@ -18,6 +19,9 @@ public class Space {
 	
 	protected var _OnEntityAdded:Signal1 = new Signal1( Entity );
 	protected var _OnEntityRemoved:Signal1 = new Signal1( Entity );
+	
+	protected var _OnComponentAdded:Signal3 = new Signal3( Entity, Class, Object );
+	protected var _OnComponentRemoved:Signal3 = new Signal3( Entity, Class, Object );
 	
 	public function Space() {
 		super();

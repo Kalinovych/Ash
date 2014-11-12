@@ -32,7 +32,7 @@ public class AspectUtil {
 	}
 	
 	private static function reflectInfo( aspectClass:Class ):AspectInfo {
-		const info:AspectInfo = new AspectInfo( aspectClass );
+		const info:AspectInfo = new AspectInfo();
 		
 		// describe type
 		const typeData:Object = DescribeTypeJSONCached.describe( aspectClass, INCLUDE_VARIABLES | INCLUDE_METADATA | INCLUDE_TRAITS | USE_ITRAITS | HIDE_OBJECT );
