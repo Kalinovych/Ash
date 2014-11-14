@@ -16,7 +16,7 @@ import flashrush.asentity.framework.systems.api.ISystemHandler;
 use namespace asentity;
 
 public class InstanceRegistryExtension implements IEntityObserver, IComponentObserver, ISystemHandler {
-	asentity var instanceRegistry:InstanceRegistry;
+	asentity var registry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
 	protected var observeEntities:Boolean;
@@ -28,9 +28,9 @@ public class InstanceRegistryExtension implements IEntityObserver, IComponentObs
 	}
 
 	public function extend( context:ESContext ):void {
-		if ( !instanceRegistry ) {
-			instanceRegistry = new InstanceRegistry();
-			context.share( instanceRegistry );
+		if ( !registry ) {
+			registry = new InstanceRegistry();
+			context.share( registry );
 		}
 
 		if ( observeEntities || observeComponents ) {
@@ -43,40 +43,40 @@ public class InstanceRegistryExtension implements IEntityObserver, IComponentObs
 
 	public function onEntityAdded( entity:Entity ):void {
 		if ( observeEntities ) {
-			instanceRegistry.handleAdded( entity );
+			registry.handleAdded( entity );
 		}
 		if ( observeComponents ) {
 			for each( var component:* in entity._components ) {
-				instanceRegistry.handleAdded( component );
+				registry.handleAdded( component );
 			}
 		}
 	}
 
 	public function onEntityRemoved( entity:Entity ):void {
 		if ( observeEntities ) {
-			instanceRegistry.handleRemoved( entity );
+			registry.handleRemoved( entity );
 		}
 		if ( observeComponents ) {
 			for each( var component:* in entity._components ) {
-				instanceRegistry.handleRemoved( component );
+				registry.handleRemoved( component );
 			}
 		}
 	}
 
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
-		instanceRegistry.handleAdded( component );
+		registry.handleAdded( component );
 	}
 
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
-		instanceRegistry.handleRemoved( component );
+		registry.handleRemoved( component );
 	}
 
 	public function onSystemAdded( system:ISystem ):void {
-		instanceRegistry.handleAdded( system );
+		registry.handleAdded( system );
 	}
 
 	public function onSystemRemoved( system:ISystem ):void {
-		instanceRegistry.handleRemoved( system );
+		registry.handleRemoved( system );
 	}
 }
 }

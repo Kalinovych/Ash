@@ -70,7 +70,7 @@ public class Engine {
 			throw new Error( "The entity name " + entity.name + " is already in use by another entity." );
 		}
 
-		entity._sign = signManager.signKeys( entity._components );
+		entity.componentBits = signManager.signKeys( entity._components );
 
 		entityList.add( entity );
 		entityByName[ entity.id ] = entity;
@@ -104,8 +104,8 @@ public class Engine {
 
 		delete entityByName[ entity.id ];
 		entityList.remove( entity );
-		signManager.recycleSign( entity._sign );
-		entity._sign = null;
+		signManager.recycleSign( entity.componentBits );
+		entity.componentBits = null;
 	}
 
 	/**
@@ -113,12 +113,12 @@ public class Engine {
 	 */
 	protected function componentAdded( entity:Entity, componentClass:Class ):void {
 		// put component bit to the entity dna
-		entity._sign.add( componentClass );
+		entity.componentBits.add( componentClass );
 
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList && familyList.length ) {
 			for each( var family:Family in familyList ) {
-				if ( entity._sign.contains( family.sign ) ) {
+				if ( entity.componentBits.contains( family.sign ) ) {
 					family.componentAdded( entity, componentClass );
 				}
 			}
@@ -132,13 +132,13 @@ public class Engine {
 		var familyList:Vector.<Family> = familiesByComponent[componentClass];
 		if ( familyList && familyList.length ) {
 			for each( var family:Family in familyList ) {
-				if ( entity._sign.contains( family.sign ) ) {
+				if ( entity.componentBits.contains( family.sign ) ) {
 					family.componentRemoved( entity, componentClass );
 				}
 			}
 		}
 
-		entity._sign.remove( componentClass );
+		entity.componentBits.remove( componentClass );
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class Engine {
 
 	[Inline]
 	protected final function entityBelongToFamily( entity:Entity, family:Family ):Boolean {
-		return ( entity._sign.contains( family.sign ) && !( family.exclusionSign && entity._sign.contains( family.exclusionSign ) ) );
+		return ( entity.componentBits.contains( family.sign ) && !( family.exclusionSign && entity.componentBits.contains( family.exclusionSign ) ) );
 	}
 
 

@@ -19,12 +19,10 @@ public class LinkedSet extends InternalList {
 		super();
 	}
 
-	[Inline]
 	public final function get firstNode():Node {
 		return _firstNode;
 	}
 	
-	[Inline]
 	public final function get lastNode():Node {
 		return _lastNode;
 	}

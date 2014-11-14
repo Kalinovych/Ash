@@ -4,29 +4,37 @@
  */
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.extensions.aspects.Aspect;
+import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
 
-public class System implements ISystem {
+public/* abstract */class System implements ISystem {
 	
-	public function System() {
-	}
+	public function System() {}
 	
-	public function initialize():void {
-	}
+	public function initialize():void {}
 	
-	public function onAdded():void {
-	}
-
-	public function update( deltaTime:Number ):void {
-	}
+	public function onAdded():void {}
 	
-	public function onRemoved():void {
-	}
+	public function onEnable():void {}
 	
-	public function destroy():void {
-	}
+	public function update( delta:Number ):void {}
 	
-	// v2 design
+	public function onDisable():void {}
+	
+	public function onRemoved():void {}
+	
+	public function destroy():void {}
+	
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
+	
+	asentity var priority:int = 0;
+	
+	
+	
+	
+	// v2 design idea
 	
 	public namespace callback;
 	

@@ -11,17 +11,17 @@ import flashrush.asentity.framework.api.asentity;
 use namespace asentity;
 
 public class InstanceRegistry implements IInstanceRegistry {
-	protected var list:BindingList = new BindingList();
-	protected var bindingByType:Dictionary = new Dictionary();
+	protected var families:FamilyList = new FamilyList();
+	protected var familyByType:Dictionary = new Dictionary();
 
 	public function getInstancesOf( type:Class ):InstanceList {
-		var node:BindingNode = bindingByType[type];
-		if ( node ) {
+		var family:InstanceFamily = familyByType[type];
+		if ( family ) {
 			var wrapper:InstanceList = new InstanceList();
-			wrapper.type = node.type;
-			wrapper.list = node.instances;
+			wrapper.type = family.type;
+			wrapper.list = family.instances;
 			wrapper.registry = this;
-			node.referenceCount++;
+			family.referenceCount++;
 			return wrapper;
 		}
 		return null;
@@ -34,29 +34,29 @@ public class InstanceRegistry implements IInstanceRegistry {
 	 * @param type Interface, Class or super Class of instances to collect
 	 */
 	public function observe( type:Class ):void {
-		var node:BindingNode = bindingByType[type];
-		if ( !node ) {
-			node = new BindingNode();
-			bindingByType[type] = node;
-			list.add( node );
+		var family:InstanceFamily = familyByType[type];
+		if ( !family ) {
+			family = new InstanceFamily();
+			families.add( family );
+			familyByType[type] = family;
 		}
 	}
 
 	public function unObserve( type:Class ):void {
-		var node:BindingNode = bindingByType[type];
-		if ( node ) {
-			delete bindingByType[type];
-			list.remove( node );
-			node.dispose();
+		var family:InstanceFamily = familyByType[type];
+		if ( family ) {
+			delete familyByType[type];
+			families.remove( family );
+			family.dispose();
 		}
 	}
 
 	public function handleAdded( instance:* ):uint {
 		var handleCount:uint = 0;
-		var node:BindingNode = list.first;
-		while ( node ) {
-			if ( instance is node.type ) {
-				if ( node.instances.add( instance ) ) {
+		var family:InstanceFamily = families.first;
+		while ( family ) {
+			if ( instance is family.type ) {
+				if ( family.instances.add( instance ) ) {
 					handleCount++;
 				}
 			}
@@ -66,10 +66,10 @@ public class InstanceRegistry implements IInstanceRegistry {
 
 	public function handleRemoved( instance:* ):uint {
 		var handleCount:uint = 0;
-		var node:BindingNode = list.first;
-		while ( node ) {
-			if ( instance is node.type ) {
-				if ( node.instances.remove( instance ) ) {
+		var family:InstanceFamily = families.first;
+		while ( family ) {
+			if ( instance is family.type ) {
+				if ( family.instances.remove( instance ) ) {
 					handleCount--;
 				}
 			}
@@ -79,8 +79,8 @@ public class InstanceRegistry implements IInstanceRegistry {
 
 	public function referenceDisposed( ref:InstanceList ):void {
 		// TODO: refCount--
-		var node:BindingNode = bindingByType[ref.type];
-		node.referenceCount--;
+		var family:InstanceFamily = familyByType[ref.type];
+		family.referenceCount--;
 		ref.type = null;
 		ref.list = null;
 		ref.registry = null;
@@ -92,7 +92,7 @@ import flashrush.asentity.extensions.instanceRegistry.InstanceList;
 import flashrush.ds.LinkedSet;
 import flashrush.ds.ListBase;
 
-class BindingNode {
+class InstanceFamily {
 	public var type:Class;
 	public var instances:LinkedSet = new LinkedSet();
 	//public var instances:InstanceList = new InstanceList();
@@ -100,8 +100,8 @@ class BindingNode {
 
 	public var noReferencesCallback:Function;
 
-	public var prev:BindingNode;
-	public var next:BindingNode;
+	public var prev:InstanceFamily;
+	public var next:InstanceFamily;
 
 	public function getReference():InstanceList {
 		// TODO: implement getReference here
@@ -126,21 +126,21 @@ class BindingNode {
 	}
 }
 
-class BindingList extends ListBase {
+class FamilyList extends ListBase {
 
-	public function get first():BindingNode {
+	public function get first():InstanceFamily {
 		return _firstNode;
 	}
 
-	public function get last():BindingNode {
+	public function get last():InstanceFamily {
 		return _lastNode;
 	}
 
-	public function add( binding:BindingNode ):BindingNode {
-		return $attach( binding );
+	public function add( family:InstanceFamily ):InstanceFamily {
+		return $attach( family );
 	}
 
-	public function remove( binding:BindingNode ):BindingNode {
-		return $detach( binding );
+	public function remove( family:InstanceFamily ):InstanceFamily {
+		return $detach( family );
 	}
 }

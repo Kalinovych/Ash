@@ -10,7 +10,7 @@ public class Name {
 		_name = name;
 	}
 
-	public function get name():String {
+	public final function get name():String {
 		return _name;
 	}
 }

@@ -10,12 +10,11 @@ import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.asentity.framework.systems.SystemList;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
-import flashrush.gdf.api.gdf_core;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.Node;
+import flashrush.collections.InternalLinkedSet;
+import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.list_internal;
 
 use namespace asentity;
-use namespace gdf_core;
 
 /**
  * Scoped collection of entities and systems
@@ -23,81 +22,107 @@ use namespace gdf_core;
 public class ESContext {
 	asentity var entityList:EntityList = new EntityList();
 	asentity var systemList:SystemList = new SystemList();
-
-	asentity var entityHandlers:LinkedSet = new LinkedSet();
-	asentity var systemHandlers:LinkedSet = new LinkedSet();
-
+	
+	private var entityHandlers:InternalLinkedSet = new InternalLinkedSet();
+	private var systemHandlers:InternalLinkedSet = new InternalLinkedSet();
+	
 	public function ESContext() {}
-
+	
 	public function addEntity( entity:Entity ):Entity {
 		entityList.add( entity );
-		var node:Node = entityHandlers.firstNode;
-		while ( node ) {
-			var handler:IEntityObserver = node.item;
-			handler.onEntityAdded( entity );
-			node = node.next;
-		}
+		
+		$notifyEntityAdded( entity );
 		return entity;
 	}
-
+	
 	public function removeEntity( entity:Entity ):Entity {
 		entityList.remove( entity );
-		var node:Node = entityHandlers.lastNode;
-		while ( node ) {
-			var handler:IEntityObserver = node.item;
-			handler.onEntityRemoved( entity );
-			node = node.prev;
-		}
+		
+		$notifyEntityRemoved( entity );
 		return entity;
 	}
-
+	
+	public function removeAllEntities():void {
+		entityList.removeAll( $notifyEntityRemoved );
+	}
+	
 	public function addSystem( system:ISystem, order:int = 0 ):* {
 		systemList.add( system, order );
-		var node:Node = systemHandlers.firstNode;
-		while ( node ) {
-			var handler:ISystemHandler = node.item;
+		
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = systemHandlers.firstNode; node; node = node.next ) {
+			const handler:ISystemHandler = node.item;
 			handler.onSystemAdded( system );
-			node = node.next;
 		}
 		return system;
 	}
-
+	
 	public function removeSystem( system:ISystem ):* {
 		systemList.remove( system );
-		var node:Node = systemHandlers.lastNode;
-		while ( node ) {
-			var handler:ISystemHandler = node.item;
+		
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = systemHandlers.lastNode; node; node = node.prev ) {
+			const handler:ISystemHandler = node.item;
 			handler.onSystemRemoved( system );
-			node = node.prev;
 		}
 		return system;
 	}
-
+	
+	//-------------------------------------------
+	// Framework internal methods
+	//-------------------------------------------
+	
 	asentity function registerHandler( handler:* ):Boolean {
 		var registered:Boolean = false;
-
+		
 		if ( handler is IEntityObserver ) {
 			registered ||= entityHandlers.add( handler );
 		}
-
+		
 		if ( handler is ISystemHandler ) {
 			registered ||= systemHandlers.add( handler );
 		}
-
+		
 		if ( !registered ) {
 			trace( "[ESContext.registerHandler]› WARNING: Handler " + handler + " wasn't registered!" );
 		}
-
+		
 		return registered;
 	}
-
-	asentity function unRegisterHandler( handler:* ):void {
+	
+	asentity function unregisterHandler( handler:* ):void {
 		if ( handler is IEntityObserver ) {
 			entityHandlers.remove( handler );
 		}
-
+		
 		if ( handler is ISystemHandler ) {
 			systemHandlers.remove( handler );
+		}
+	}
+	
+	//-------------------------------------------
+	// Protected methods
+	//-------------------------------------------
+	
+	[Inline]
+	protected final function $notifyEntityAdded( entity:Entity ):void {
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = entityHandlers.firstNode; node; node = node.next ) {
+			const handler:IEntityObserver = node.item;
+			handler.onEntityAdded( entity );
+		}
+	}
+	
+	[Inline]
+	protected final function $notifyEntityRemoved( entity:Entity ):void {
+		use namespace list_internal;
+		
+		for ( var node:LLNodeBase = entityHandlers.lastNode; node; node = node.prev ) {
+			const handler:IEntityObserver = node.item;
+			handler.onEntityRemoved( entity );
 		}
 	}
 }

@@ -7,9 +7,11 @@ import flashrush.asentity.extensions.ECSigner;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentNotifier;
 import flashrush.asentity.framework.core.ConsistencyLock;
-import flashrush.asentity.framework.core.Space;
+import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.utils.SetBits;
+import flashrush.asentity.framework.signature.Signer;
 import flashrush.collections.LinkedMap;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -18,38 +20,49 @@ import flashrush.signatures.bitwise.api.IBitSignature;
 use namespace asentity;
 
 public class AspectManager implements IAspectManager, IEntityObserver {
-	private var space:Space;
+	private var _space:EntitySpace;
+	private var componentNotifier:IComponentNotifier;
 	private var consistencyLock:ConsistencyLock;
 	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
-	private var signer:ECSigner = new ECSigner();
+	private var ecSigner:ECSigner = new ECSigner();
 	
-	public function AspectManager( space:Space, consistencyLock:ConsistencyLock = null ) {
-		this.space = space;
+	private var signer:Signer = new Signer();
+	
+	public function AspectManager( space:EntitySpace, componentNotifier:IComponentNotifier, consistencyLock:ConsistencyLock = null ) {
+		this._space = space;
+		this.componentNotifier = componentNotifier;
 		this.consistencyLock = consistencyLock;
 		
-		space.OnEntityAdded.add( signer.onEntityAdded );
-		space.OnEntityRemoved.add( signer.onEntityRemoved );
+		_space.addEntityHandler( ecSigner );
+		_space.addEntityHandler( this );
 		
-		space.OnEntityAdded.add( onEntityAdded );
-		space.OnEntityRemoved.add( onEntityRemoved );
+		//space.OnEntityAdded.add( ecSigner.onEntityAdded );
+		//space.OnEntityRemoved.add( ecSigner.onEntityRemoved );
 		
-		//entitySpace.registerHandler( signer );
+		//space.OnEntityAdded.add( onEntityAdded );
+		//space.OnEntityRemoved.add( onEntityRemoved );
+		
+		//entitySpace.registerHandler( ecSigner );
 		//entitySpace.registerHandler( this );
 	}
 	
-	public function getAspects( aspectDefinition:Class ):AspectList {
-		var family:AspectFamily = families.get( aspectDefinition );
+	public final function get space():EntitySpace {
+		return _space;
+	}
+	
+	public function getAspects( type:Class ):AspectList {
+		var family:AspectFamily = families.get( type );
 		if ( !family ) {
-			family = createFamily( aspectDefinition );
-			families.put( aspectDefinition, family );
+			family = createFamily( type );
+			families.put( type, family );
 		}
 		return family.aspects;
 	}
 	
 	/** @private **/
 	public function onEntityAdded( entity:Entity ):void {
-		trace( "[AspectsManager.onEntityAdded]›", entity );
 		use namespace list_internal;
+		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
 			const family:AspectFamily = node.item;
 			if ( $entityMatchAspect( entity, family ) ) {
@@ -61,16 +74,14 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	/** @private **/
 	public function onEntityRemoved( entity:Entity ):void {
 		use namespace list_internal;
+		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
 			const family:AspectFamily = node.item;
-			if ( entity in family.aspectByEntity ) {
+			if ( family.aspectByEntity[entity] ) {
 				family.removeQualifiedEntity( entity );
 			}
-			/*if ( $entityMatchAspect( entity, family ) ) {
-				family.removeQualifiedEntity( entity );
-			}*/
 		}
-		//signer.disposeSign( sign );
+		//ecSigner.disposeSign( sign );
 		//entity._sign = null;
 	}
 	
@@ -79,37 +90,47 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	//-------------------------------------------
 	
 	/** @private **/
-	protected final function createFamily( aspectDefinition:Class ):AspectFamily {
-		const aspectInfo:AspectInfo = AspectUtil.getInfo( aspectDefinition );
+	protected final function createFamily( aspectType:Class ):AspectFamily {
+		const aspectInfo:AspectInfo = AspectUtil.getInfo( aspectType );
 		const family:AspectFamily = new AspectFamily( aspectInfo, consistencyLock );
 		
 		// helpers
-		var field:AspectField;
+		var trait:AspectTrait;
 		var i:int;
 		
 		// sign
-		const sign:IBitSignature = signer.signer.signEmpty() as IBitSignature;
-		const excludedSign:IBitSignature = ( aspectInfo.hasExcluded ? signer.signer.signEmpty() as IBitSignature : null );
-		for ( i = 0; i < aspectInfo.fieldCount; i++ ) {
-			field = aspectInfo.fieldList[i];
-			const flag:int = signer.signer.provideFlag( field.type );
-			field.isExcluded ? excludedSign.set( flag ) : sign.set( flag );
+		const requiredBits:SetBits = signer.signNone();
+		//const mask:Signature = ( aspectInfo.hasExcluded ? signer.signFull() : null );
+		const mask:SetBits = signer.signFull();
+		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
+			trait = aspectInfo.traits[i];
+			switch ( trait.kind ) {
+				case AspectTrait.REQUIRED:
+					requiredBits.add( trait.type );
+					break;
+				case AspectTrait.OPTIONAL:
+					break;
+				case AspectTrait.EXCLUDED:
+					mask.remove( trait.type );
+					break;
+			}
+			//trait.isExcluded ? mask.remove( trait.type ) : requiredBits.add( trait.type );
 		}
-		family.sign = sign;
-		family.excludedSign = excludedSign;
+		family.bits = requiredBits;
+		family.mask = mask;
 		
 		// scan space for an entities that match the aspect
-		for ( var entity:Entity = space.firstEntity; entity; entity = entity.next ) {
+		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
 			if ( $entityMatchAspect( entity, family ) ) {
 				family.addQualifiedEntity( entity );
 			}
 		}
 		
 		// register family as an observer of components of described types.
-		const componentNotifier:IComponentNotifier = space.componentNotifier;
-		for ( i = 0; i < aspectInfo.fieldCount; i++ ) {
-			field = aspectInfo.fieldList[i];
-			componentNotifier.addObserver( field.type, family );
+		const componentNotifier:IComponentNotifier = componentNotifier;
+		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
+			trait = aspectInfo.traits[i];
+			componentNotifier.addComponentHandler( trait.type, family );
 		}
 		
 		return family;
@@ -117,7 +138,8 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	
 	[Inline]
 	protected final function $entityMatchAspect( entity:Entity, aspect:AspectFamily ):Boolean {
-		return ( entity._sign.hasAllOf( aspect.sign ) && !( aspect.excludedSign && entity._sign.hasAllOf( aspect.excludedSign ) ) );
+		return entity.componentBits.hasAllOf( aspect.bits, aspect.mask );
+		//return ( entity.componentBits.hasAllOf( aspect.bits ) && !( aspect.mask && entity.componentBits.hasAllOf( aspect.mask ) ) );
 	}
 }
 }

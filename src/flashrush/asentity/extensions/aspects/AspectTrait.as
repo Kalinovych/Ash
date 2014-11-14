@@ -3,21 +3,25 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-public class AspectField {
+
+/**
+ * Contains the information about single an aspect's trait(component). 
+ */
+public class AspectTrait {
 	public static const REQUIRED:int = 1;
 	public static const OPTIONAL:int = 2;
 	public static const EXCLUDED:int = 3;
 	
 	public/* readonly */var type:Class;
-	public/* readonly */var name:String;
 	public/* readonly */var kind:int;
+	public/* readonly */var fieldName:String;
 	
-	public function AspectField( type:Class, name:String, kind:int ) {
+	public function AspectTrait( componentType:Class, kind:int = REQUIRED, fieldName:String = null ) {
 		CONFIG::debug{ $verifyKind(kind); }
 		
-		this.type = type;
-		this.name = name;
+		this.type = componentType;
 		this.kind = kind;
+		this.fieldName = fieldName;
 	}
 	
 	public final function get isRequired():Boolean {

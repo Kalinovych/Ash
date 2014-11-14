@@ -18,6 +18,7 @@ public class AspectUtil {
 	private static const OPTIONAL_META_TAG:String = "Optional";
 	private static const EXCLUDE_META_TAG:String = "Without";
 	
+	// map of field names to skip when building aspect info.
 	private static const SKIP_FIELDS:Object = {"entity": true, "prev": true, "next": true};
 	
 	private static const infoLib:Dictionary = new Dictionary();
@@ -25,13 +26,17 @@ public class AspectUtil {
 	public static function getInfo( aspectClass:Class ):AspectInfo {
 		var info:AspectInfo = infoLib[aspectClass];
 		if ( !info ) {
-			info = reflectInfo( aspectClass );
+			info = describeAspect( aspectClass );
 			infoLib[aspectClass] = info;
 		}
 		return info;
 	}
 	
-	private static function reflectInfo( aspectClass:Class ):AspectInfo {
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
+	
+	private static function describeAspect( aspectClass:Class ):AspectInfo {
 		const info:AspectInfo = new AspectInfo();
 		
 		// describe type
@@ -55,25 +60,25 @@ public class AspectUtil {
 			}
 			
 			const componentClass:Class = getDefinitionByName( property.type ) as Class;
-			const inclusionKind:int = getInclusionKind( property.metadata );
-			info.addField( componentClass, propertyName, inclusionKind );
+			const inclusionKind:int = retrieveInclusionKind( property.metadata );
+			info.addTrait( new AspectTrait( componentClass, inclusionKind, propertyName) );
 		}
 		
 		return info;
 	}
 	
-	private static function getInclusionKind( metadata:Array ):int {
+	private static function retrieveInclusionKind( metadata:Array ):int {
 		const annotationCount:uint = ( metadata ? metadata.length : 0 );
 		for ( var i:int = 0; i < annotationCount; i++ ) {
 			const tagName:String = metadata[i].name;
 			if ( tagName == EXCLUDE_META_TAG ) {
-				return AspectField.EXCLUDED;
+				return AspectTrait.EXCLUDED;
 			}
 			if ( tagName == OPTIONAL_META_TAG ) {
-				return AspectField.OPTIONAL;
+				return AspectTrait.OPTIONAL;
 			}
 		}
-		return AspectField.REQUIRED;
+		return AspectTrait.REQUIRED;
 	}
 	
 	

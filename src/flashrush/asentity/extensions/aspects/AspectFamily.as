@@ -6,10 +6,10 @@ package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.core.ConsistencyLock;
+import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.signatures.api.ISignature;
+import flashrush.asentity.framework.utils.SetBits;
 
 use namespace asentity;
 
@@ -17,33 +17,27 @@ use namespace asentity;
  * Class responsible for concrete aspect detection
  */
 internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ {
-	internal var mappingInfo:AspectInfo;
+	internal var aspectInfo:AspectInfo;
 	
-	private var _aspects:AspectList = new AspectList();
-	
-	/** Map of this family nodes by entity */
+	internal var aspects:AspectList = new AspectList();
 	internal var aspectByEntity:Dictionary = new Dictionary();
 	
-	/** Bit representation of the family's required components for fast matching */
-	internal var sign:ISignature;
-	
-	/** Bit representation of the family's excluded components for fast matching */
-	internal var excludedSign:ISignature;
+	internal var bits:SetBits;
+	internal var mask:SetBits;
 	
 	private var consistencyLock:ConsistencyLock;
 	
+	private var poolHead:Aspect;
 	private var disposeCacheHead:Aspect;
 	
-	private var poolHead:Aspect;
-	
+	/**
+	 * Constructs new family of the aspect
+	 * @param aspectInfo
+	 * @param consistencyLock
+	 */
 	public function AspectFamily( aspectInfo:AspectInfo, consistencyLock:ConsistencyLock = null ) {
-		this.mappingInfo = aspectInfo;
+		this.aspectInfo = aspectInfo;
 		this.consistencyLock = consistencyLock;
-	}
-	
-	/** The list of aspects that belongs to the family. */
-	public final function get aspects():AspectList {
-		return _aspects;
 	}
 	
 	public function addQualifiedEntity( entity:Entity ):void {
@@ -61,31 +55,28 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
+		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
-		const field:AspectField = mappingInfo.fieldMap[componentType];
+		if ( !trait ) return;
 		
-		switch ( field.kind ) {
-			case AspectField.REQUIRED:
-				// some entity obtains one of the aspect traits
-				if ( !aspect ) {
+		switch ( trait.kind ) {
+			case AspectTrait.REQUIRED:
+				// an entity obtains one of the aspect traits
+				if ( !aspect && entity.componentBits.hasAllOf( bits, mask ) ) {
 					$createAspectOf( entity );
 				}
 				break;
 			
-			case AspectField.OPTIONAL:
+			case AspectTrait.OPTIONAL:
 				if ( aspect ) {
-					aspect[field.name] = component;
+					aspect[trait.fieldName] = component;
 				}
 				break;
 			
-			case AspectField.EXCLUDED: // added aspect exclusion component
+			case AspectTrait.EXCLUDED: // added aspect exclusion component
 				if ( aspect ) {
 					$removeAspectOf( entity );
 				}
-				break;
-			
-			default:
-				// the component is not interested, do nothing.
 				break;
 		}
 	}
@@ -93,34 +84,32 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
+		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
-		const field:AspectField = mappingInfo.fieldMap[componentType];
+		// exit if the family hasn't such trait
+		if ( !trait ) return;
 		
-		switch ( field.kind ) {
-			case AspectField.REQUIRED:
+		switch ( trait.kind ) {
+			case AspectTrait.REQUIRED:
 				// aspect lost it trait
 				if ( aspect ) {
 					$removeAspectOf( entity );
 				}
 				break;
 			
-			case AspectField.OPTIONAL:
+			case AspectTrait.OPTIONAL:
 				// just clear the reference
 				if ( aspect ) {
-					aspect[field.name] = null;
+					aspect[trait.fieldName] = null;
 				}
 				break;
 			
-			case AspectField.EXCLUDED:
+			case AspectTrait.EXCLUDED:
 				// removed component that denies the aspect
 				// check is the entity fits the aspect now
-				if ( !entity._sign.hasAllOf( excludedSign ) ) {
+				if ( entity.componentBits.hasAllOf( bits, mask ) ) {
 					addQualifiedEntity( entity );
 				}
-				break;
-			
-			default:
-				// the component is not interested, do nothing.
 				break;
 		}
 	}
@@ -144,26 +133,29 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 			poolHead = poolHead.next;
 			aspect.cacheNext = null;
 		} else {
-			aspect = new mappingInfo.type();
+			aspect = new aspectInfo.type();
 		}
 		aspect.entity = entity;
 		
-		for ( var i:int = 0; i < mappingInfo.fieldCount; i++ ) {
-			const field:AspectField = mappingInfo.fieldList[i];
-			if (field.isRequiredOrOptional) {
-				aspect[field.name] = entity.get( field.type );
+		// set components to aspect fields if it has own class. 
+		if ( aspectInfo.type != Aspect ) {
+			for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
+				const trait:AspectTrait = aspectInfo.traits[i];
+				if ( trait.fieldName && trait.isRequiredOrOptional ) {
+					aspect[trait.fieldName] = entity.get( trait.type );
+				}
 			}
 		}
 		
 		aspectByEntity[entity] = aspect;
-		_aspects.add( aspect );
+		aspects.add( aspect );
 	}
 	
 	[Inline]
 	private final function $removeAspectOf( entity:Entity ):void {
 		const aspect:Aspect = aspectByEntity[entity];
 		delete aspectByEntity[entity];
-		_aspects.remove( aspect );
+		aspects.remove( aspect );
 		
 		if ( consistencyLock && consistencyLock.isLocked ) {
 			aspect.cacheNext = disposeCacheHead;
@@ -175,8 +167,8 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	}
 	
 	private final function $disposeAspect( aspect:Aspect ):void {
-		for ( var i:int = 0; i < mappingInfo.fieldCount; i++ ) {
-			aspect[mappingInfo.fieldList[i].name] = null;
+		for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
+			aspect[aspectInfo.traits[i].fieldName] = null;
 		}
 		
 		aspect.entity = null;

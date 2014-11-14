@@ -3,7 +3,6 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import ash.core.Node;
 import ash.signals.Signal1;
 
 import flashrush.collections.Linker;

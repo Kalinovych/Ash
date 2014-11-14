@@ -3,7 +3,8 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentObserver;
-import flashrush.asentity.framework.core.Space;
+import flashrush.asentity.framework.core.EntitySpace;
+import flashrush.asentity.framework.utils.SetBits;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -33,14 +34,14 @@ use namespace asentity;
 public class Entity {
 	private static var idIndex:uint = 0;
 	
-	asentity var _id:uint;
+	private var _id:uint;
 	
 	asentity var _components:Dictionary = new Dictionary();
 	asentity var _componentCount:uint = 0;
-	asentity var observers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
-	asentity var _sign:ISignature;
+	asentity var componentObservers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
+	asentity var componentBits:SetBits;
 	
-	asentity var _space:*;
+	asentity var space:EntitySpace;
 	asentity var prev:Entity;
 	asentity var next:Entity;
 	
@@ -55,32 +56,16 @@ public class Entity {
 		return _id;
 	}
 	
-	public final function get space():Space {
-		return _space;
-	}
-	
 	/**
-	 *  Determines whether the entity was added and wasn't removed from an engine.
+	 *  Determines whether the entity currently in a space.
 	 */
 	public final function get isInSpace():Boolean {
-		return (_space);
+		return (space != null);
 	}
 	
 	public final function get componentCount():uint {
 		return _componentCount;
 	}
-	
-	public final function get sign():ISignature {
-		return _sign;
-	}
-	
-	/*public final function get prev():Entity {
-		return asentity::prev;
-	}
-	
-	public final function get next():Entity {
-		return asentity::next;
-	}*/
 	
 	/**
 	 * Add a component to the entity.
@@ -103,7 +88,7 @@ public class Entity {
 		}
 		
 		// if already contains a component of the type, remove it first
-		var current:* = _components[type];
+		const current:* = _components[type];
 		if ( current ) {
 			if ( component === current ) {
 				return this;
@@ -113,12 +98,12 @@ public class Entity {
 		
 		// add
 		_components[type] = component;
-		_componentCount++;
+		++_componentCount;
 		
 		// notify observers
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+		for ( var node:LLNodeBase = componentObservers.first; node; node = node.next ) {
 			const observer:IComponentObserver = node.item;
 			observer.onComponentAdded( this, type, component );
 		}
@@ -143,7 +128,7 @@ public class Entity {
 		// notify observers
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
+		for ( var node:LLNodeBase = componentObservers.first; node; node = node.next ) {
 			const observer:IComponentObserver = node.item;
 			observer.onComponentRemoved( this, type, component );
 		}
@@ -320,14 +305,30 @@ public class Entity {
 	 */
 	[Inline]
 	public final function has( type:Class ):Boolean {
-		return _components[type] != null;
+		return ( _components[type] != null );
 	}
 	
 	public function toString():String {
 		return "[Entity" + _id + "{" + componentsToStr() + "}]"; // [Entity3248{Pos,Body,Graphics}]
 	}
 	
-	private function componentsToStr():String {
+	//-------------------------------------------
+	// Internals
+	//-------------------------------------------
+	
+	asentity function addComponentObserver( observer:IComponentObserver ):void {
+		componentObservers.add( observer );
+	}
+	
+	asentity function removeComponentObserver( observer:IComponentObserver ):void {
+		componentObservers.remove( observer );
+	}
+	
+	//-------------------------------------------
+	// Protected methods
+	//-------------------------------------------
+	
+	protected function componentsToStr():String {
 		var result:String = "";
 		for ( var type:Class in _components ) {
 			result && (result += ",");
@@ -337,12 +338,5 @@ public class Entity {
 	}
 	
 	
-	asentity function addComponentObserver( observer:IComponentObserver ):void {
-		observers.add( observer );
-	}
-	
-	asentity function removeComponentObserver( observer:IComponentObserver ):void {
-		observers.remove( observer );
-	}
 }
 }

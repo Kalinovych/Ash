@@ -8,6 +8,7 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.entity.api.IEntityObserver;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -26,19 +27,19 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 // IComponentNotifier methods
 //-------------------------------------------
 	
-	public function addObserver( componentType:Class, observer:IComponentObserver ):void {
-		var componentObservers:LinkedSet = observersMap[componentType];
-		if ( !componentObservers ) {
-			componentObservers = new LinkedSet();
-			observersMap[componentType] = componentObservers;
+	public function addComponentHandler( componentType:Class, observer:IComponentObserver ):void {
+		var typeObservers:LinkedSet = observersMap[componentType];
+		if ( !typeObservers ) {
+			typeObservers = new LinkedSet();
+			observersMap[componentType] = typeObservers;
 		}
-		componentObservers.add( observer );
+		typeObservers.add( observer );
 	}
 	
-	public function removeObserver( componentType:Class, observer:IComponentObserver ):void {
-		var componentObservers:LinkedSet = observersMap[componentType];
-		if ( componentObservers ) {
-			componentObservers.remove( observer );
+	public function removeComponentHandler( componentType:Class, observer:IComponentObserver ):void {
+		var typeObservers:LinkedSet = observersMap[componentType];
+		if ( typeObservers ) {
+			typeObservers.remove( observer );
 		}
 	}
 
@@ -46,13 +47,15 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 //  Internals: IEntityObserver
 //-------------------------------------------
 	
-	/** @private */
+	/** @private
+	 * Called direct from the space
+	 */
 	public function onEntityAdded( entity:Entity ):void {
 		entity.addComponentObserver( this );
 		
 		const components:Dictionary = entity._components;
 		for ( var componentType:* in components ) {
-			$processComponentAdded( entity, componentType, components[componentType] );
+			$processAddedComponent( entity, componentType, components[componentType] );
 		}
 	}
 	
@@ -60,7 +63,7 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 	public function onEntityRemoved( entity:Entity ):void {
 		const components:Dictionary = entity._components;
 		for ( var componentType:* in components ) {
-			$processComponentRemoved( entity, componentType, components[componentType] );
+			$processRemovedComponent( entity, componentType, components[componentType] );
 		}
 		
 		entity.removeComponentObserver( this );
@@ -72,38 +75,20 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 	
 	/** @private */
 	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
-		$processComponentAdded( entity, componentType, component );
-		/*use namespace list_internal;
-		
-		const observers:LinkedSet = observersMap[componentType];
-		if ( observers ) {
-			for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
-				const observer:IComponentObserver = node.item;
-				observer.onComponentAdded( entity, componentType, component );
-			}
-		}*/
+		$processAddedComponent( entity, componentType, component );
 	}
 	
 	/** @private */
 	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
-		$processComponentRemoved( entity, componentType, component );
-		/*use namespace list_internal;
-		
-		const observers:LinkedSet = observersMap[componentType];
-		if ( observers ) {
-			for ( var node:LLNodeBase = observers.first; node; node = node.next ) {
-				const observer:IComponentObserver = node.item;
-				observer.onComponentRemoved( entity, componentType, component );
-			}
-		}*/
+		$processRemovedComponent( entity, componentType, component );
 	}
 	
-	//-------------------------------------------
-	// Protected
-	//-------------------------------------------
+//-------------------------------------------
+// Protected
+//-------------------------------------------
 	
 	[Inline]
-	protected final function $processComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+	protected final function $processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
 		use namespace list_internal;
 		
 		const observers:LinkedSet = observersMap[componentType];
@@ -116,7 +101,7 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 	}
 	
 	[Inline]
-	protected final function $processComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+	protected final function $processRemovedComponent( entity:Entity, componentType:Class, component:* ):void {
 		use namespace list_internal;
 		
 		const observers:LinkedSet = observersMap[componentType];

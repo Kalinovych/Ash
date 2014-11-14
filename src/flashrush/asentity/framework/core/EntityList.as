@@ -13,14 +13,14 @@ public class EntityList {
 	public var last:Entity;
 	public var length:uint = 0;
 	
-	public var space:Space;
+	public var space:EntitySpace;
 	
-	public function EntityList( space:Space = null ) {
+	public function EntityList( space:EntitySpace = null ) {
 		this.space = space;
 	}
 	
 	public function add( node:Entity ):void {
-		node._space = space;
+		node.space = space;
 		node.prev = last;
 		node.next = null;
 		last ? last.next = node : first = node;
@@ -45,18 +45,19 @@ public class EntityList {
 			node.next.prev = node.prev;
 		}
 		
-		node._space = null;
+		node.space = null;
 		
 		length--;
 	}
 	
 	public function removeAll( eachCallback:Function = null ):void {
 		while ( first ) {
-			var node:Entity = first;
+			const node:Entity = first;
 			first = first.next;
+			first.prev = null;
 			node.next = null;
 			eachCallback && eachCallback( node );
-			node._space = null;
+			node.space = null;
 		}
 		last = null;
 		length = 0;

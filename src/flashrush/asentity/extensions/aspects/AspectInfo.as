@@ -9,30 +9,29 @@ import flash.utils.Dictionary;
  * Contains the information that describes an aspect of an entity.
  */
 public class AspectInfo {
-	public const fieldList:Vector.<AspectField> = new <AspectField>[];
+	public var type:Class = Aspect;
 	
-	public const fieldMap:Dictionary/*<Class, String fieldName>*/ = new Dictionary();
+	public const traits:Vector.<AspectTrait> = new <AspectTrait>[];
 	
-	public var fieldCount:uint = 0;
+	public const traitMap:Dictionary/*<(component)Class, AspectTrait>*/ = new Dictionary();
+	
+	public var traitCount:uint = 0;
 	
 	public var hasExcluded:Boolean = false;
 	
 	/**
 	 * Constructor
-	 * @param type The Class of the described aspect
+	 * @param nodeClass The Class of the described aspect
 	 */
-	public function AspectInfo() {
+	public function AspectInfo( nodeClass:Class = null ) {
+		this.type = nodeClass || Aspect;
 	}
 	
-	/**
-	 * @internal
-	 */
-	internal function addField( type:Class, name:String, kind:int ):void {
-		const field:AspectField = new AspectField(type, name, kind );
-		fieldList[fieldCount] = field;
-		fieldMap[type] = field;
-		fieldCount++;
-		hasExcluded ||= (kind == AspectField.EXCLUDED);
+	public function addTrait( trait:AspectTrait ):void {
+		traits[traitCount] = trait;
+		traitMap[trait.type] = trait;
+		hasExcluded ||= (trait.kind == AspectTrait.EXCLUDED);
+		++traitCount;
 	}
 }
 }
