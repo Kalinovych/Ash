@@ -9,7 +9,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.utils.SetBits;
+import flashrush.asentity.framework.utils.ObjectBits;
 
 use namespace asentity;
 
@@ -22,8 +22,8 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	internal var aspects:AspectList = new AspectList();
 	internal var aspectByEntity:Dictionary = new Dictionary();
 	
-	internal var bits:SetBits;
-	internal var mask:SetBits;
+	internal var bits:ObjectBits;
+	internal var mask:ObjectBits;
 	
 	private var consistencyLock:ConsistencyLock;
 	

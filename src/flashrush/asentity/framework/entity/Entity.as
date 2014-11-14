@@ -4,7 +4,7 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.core.EntitySpace;
-import flashrush.asentity.framework.utils.SetBits;
+import flashrush.asentity.framework.utils.ObjectBits;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -39,7 +39,7 @@ public class Entity {
 	asentity var _components:Dictionary = new Dictionary();
 	asentity var _componentCount:uint = 0;
 	asentity var componentObservers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
-	asentity var componentBits:SetBits;
+	asentity var componentBits:ObjectBits;
 	
 	asentity var space:EntitySpace;
 	asentity var prev:Entity;

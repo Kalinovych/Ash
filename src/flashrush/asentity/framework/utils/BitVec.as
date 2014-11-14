@@ -3,6 +3,10 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.utils {
+import com.flashrush.utils.FormatUtil;
+import com.flashrush.utils.StrUtil;
+
+import mx.utils.StringUtil;
 
 public class BitVec {
 	public static const EMPTY_FIELD:uint = 0x0;
@@ -87,6 +91,10 @@ public class BitVec {
 		}
 		
 		return true;
+	}
+	
+	public function toString():void {
+		FormatUtil
 	}
 	
 	//-------------------------------------------

@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.utils {
-public class SetBits extends BitVec {
+public class ObjectBits extends BitVec {
 	private var indexMap:ObjectIndexer;
 	
-	public function SetBits( fieldCount:uint, indexMap:ObjectIndexer ) {
+	public function ObjectBits( fieldCount:uint, indexMap:ObjectIndexer ) {
 		super( fieldCount );
 		this.indexMap = indexMap;
 	}

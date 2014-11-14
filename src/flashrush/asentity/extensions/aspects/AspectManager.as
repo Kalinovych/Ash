@@ -10,8 +10,8 @@ import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
-import flashrush.asentity.framework.utils.SetBits;
-import flashrush.asentity.framework.signature.Signer;
+import flashrush.asentity.framework.utils.ObjectBits;
+import flashrush.asentity.framework.utils.BitFlagContext;
 import flashrush.collections.LinkedMap;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -26,7 +26,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
 	private var ecSigner:ECSigner = new ECSigner();
 	
-	private var signer:Signer = new Signer();
+	private var signer:BitFlagContext = new BitFlagContext();
 	
 	public function AspectManager( space:EntitySpace, componentNotifier:IComponentNotifier, consistencyLock:ConsistencyLock = null ) {
 		this._space = space;
@@ -99,9 +99,9 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		var i:int;
 		
 		// sign
-		const requiredBits:SetBits = signer.signNone();
+		const requiredBits:ObjectBits = signer.signNone();
 		//const mask:Signature = ( aspectInfo.hasExcluded ? signer.signFull() : null );
-		const mask:SetBits = signer.signFull();
+		const mask:ObjectBits = signer.signFull();
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
 			trait = aspectInfo.traits[i];
 			switch ( trait.kind ) {
