@@ -61,7 +61,7 @@ public class AspectUtil {
 			
 			const componentClass:Class = getDefinitionByName( property.type ) as Class;
 			const inclusionKind:int = retrieveInclusionKind( property.metadata );
-			info.addTrait( new AspectTrait( componentClass, inclusionKind, propertyName) );
+			info.addTrait( new FamilyTrait( componentClass, inclusionKind, propertyName) );
 		}
 		
 		return info;
@@ -72,13 +72,13 @@ public class AspectUtil {
 		for ( var i:int = 0; i < annotationCount; i++ ) {
 			const tagName:String = metadata[i].name;
 			if ( tagName == EXCLUDE_META_TAG ) {
-				return AspectTrait.EXCLUDED;
+				return FamilyTrait.EXCLUDED;
 			}
 			if ( tagName == OPTIONAL_META_TAG ) {
-				return AspectTrait.OPTIONAL;
+				return FamilyTrait.OPTIONAL;
 			}
 		}
-		return AspectTrait.REQUIRED;
+		return FamilyTrait.REQUIRED;
 	}
 	
 	

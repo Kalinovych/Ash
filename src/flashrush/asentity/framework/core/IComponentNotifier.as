@@ -4,8 +4,8 @@
  */
 package flashrush.asentity.framework.core {
 public interface IComponentNotifier {
-	function addComponentHandler( componentType:Class, observer:IComponentObserver ):void;
+	function addComponentHandler( observer:IComponentObserver, componentType:Class ):void;
 
-	function removeComponentHandler( componentType:Class, observer:IComponentObserver ):void;
+	function removeComponentHandler( observer:IComponentObserver, componentType:Class ):void;
 }
 }

@@ -3,10 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.utils {
-import com.flashrush.utils.FormatUtil;
-import com.flashrush.utils.StrUtil;
-
-import mx.utils.StringUtil;
+import flashrush.utils.ToString;
 
 public class BitVec {
 	public static const EMPTY_FIELD:uint = 0x0;
@@ -23,30 +20,34 @@ public class BitVec {
 		fields = new Vector.<uint>( this.fieldCount );
 	}
 	
-	public function set( index:uint ):void {
+	public function set( index:uint ):BitVec {
 		fields[index >> 5] |= (1 << (index & BIT_INDEX_MASK));
+		return this;
 	}
 	
-	public function setAll():void {
+	public function setAll():BitVec {
 		var i:uint = 0;
 		do {
 			fields[i] = FULL_FIELD;
 			++i;
 		}
 		while ( i < fieldCount );
+		return this;
 	}
 	
-	public function unset( index:uint ):void {
+	public function unset( index:uint ):BitVec {
 		fields[index >>> FIELD_INDEX_SHIFT] &= ~(1 << (index & BIT_INDEX_MASK));
+		return this;
 	}
 	
-	public function unsetAll():void {
+	public function unsetAll():BitVec {
 		var i:uint = 0;
 		do {
 			fields[i] = EMPTY_FIELD;
 			++i;
 		}
 		while ( i < fieldCount );
+		return this;
 	}
 	
 	public function has( index:uint ):Boolean {
@@ -93,8 +94,12 @@ public class BitVec {
 		return true;
 	}
 	
-	public function toString():void {
-		FormatUtil
+	public function toString():String {
+		var str:String = "";
+		for ( var i:int = fieldCount - 1; i >= 0; --i ) {
+			str += ToString.binary( fields[i], true, 4 );
+		}
+		return str;
 	}
 	
 	//-------------------------------------------

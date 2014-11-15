@@ -10,8 +10,8 @@ import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
-import flashrush.asentity.framework.utils.ObjectBits;
-import flashrush.asentity.framework.utils.BitFlagContext;
+import flashrush.asentity.framework.utils.BitSign;
+import flashrush.asentity.framework.utils.BitContext;
 import flashrush.collections.LinkedMap;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -26,7 +26,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
 	private var ecSigner:ECSigner = new ECSigner();
 	
-	private var signer:BitFlagContext = new BitFlagContext();
+	private var signer:BitContext = new BitContext();
 	
 	public function AspectManager( space:EntitySpace, componentNotifier:IComponentNotifier, consistencyLock:ConsistencyLock = null ) {
 		this._space = space;
@@ -95,22 +95,21 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		const family:AspectFamily = new AspectFamily( aspectInfo, consistencyLock );
 		
 		// helpers
-		var trait:AspectTrait;
+		var trait:FamilyTrait;
 		var i:int;
 		
 		// sign
-		const requiredBits:ObjectBits = signer.signNone();
-		//const mask:Signature = ( aspectInfo.hasExcluded ? signer.signFull() : null );
-		const mask:ObjectBits = signer.signFull();
+		const requiredBits:BitSign = signer.signNone();
+		const mask:BitSign = signer.signAll();
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
 			trait = aspectInfo.traits[i];
 			switch ( trait.kind ) {
-				case AspectTrait.REQUIRED:
+				case FamilyTrait.REQUIRED:
 					requiredBits.add( trait.type );
 					break;
-				case AspectTrait.OPTIONAL:
+				case FamilyTrait.OPTIONAL:
 					break;
-				case AspectTrait.EXCLUDED:
+				case FamilyTrait.EXCLUDED:
 					mask.remove( trait.type );
 					break;
 			}
@@ -120,17 +119,17 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		family.mask = mask;
 		
 		// scan space for an entities that match the aspect
-		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
+		_space.filterEntities( requiredBits, mask, family.addQualifiedEntity );
+		/*for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
 			if ( $entityMatchAspect( entity, family ) ) {
 				family.addQualifiedEntity( entity );
 			}
-		}
+		}*/
 		
 		// register family as an observer of components of described types.
 		const componentNotifier:IComponentNotifier = componentNotifier;
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
-			trait = aspectInfo.traits[i];
-			componentNotifier.addComponentHandler( trait.type, family );
+			componentNotifier.addComponentHandler( family, aspectInfo.traits[i].type );
 		}
 		
 		return family;

@@ -8,6 +8,7 @@ import flash.errors.IllegalOperationError;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.InternalLinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -21,9 +22,9 @@ public class EntitySpace {
 	/**
 	 * Dev:
 	 *   linear handlers or concurrent signals?
-	 *   
+	 *
 	 *   is it possible withing handlers notification added another entity?
-	 *   
+	 *
 	 *   Possible call stack;
 	 *      addEntity
 	 *          notify handlers
@@ -33,7 +34,7 @@ public class EntitySpace {
 	 *                          system process added aspect
 	 *                              is some cases add/remove an other entity?
 	 *
-	 *   
+	 *
 	 */
 	
 	private var _entities:EntityList = new EntityList( this );
@@ -110,6 +111,14 @@ public class EntitySpace {
 		_entities.removeAll( $processRemovedEntity );
 	}
 	
+	public function filterEntities( bits:BitSign, mask:BitSign, handler:Function ):void {
+		for ( var entity:Entity = firstEntity; entity; entity = entity.next ) {
+			if ( entity.componentBits.hasAllOf( bits, mask ) ) {
+				handler( entity );
+			}
+		}
+	}
+
 //-------------------------------------------
 // Framework internals
 //-------------------------------------------
@@ -131,7 +140,8 @@ public class EntitySpace {
 		//_OnEntityAdded.dispatch( entity );
 		
 		use namespace list_internal;
-		for (var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next) {
+		
+		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
 			const handler:IEntityObserver = node.item;
 			handler.onEntityAdded( entity );
 		}
@@ -142,7 +152,8 @@ public class EntitySpace {
 		//_OnEntityRemoved.dispatch( entity );
 		
 		use namespace list_internal;
-		for (var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next) {
+		
+		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
 			const handler:IEntityObserver = node.item;
 			handler.onEntityRemoved( entity );
 		}

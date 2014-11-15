@@ -27,7 +27,7 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 // IComponentNotifier methods
 //-------------------------------------------
 	
-	public function addComponentHandler( componentType:Class, observer:IComponentObserver ):void {
+	public function addComponentHandler( observer:IComponentObserver, componentType:Class ):void {
 		var typeObservers:LinkedSet = observersMap[componentType];
 		if ( !typeObservers ) {
 			typeObservers = new LinkedSet();
@@ -36,7 +36,7 @@ public class ComponentManager implements IComponentNotifier, IEntityObserver, IC
 		typeObservers.add( observer );
 	}
 	
-	public function removeComponentHandler( componentType:Class, observer:IComponentObserver ):void {
+	public function removeComponentHandler( observer:IComponentObserver, componentType:Class ):void {
 		var typeObservers:LinkedSet = observersMap[componentType];
 		if ( typeObservers ) {
 			typeObservers.remove( observer );

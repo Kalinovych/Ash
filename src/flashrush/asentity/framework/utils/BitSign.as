@@ -3,10 +3,10 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.utils {
-public class ObjectBits extends BitVec {
+public class BitSign extends BitVec {
 	private var indexMap:ObjectIndexer;
 	
-	public function ObjectBits( fieldCount:uint, indexMap:ObjectIndexer ) {
+	public function BitSign( fieldCount:uint, indexMap:ObjectIndexer ) {
 		super( fieldCount );
 		this.indexMap = indexMap;
 	}

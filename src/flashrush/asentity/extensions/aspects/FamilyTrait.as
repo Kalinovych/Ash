@@ -5,9 +5,9 @@
 package flashrush.asentity.extensions.aspects {
 
 /**
- * Contains the information about single an aspect's trait(component). 
+ * Contains the information about a single trait(component) of the family. 
  */
-public class AspectTrait {
+public class FamilyTrait {
 	public static const REQUIRED:int = 1;
 	public static const OPTIONAL:int = 2;
 	public static const EXCLUDED:int = 3;
@@ -16,7 +16,7 @@ public class AspectTrait {
 	public/* readonly */var kind:int;
 	public/* readonly */var fieldName:String;
 	
-	public function AspectTrait( componentType:Class, kind:int = REQUIRED, fieldName:String = null ) {
+	public function FamilyTrait( componentType:Class, kind:int = REQUIRED, fieldName:String = null ) {
 		CONFIG::debug{ $verifyKind(kind); }
 		
 		this.type = componentType;
@@ -36,15 +36,15 @@ public class AspectTrait {
 		return (kind == EXCLUDED);
 	}
 	
-	public final function get isRequiredOrOptional():Boolean {
-		return (kind == REQUIRED || kind == OPTIONAL);
+	public final function get isNotExcluded():Boolean {
+		return (kind != EXCLUDED);
 	}
 	
 	CONFIG::debug
 	[Inline]
 	protected final function $verifyKind( kind:int ):void {
 		if ( kind < REQUIRED || kind > EXCLUDED ) {
-			throw new ArgumentError( "Incorrect AspectField kind value passed: " + kind );
+			throw new ArgumentError( "Incorrect kind of a FamilyTrait: " + kind );
 		}
 	}
 }

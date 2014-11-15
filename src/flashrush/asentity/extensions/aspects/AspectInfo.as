@@ -11,7 +11,7 @@ import flash.utils.Dictionary;
 public class AspectInfo {
 	public var type:Class = Aspect;
 	
-	public const traits:Vector.<AspectTrait> = new <AspectTrait>[];
+	public const traits:Vector.<FamilyTrait> = new <FamilyTrait>[];
 	
 	public const traitMap:Dictionary/*<(component)Class, AspectTrait>*/ = new Dictionary();
 	
@@ -27,10 +27,10 @@ public class AspectInfo {
 		this.type = nodeClass || Aspect;
 	}
 	
-	public function addTrait( trait:AspectTrait ):void {
+	public function addTrait( trait:FamilyTrait ):void {
 		traits[traitCount] = trait;
 		traitMap[trait.type] = trait;
-		hasExcluded ||= (trait.kind == AspectTrait.EXCLUDED);
+		hasExcluded ||= (trait.kind == FamilyTrait.EXCLUDED);
 		++traitCount;
 	}
 }
