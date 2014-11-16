@@ -9,7 +9,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.IComponentObserver;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.utils.BitSign;
+import flashrush.asentity.framework.utils.ElementBits;
 
 use namespace asentity;
 
@@ -22,8 +22,8 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 	internal var aspects:AspectList = new AspectList();
 	internal var aspectByEntity:Dictionary = new Dictionary();
 	
-	internal var bits:BitSign;
-	internal var mask:BitSign;
+	internal var bits:ElementBits;
+	internal var mask:ElementBits;
 	
 	private var consistencyLock:ConsistencyLock;
 	
@@ -61,7 +61,7 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		
 		switch ( trait.kind ) {
 			case FamilyTrait.REQUIRED:
-				// an entity obtains one of the aspect traits
+				// the entity obtains one of the aspect traits
 				if ( !aspect && entity.componentBits.hasAllOf( bits, mask ) ) {
 					$createAspectOf( entity );
 				}

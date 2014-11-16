@@ -5,7 +5,7 @@
 package flashrush.asentity.extensions.aspects {
 
 /**
- * Contains the information about a single trait(component) of the family. 
+ * Contains the information about a family's single trait(component). 
  */
 public class FamilyTrait {
 	public static const REQUIRED:int = 1;

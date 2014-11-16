@@ -8,7 +8,7 @@ import flash.errors.IllegalOperationError;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityObserver;
-import flashrush.asentity.framework.utils.BitSign;
+import flashrush.asentity.framework.utils.ElementBits;
 import flashrush.collections.InternalLinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -111,7 +111,7 @@ public class EntitySpace {
 		_entities.removeAll( $processRemovedEntity );
 	}
 	
-	public function filterEntities( bits:BitSign, mask:BitSign, handler:Function ):void {
+	public function filterEntities( bits:ElementBits, mask:ElementBits, handler:Function ):void {
 		for ( var entity:Entity = firstEntity; entity; entity = entity.next ) {
 			if ( entity.componentBits.hasAllOf( bits, mask ) ) {
 				handler( entity );
