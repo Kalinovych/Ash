@@ -11,22 +11,22 @@ public class BitFactory {
 		vecFieldCount = 1 + ((maxFlagCount-1) >>> BitVec.FIELD_INDEX_SHIFT);
 	}
 	
-	public function signNone():ElementBits {
-		return new ElementBits( vecFieldCount, indexMap );
+	public function signNone():BitSign {
+		return new BitSign( vecFieldCount, indexMap );
 	}
 	
-	public function signAll():ElementBits {
-		return new ElementBits( vecFieldCount, indexMap ).setAll() as ElementBits;
+	public function signAll():BitSign {
+		return new BitSign( vecFieldCount, indexMap ).setAll() as BitSign;
 	}
 	
-	public function sign( items:Array ):ElementBits {
-		const bits:ElementBits = new ElementBits( vecFieldCount, indexMap );
+	public function sign( items:Array ):BitSign {
+		const bits:BitSign = new BitSign( vecFieldCount, indexMap );
 		if (items) bits.addAll( items );
 		return bits;
 	}
 	
-	public function signKeys( map:Object ):ElementBits {
-		const sign:ElementBits = new ElementBits( vecFieldCount, indexMap );
+	public function signKeys( map:Object ):BitSign {
+		const sign:BitSign = new BitSign( vecFieldCount, indexMap );
 		for ( var key:* in map ) {
 			sign.add( key );
 		}

@@ -7,23 +7,23 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
-import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.utils.ElementBits;
+import flashrush.asentity.framework.utils.BitSign;
 
 use namespace asentity;
 
 /**
  * Class responsible for concrete aspect detection
  */
-internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ {
+internal class AspectFamily implements IComponentProcessor/*, IEntityObserver */ {
 	internal var aspectInfo:AspectInfo;
 	
 	internal var aspects:AspectList = new AspectList();
 	internal var aspectByEntity:Dictionary = new Dictionary();
 	
-	internal var bits:ElementBits;
-	internal var mask:ElementBits;
+	internal var bits:BitSign;
+	internal var mask:BitSign;
 	
 	private var consistencyLock:ConsistencyLock;
 	
@@ -52,7 +52,7 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		}
 	}
 	
-	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+	public function processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
 		const trait:FamilyTrait = aspectInfo.traitMap[componentType];
@@ -81,7 +81,7 @@ internal class AspectFamily implements IComponentObserver/*, IEntityObserver */ 
 		}
 	}
 	
-	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+	public function processRemovedComponent( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
 		const trait:FamilyTrait = aspectInfo.traitMap[componentType];

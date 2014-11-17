@@ -3,28 +3,26 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import flashrush.asentity.extensions.ECSigner;
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.IComponentNotifier;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
+import flashrush.asentity.framework.components.IComponentNotifier;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
-import flashrush.asentity.framework.utils.ElementBits;
+import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.utils.BitFactory;
+import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LinkedMap;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
-import flashrush.signatures.bitwise.api.IBitSignature;
 
 use namespace asentity;
 
-public class AspectManager implements IAspectManager, IEntityObserver {
+public class AspectManager implements IAspectManager, IEntityProcessor {
 	private var _space:EntitySpace;
 	private var componentNotifier:IComponentNotifier;
 	private var consistencyLock:ConsistencyLock;
 	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
-	private var ecSigner:ECSigner = new ECSigner();
+	//private var ecSigner:ECSigner = new ECSigner();
 	
 	private var signer:BitFactory = new BitFactory();
 	
@@ -33,17 +31,8 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		this.componentNotifier = componentNotifier;
 		this.consistencyLock = consistencyLock;
 		
-		_space.addEntityHandler( ecSigner );
+		//_space.addEntityHandler( ecSigner );
 		_space.addEntityHandler( this );
-		
-		//space.OnEntityAdded.add( ecSigner.onEntityAdded );
-		//space.OnEntityRemoved.add( ecSigner.onEntityRemoved );
-		
-		//space.OnEntityAdded.add( onEntityAdded );
-		//space.OnEntityRemoved.add( onEntityRemoved );
-		
-		//entitySpace.registerHandler( ecSigner );
-		//entitySpace.registerHandler( this );
 	}
 	
 	public final function get space():EntitySpace {
@@ -60,7 +49,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	}
 	
 	/** @private **/
-	public function onEntityAdded( entity:Entity ):void {
+	public function processAddedEntity( entity:Entity ):void {
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
@@ -72,7 +61,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 	}
 	
 	/** @private **/
-	public function onEntityRemoved( entity:Entity ):void {
+	public function processRemovedEntity( entity:Entity ):void {
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
@@ -85,9 +74,9 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		//entity._sign = null;
 	}
 	
-	//-------------------------------------------
-	// Protected methods
-	//-------------------------------------------
+//-------------------------------------------
+//Protected methods
+//-------------------------------------------
 	
 	/** @private **/
 	protected final function createFamily( aspectType:Class ):AspectFamily {
@@ -99,8 +88,8 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		var i:int;
 		
 		// sign
-		const requiredBits:ElementBits = signer.signNone();
-		const mask:ElementBits = signer.signAll();
+		const requiredBits:BitSign = signer.signNone();
+		const mask:BitSign = signer.signAll();
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
 			trait = aspectInfo.traits[i];
 			switch ( trait.kind ) {
@@ -129,7 +118,7 @@ public class AspectManager implements IAspectManager, IEntityObserver {
 		// register family as an observer of components of described types.
 		const componentNotifier:IComponentNotifier = componentNotifier;
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
-			componentNotifier.addComponentHandler( family, aspectInfo.traits[i].type );
+			componentNotifier.addComponentProcessor( family, aspectInfo.traits[i].type );
 		}
 		
 		return family;

@@ -5,41 +5,29 @@
 package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
-import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.entity.Entity;
 
 /**
  * Groups entities containing specified component type into a single linked list.
  */
-public class ComponentFamily implements IComponentObserver {
+public class ComponentFamily implements IComponentProcessor {
 	internal var mappingType:Class;
 	internal var aspectByEntity:Dictionary/*<Entity,Aspect>*/ = new Dictionary();
 	private var _aspects:AspectList = new AspectList();
-	private var processingLock:ConsistencyLock;
+	private var consistencyLock:ConsistencyLock;
 	
 	private var disposeCacheHead:Aspect;
 	private static var poolHead:Aspect;
 	
-	public function ComponentFamily( componentType:Class, processingLock:ConsistencyLock ) {
+	public function ComponentFamily( componentType:Class, consistencyLock:ConsistencyLock ) {
 		this.mappingType = componentType;
-		this.processingLock = processingLock;
+		this.consistencyLock = consistencyLock;
 	}
 	
 	public final function get aspects():AspectList {
 		return _aspects;
-	}
-	
-	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
-		if ( componentType == mappingType && !aspectByEntity[entity] ) {
-			$createAspectOf( entity );
-		}
-	}
-	
-	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
-		if ( componentType == mappingType && aspectByEntity[entity] ) {
-			$removeAspectOf( entity );
-		}
 	}
 	
 	/** Adds an Entity containing the component of the mapping type to the aspect list*/
@@ -56,9 +44,21 @@ public class ComponentFamily implements IComponentObserver {
 		}
 	}
 	
-	//-------------------------------------------
-	// Internals
-	//-------------------------------------------
+	public function processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
+		if ( componentType == mappingType && !aspectByEntity[entity] ) {
+			$createAspectOf( entity );
+		}
+	}
+	
+	public function processRemovedComponent( entity:Entity, componentType:Class, component:* ):void {
+		if ( componentType == mappingType && aspectByEntity[entity] ) {
+			$removeAspectOf( entity );
+		}
+	}
+	
+//-------------------------------------------
+// Internals
+//-------------------------------------------
 	
 	/**
 	 * Creates new family's aspect for the matched entity
@@ -86,10 +86,10 @@ public class ComponentFamily implements IComponentObserver {
 		delete aspectByEntity[entity];
 		_aspects.remove( aspect );
 		
-		if ( processingLock.isLocked ) {
+		if ( consistencyLock.isLocked ) {
 			aspect.cacheNext = disposeCacheHead;
 			disposeCacheHead = aspect;
-			processingLock.onUnlocks( releaseCache );
+			consistencyLock.onUnlocks( releaseCache );
 		} else {
 			$disposeAspect( aspect )
 		}

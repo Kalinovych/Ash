@@ -7,8 +7,8 @@ import flash.errors.IllegalOperationError;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
-import flashrush.asentity.framework.utils.ElementBits;
+import flashrush.asentity.framework.entity.api.IEntityProcessor;
+import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.InternalLinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
@@ -40,9 +40,6 @@ public class EntitySpace {
 	private var _entities:EntityList = new EntityList( this );
 	private var _entityHandlers:InternalLinkedSet = new InternalLinkedSet();
 	
-	//protected var _OnEntityAdded:Signal1 = new Signal1( Entity );
-	//protected var _OnEntityRemoved:Signal1 = new Signal1( Entity );
-	
 	public function EntitySpace() {
 		super();
 	}
@@ -63,14 +60,6 @@ public class EntitySpace {
 		return _entities.length;
 	}
 	
-	/*public final function get OnEntityAdded():ICallbacks {
-		return _OnEntityAdded;
-	}
-	
-	public final function get OnEntityRemoved():ICallbacks {
-		return _OnEntityRemoved;
-	}*/
-
 //-------------------------------------------
 // Public methods
 //-------------------------------------------
@@ -111,7 +100,7 @@ public class EntitySpace {
 		_entities.removeAll( $processRemovedEntity );
 	}
 	
-	public function filterEntities( bits:ElementBits, mask:ElementBits, handler:Function ):void {
+	public function filterEntities( bits:BitSign, mask:BitSign, handler:Function ):void {
 		for ( var entity:Entity = firstEntity; entity; entity = entity.next ) {
 			if ( entity.componentBits.hasAllOf( bits, mask ) ) {
 				handler( entity );
@@ -123,11 +112,11 @@ public class EntitySpace {
 // Framework internals
 //-------------------------------------------
 	
-	asentity function addEntityHandler( handler:IEntityObserver ):void {
+	asentity function addEntityHandler( handler:IEntityProcessor ):void {
 		_entityHandlers.add( handler );
 	}
 	
-	asentity function removeEntityHandler( handler:IEntityObserver ):void {
+	asentity function removeEntityHandler( handler:IEntityProcessor ):void {
 		_entityHandlers.remove( handler );
 	}
 
@@ -137,25 +126,21 @@ public class EntitySpace {
 	
 	[Inline]
 	protected final function $processAddedEntity( entity:Entity ):void {
-		//_OnEntityAdded.dispatch( entity );
-		
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
-			const handler:IEntityObserver = node.item;
-			handler.onEntityAdded( entity );
+			const handler:IEntityProcessor = node.item;
+			handler.processAddedEntity( entity );
 		}
 	}
 	
 	[Inline]
 	protected final function $processRemovedEntity( entity:Entity ):void {
-		//_OnEntityRemoved.dispatch( entity );
-		
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
-			const handler:IEntityObserver = node.item;
-			handler.onEntityRemoved( entity );
+			const handler:IEntityProcessor = node.item;
+			handler.processRemovedEntity( entity );
 		}
 	}
 }

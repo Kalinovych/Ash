@@ -6,7 +6,7 @@ package flashrush.asentity.framework.components {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
 import flashrush.ds.Node;
@@ -60,7 +60,7 @@ public class ComponentSet {
 		// notify handlers
 		var node:Node = _handlers.firstNode;
 		while ( node ) {
-			var handler:IComponentObserver = node.item;
+			var handler:IComponentProcessor = node.item;
 			//handler.onComponentAdded( this, type, component );
 			node = node.next;
 		}
@@ -83,7 +83,7 @@ public class ComponentSet {
 			// notify handlers
 			var node:Node = _handlers.firstNode;
 			while ( node ) {
-				var handler:IComponentObserver = node.item;
+				var handler:IComponentProcessor = node.item;
 				//handler.onComponentRemoved( this, type, component );
 				node = node.next;
 			}
@@ -136,11 +136,11 @@ public class ComponentSet {
 		return _components[ componentClass ] != null;
 	}
 
-	asentity function addHandler( handler:IComponentObserver ):void {
+	asentity function addHandler( handler:IComponentProcessor ):void {
 		_handlers.add( handler );
 	}
 
-	asentity function removeHandler( handler:IComponentObserver ):void {
+	asentity function removeHandler( handler:IComponentProcessor ):void {
 		_handlers.remove( handler );
 	}
 }

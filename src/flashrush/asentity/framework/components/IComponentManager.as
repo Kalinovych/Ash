@@ -2,7 +2,9 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework.core {
+package flashrush.asentity.framework.components {
+import flashrush.asentity.framework.core.*;
+
 /**
  * Design of ComponentManager public interface.
  * 
@@ -24,7 +26,7 @@ public interface IComponentManager {
 	/**
 	 * 
 	 */
-	function addObserver( observer:IComponentObserver, type:Class ):void;
+	function addObserver( observer:IComponentProcessor, type:Class ):void;
 	
 }
 }

@@ -6,7 +6,7 @@ package flashrush.asentity.framework.entity {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.collections.base.LinkedListBase;
 import flashrush.gdf.api.gdf_core;
 import flashrush.ds.LinkedSet;
@@ -46,8 +46,8 @@ public class EntityCollection extends LinkedListBase {
 
 		// inline notify handlers
 		for ( var node:Node = handlers.firstNode; node; node = node.next ) {
-			var handler:IEntityObserver = node.item;
-			handler.onEntityAdded( entity );
+			var handler:IEntityProcessor = node.item;
+			handler.processAddedEntity( entity );
 		}
 
 		return entity;
@@ -67,8 +67,8 @@ public class EntityCollection extends LinkedListBase {
 
 		// inline notify handlers in backward order
 		for ( var node:Node = handlers.firstNode; node; node = node.prev ) {
-			var handler:IEntityObserver = node.item;
-			handler.onEntityRemoved( entity );
+			var handler:IEntityProcessor = node.item;
+			handler.processRemovedEntity( entity );
 		}
 
 		return true;
@@ -83,11 +83,11 @@ public class EntityCollection extends LinkedListBase {
 		}
 	}
 
-	public function registerHandler( handler:IEntityObserver ):Boolean {
+	public function registerHandler( handler:IEntityProcessor ):Boolean {
 		return handlers.add( handler );
 	}
 
-	public function unRegisterHandler( handler:IEntityObserver ):Boolean {
+	public function unRegisterHandler( handler:IEntityProcessor ):Boolean {
 		return handlers.remove( handler );
 	}
 

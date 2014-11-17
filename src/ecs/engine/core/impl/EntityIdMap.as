@@ -7,11 +7,11 @@ import ecs.engine.core.ESContext;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.entity.api.IEntityProcessor;
 
 use namespace asentity;
 
-public class EntityIdMap implements IEntityObserver {
+public class EntityIdMap implements IEntityProcessor {
 	private var _context:ESContext;
 	private var _map:Vector.<Entity> = new <Entity>[];
 
@@ -25,7 +25,7 @@ public class EntityIdMap implements IEntityObserver {
 		return ( id < _map.length ? _map[id] : null );
 	}
 
-	public function onEntityAdded( entity:Entity ):void {
+	public function processAddedEntity( entity:Entity ):void {
 		var id:uint = entity.id;
 		if ( _map.length <= id ) {
 			_map.length += 100;
@@ -33,7 +33,7 @@ public class EntityIdMap implements IEntityObserver {
 		_map[id] = entity;
 	}
 
-	public function onEntityRemoved( entity:Entity ):void {
+	public function processRemovedEntity( entity:Entity ):void {
 		_map[entity.id] = null;
 	}
 }

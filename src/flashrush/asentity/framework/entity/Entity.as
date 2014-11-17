@@ -2,13 +2,13 @@ package flashrush.asentity.framework.entity {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
-import flashrush.asentity.framework.utils.ElementBits;
+import flashrush.asentity.framework.components.IComponentProcessor;
+import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
-import flashrush.signatures.api.ISignature;
 import flashrush.utils.getClassName;
 
 use namespace asentity;
@@ -38,8 +38,8 @@ public class Entity {
 	
 	asentity var _components:Dictionary = new Dictionary();
 	asentity var _componentCount:uint = 0;
-	asentity var componentBits:ElementBits;
-	asentity var componentObservers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
+	asentity var componentBits:BitSign;
+	asentity var componentHandlers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
 	
 	asentity var space:EntitySpace;
 	asentity var prev:Entity;
@@ -103,9 +103,9 @@ public class Entity {
 		// notify observers
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = componentObservers.first; node; node = node.next ) {
-			const observer:IComponentObserver = node.item;
-			observer.onComponentAdded( this, type, component );
+		for ( var node:LLNodeBase = componentHandlers.first; node; node = node.next ) {
+			const observer:IComponentProcessor = node.item;
+			observer.processAddedComponent( this, type, component );
 		}
 		return this;
 	}
@@ -128,9 +128,9 @@ public class Entity {
 		// notify observers
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = componentObservers.first; node; node = node.next ) {
-			const observer:IComponentObserver = node.item;
-			observer.onComponentRemoved( this, type, component );
+		for ( var node:LLNodeBase = componentHandlers.first; node; node = node.next ) {
+			const observer:IComponentProcessor = node.item;
+			observer.processRemovedComponent( this, type, component );
 		}
 		return component;
 	}
@@ -316,12 +316,12 @@ public class Entity {
 	// Internals
 	//-------------------------------------------
 	
-	asentity function addComponentObserver( observer:IComponentObserver ):void {
-		componentObservers.add( observer );
+	asentity function addComponentHandler( handler:IComponentHandler ):void {
+		componentHandlers.add( handler );
 	}
 	
-	asentity function removeComponentObserver( observer:IComponentObserver ):void {
-		componentObservers.remove( observer );
+	asentity function removeComponentHandler( handler:IComponentHandler ):void {
+		componentHandlers.remove( handler );
 	}
 	
 	//-------------------------------------------

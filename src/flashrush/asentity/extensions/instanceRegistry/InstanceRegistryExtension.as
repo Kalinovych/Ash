@@ -7,15 +7,15 @@ import ecs.engine.ESContext;
 import ecs.engine.core.ESContext;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.IComponentObserver;
+import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityObserver;
+import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
 
 use namespace asentity;
 
-public class InstanceRegistryExtension implements IEntityObserver, IComponentObserver, ISystemHandler {
+public class InstanceRegistryExtension implements IEntityProcessor, IComponentProcessor, ISystemHandler {
 	asentity var registry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
@@ -41,7 +41,7 @@ public class InstanceRegistryExtension implements IEntityObserver, IComponentObs
 		}
 	}
 
-	public function onEntityAdded( entity:Entity ):void {
+	public function processAddedEntity( entity:Entity ):void {
 		if ( observeEntities ) {
 			registry.handleAdded( entity );
 		}
@@ -52,7 +52,7 @@ public class InstanceRegistryExtension implements IEntityObserver, IComponentObs
 		}
 	}
 
-	public function onEntityRemoved( entity:Entity ):void {
+	public function processRemovedEntity( entity:Entity ):void {
 		if ( observeEntities ) {
 			registry.handleRemoved( entity );
 		}
@@ -63,11 +63,11 @@ public class InstanceRegistryExtension implements IEntityObserver, IComponentObs
 		}
 	}
 
-	public function onComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+	public function processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
 		registry.handleAdded( component );
 	}
 
-	public function onComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+	public function processRemovedComponent( entity:Entity, componentType:Class, component:* ):void {
 		registry.handleRemoved( component );
 	}
 
