@@ -71,7 +71,6 @@ public class ComponentManager {
 		}
 	}
 	
-	
 	public function addComponentHandler( handler:IComponentHandler ):void {
 		_handlers.add( handler );
 		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {

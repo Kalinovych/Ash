@@ -2,10 +2,11 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework.componentProcessorMap {
+package flashrush.asentity.extensions.componentHandlerMap {
+import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMapping;
 import flashrush.asentity.framework.componentManager.IComponentHandler;
 
-public class ComponentHandlerMapping {
+public class ComponentHandlerMapping implements IComponentHandlerMapping {
 	private var _componentType:Class;
 	private var _handler:IComponentHandler;
 	

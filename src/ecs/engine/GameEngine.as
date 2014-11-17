@@ -7,7 +7,7 @@ package ecs.engine {
 import com.flashrush.signals.ISignal;
 import com.flashrush.signals.Signal;
 
-import flashrush.asentity.framework.componentProcessorMap.ComponentHandler;
+import flashrush.asentity.extensions.componentHandlerMap.ComponentHandler;
 import ecs.engine.threads.RenderThread;
 import ecs.engine.threads.UpdateThread;
 import flashrush.asentity.extensions.aspects.AspectManager;

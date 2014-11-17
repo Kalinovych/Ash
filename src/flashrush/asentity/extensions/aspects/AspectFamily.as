@@ -6,6 +6,7 @@ package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
@@ -16,7 +17,7 @@ use namespace asentity;
 /**
  * Class responsible for concrete aspect detection
  */
-internal class AspectFamily implements IComponentProcessor/*, IEntityObserver */ {
+internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	internal var aspectInfo:AspectInfo;
 	
 	internal var aspects:AspectList = new AspectList();
@@ -52,7 +53,7 @@ internal class AspectFamily implements IComponentProcessor/*, IEntityObserver */
 		}
 	}
 	
-	public function processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
 		const trait:FamilyTrait = aspectInfo.traitMap[componentType];
@@ -81,7 +82,7 @@ internal class AspectFamily implements IComponentProcessor/*, IEntityObserver */
 		}
 	}
 	
-	public function processRemovedComponent( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
 		const trait:FamilyTrait = aspectInfo.traitMap[componentType];

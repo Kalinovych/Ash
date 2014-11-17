@@ -2,11 +2,10 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework.componentProcessorMap {
-import flashrush.asentity.framework.components.*;
+package flashrush.asentity.extensions.componentHandlerMap {
 import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.framework.components.*;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.collections.LinkedList;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;

@@ -4,9 +4,9 @@
  */
 package flashrush.asentity.extensions.aspects {
 import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
-import flashrush.asentity.framework.components.IComponentNotifier;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.utils.BitFactory;
@@ -19,16 +19,16 @@ use namespace asentity;
 
 public class AspectManager implements IAspectManager, IEntityProcessor {
 	private var _space:EntitySpace;
-	private var componentNotifier:IComponentNotifier;
+	private var componentHandlerMap:IComponentHandlerMap;
 	private var consistencyLock:ConsistencyLock;
 	private var families:LinkedMap/*<NodeClass, AspectFamily>*/ = new LinkedMap();
 	//private var ecSigner:ECSigner = new ECSigner();
 	
 	private var signer:BitFactory = new BitFactory();
 	
-	public function AspectManager( space:EntitySpace, componentNotifier:IComponentNotifier, consistencyLock:ConsistencyLock = null ) {
+	public function AspectManager( space:EntitySpace, componentHandlerMap:IComponentHandlerMap, consistencyLock:ConsistencyLock = null ) {
 		this._space = space;
-		this.componentNotifier = componentNotifier;
+		this.componentHandlerMap = componentHandlerMap;
 		this.consistencyLock = consistencyLock;
 		
 		//_space.addEntityHandler( ecSigner );
@@ -73,7 +73,7 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 		//ecSigner.disposeSign( sign );
 		//entity._sign = null;
 	}
-	
+
 //-------------------------------------------
 //Protected methods
 //-------------------------------------------
@@ -116,9 +116,8 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 		}*/
 		
 		// register family as an observer of components of described types.
-		const componentNotifier:IComponentNotifier = componentNotifier;
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
-			componentNotifier.addComponentProcessor( family, aspectInfo.traits[i].type );
+			componentHandlerMap.map( aspectInfo.traits[i].type ).toHandler( family );
 		}
 		
 		return family;
