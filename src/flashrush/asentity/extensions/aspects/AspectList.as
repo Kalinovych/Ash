@@ -5,7 +5,7 @@
 package flashrush.asentity.extensions.aspects {
 import ash.signals.Signal1;
 
-import flashrush.collections.Linker;
+import flashrush.collections.NodeLinker;
 
 /**
  *
@@ -43,7 +43,7 @@ public class AspectList {
 	// Internal fields
 	//-------------------------------------------
 	
-	internal var linker:Linker = new Linker();
+	internal var linker:NodeLinker = new NodeLinker();
 	
 	/**
 	 * @private
@@ -101,11 +101,11 @@ public class AspectList {
 	public function forEach( callback:Function, arg:* = null ):void {
 		var aspect:Aspect;
 		if ( arg ) {
-			for ( aspect = linker.first; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first as Aspect; aspect; aspect = aspect.next ) {
 				callback( aspect, arg );
 			}
 		} else {
-			for ( aspect = linker.first; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first as Aspect; aspect; aspect = aspect.next ) {
 				callback( aspect );
 			}
 		}
