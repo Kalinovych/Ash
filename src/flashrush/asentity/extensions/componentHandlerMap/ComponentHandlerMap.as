@@ -10,13 +10,13 @@ import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMa
 import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerUnmapper;
 
 public class ComponentHandlerMap implements IComponentHandlerMap {
-	private var _notifier:ComponentHandlerNotifier;
+	private var _notifier:ComponentHandlerManager;
 	private var _mappers:Dictionary = new Dictionary();
 	
 	private const NULL_UNMAPPER:IComponentHandlerUnmapper = new NullComponentHandlerUnmapper();
 	
-	public function ComponentHandlerMap( notifier:ComponentHandlerNotifier = null ) {
-		_notifier = notifier || new ComponentHandlerNotifier();
+	public function ComponentHandlerMap( notifier:ComponentHandlerManager = null ) {
+		_notifier = notifier || new ComponentHandlerManager();
 	}
 	
 	public function map( componentType:Class ):IComponentHandlerMapper {

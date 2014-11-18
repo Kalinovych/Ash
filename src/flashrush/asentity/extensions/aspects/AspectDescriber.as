@@ -14,20 +14,20 @@ import com.flashrush.utils.DescribeTypeJSONCached;
 import flash.utils.Dictionary;
 import flash.utils.getDefinitionByName;
 
-public class AspectUtil {
+public class AspectDescriber {
 	private static const OPTIONAL_META_TAG:String = "Optional";
 	private static const EXCLUDE_META_TAG:String = "Without";
 	
 	// map of field names to skip when building aspect info.
 	private static const SKIP_FIELDS:Object = {"entity": true, "prev": true, "next": true};
 	
-	private static const infoLib:Dictionary = new Dictionary();
+	private static const _infoMap:Dictionary = new Dictionary();
 	
-	public static function getInfo( aspectClass:Class ):AspectInfo {
-		var info:AspectInfo = infoLib[aspectClass];
+	public static function describe( aspectClass:Class ):AspectInfo {
+		var info:AspectInfo = _infoMap[aspectClass];
 		if ( !info ) {
-			info = describeAspect( aspectClass );
-			infoLib[aspectClass] = info;
+			info = _describe( aspectClass );
+			_infoMap[aspectClass] = info;
 		}
 		return info;
 	}
@@ -36,7 +36,7 @@ public class AspectUtil {
 	// Internals
 	//-------------------------------------------
 	
-	private static function describeAspect( aspectClass:Class ):AspectInfo {
+	private static function _describe( aspectClass:Class ):AspectInfo {
 		const info:AspectInfo = new AspectInfo();
 		
 		// describe type
@@ -53,15 +53,15 @@ public class AspectUtil {
 		// reflect fields to info
 		const fieldCount:uint = fieldDataList.length;
 		for ( var i:int = 0; i < fieldCount; i++ ) {
-			const property:Object = fieldDataList[i];
-			const propertyName:String = property.name;
-			if ( SKIP_FIELDS[propertyName] ) {
+			const field:Object = fieldDataList[i];
+			const fieldName:String = field.name;
+			if ( SKIP_FIELDS[fieldName] ) {
 				continue;
 			}
 			
-			const componentClass:Class = getDefinitionByName( property.type ) as Class;
-			const inclusionKind:int = retrieveInclusionKind( property.metadata );
-			info.addTrait( new FamilyTrait( componentClass, inclusionKind, propertyName) );
+			const componentClass:Class = getDefinitionByName( field.type ) as Class;
+			const inclusionKind:int = retrieveInclusionKind( field.metadata );
+			info.addTrait( new AspectTrait( componentClass, inclusionKind, new QName(field.uri || "", fieldName)) );
 		}
 		
 		return info;
@@ -72,13 +72,13 @@ public class AspectUtil {
 		for ( var i:int = 0; i < annotationCount; i++ ) {
 			const tagName:String = metadata[i].name;
 			if ( tagName == EXCLUDE_META_TAG ) {
-				return FamilyTrait.EXCLUDED;
+				return AspectTrait.EXCLUDED;
 			}
 			if ( tagName == OPTIONAL_META_TAG ) {
-				return FamilyTrait.OPTIONAL;
+				return AspectTrait.OPTIONAL;
 			}
 		}
-		return FamilyTrait.REQUIRED;
+		return AspectTrait.REQUIRED;
 	}
 	
 	

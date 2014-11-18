@@ -12,10 +12,10 @@ import flashrush.asentity.framework.componentManager.IComponentHandler;
 
 public class ComponentHandlerMapper implements IComponentHandlerMapper, IComponentHandlerUnmapper {
 	private var _componentType:Class;
-	private var _notifier:ComponentHandlerNotifier;
+	private var _notifier:ComponentHandlerManager;
 	private var _mappings:Dictionary = new Dictionary();
 	
-	public function ComponentHandlerMapper( componentType:Class, notifier:ComponentHandlerNotifier ) {
+	public function ComponentHandlerMapper( componentType:Class, notifier:ComponentHandlerManager ) {
 		_componentType = componentType;
 		_notifier = notifier;
 	}
@@ -27,6 +27,10 @@ public class ComponentHandlerMapper implements IComponentHandlerMapper, ICompone
 	public function fromHandler( handler:IComponentHandler ):void {
 		var mapping:IComponentHandlerMapping = _mappings[handler];
 		mapping && deleteMapping( mapping );
+	}
+	
+	public function toCallback( callback:Function ):void {
+		
 	}
 	
 	public function fromAll():void {

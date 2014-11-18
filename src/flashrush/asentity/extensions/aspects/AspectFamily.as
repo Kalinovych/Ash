@@ -56,25 +56,25 @@ internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	public function handleComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
-		const trait:FamilyTrait = aspectInfo.traitMap[componentType];
+		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		if ( !trait ) return;
 		
 		switch ( trait.kind ) {
-			case FamilyTrait.REQUIRED:
+			case AspectTrait.REQUIRED:
 				// the entity obtains one of the aspect traits
 				if ( !aspect && entity.componentBits.hasAllOf( bits, mask ) ) {
 					$createAspectOf( entity );
 				}
 				break;
 			
-			case FamilyTrait.OPTIONAL:
-				if ( aspect ) {
+			case AspectTrait.OPTIONAL:
+				if ( aspect && trait.autoInject ) {
 					aspect[trait.fieldName] = component;
 				}
 				break;
 			
-			case FamilyTrait.EXCLUDED: // added aspect exclusion component
+			case AspectTrait.EXCLUDED: // added aspect exclusion component
 				if ( aspect ) {
 					$removeAspectOf( entity );
 				}
@@ -85,27 +85,27 @@ internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	public function handleComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
 		const aspect:Aspect = aspectByEntity[entity];
-		const trait:FamilyTrait = aspectInfo.traitMap[componentType];
+		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		// exit if the family hasn't such trait
 		if ( !trait ) return;
 		
 		switch ( trait.kind ) {
-			case FamilyTrait.REQUIRED:
+			case AspectTrait.REQUIRED:
 				// aspect lost it trait
 				if ( aspect ) {
 					$removeAspectOf( entity );
 				}
 				break;
 			
-			case FamilyTrait.OPTIONAL:
+			case AspectTrait.OPTIONAL:
 				// just clear the reference
-				if ( aspect ) {
+				if ( aspect && trait.autoInject ) {
 					aspect[trait.fieldName] = null;
 				}
 				break;
 			
-			case FamilyTrait.EXCLUDED:
+			case AspectTrait.EXCLUDED:
 				// removed component that denies the aspect
 				// check is the entity fits the aspect now
 				if ( entity.componentBits.hasAllOf( bits, mask ) ) {
@@ -141,8 +141,8 @@ internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		// set components to aspect fields if it has own class. 
 		if ( aspectInfo.type != Aspect ) {
 			for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
-				const trait:FamilyTrait = aspectInfo.traits[i];
-				if ( trait.fieldName && trait.isNotExcluded ) {
+				const trait:AspectTrait = aspectInfo.traits[i];
+				if ( trait.autoInject ) {
 					aspect[trait.fieldName] = entity.get( trait.type );
 				}
 			}
@@ -169,7 +169,10 @@ internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	private final function $disposeAspect( aspect:Aspect ):void {
 		for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
-			aspect[aspectInfo.traits[i].fieldName] = null;
+			const trait:AspectTrait = aspectInfo.traits[i];
+			if ( trait.autoInject ) {
+				aspect[trait.fieldName] = null;
+			}
 		}
 		
 		aspect.entity = null;

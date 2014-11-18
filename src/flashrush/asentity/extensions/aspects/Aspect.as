@@ -4,9 +4,9 @@
  */
 package flashrush.asentity.extensions.aspects {
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.collections.base.Linkable;
 
-public class Aspect extends Linkable {
+public class Aspect {
+	
 	//-------------------------------------------
 	// Properties
 	//-------------------------------------------
@@ -22,5 +22,12 @@ public class Aspect extends Linkable {
 	//-------------------------------------------
 	
 	internal var cacheNext:Aspect;
+	
+	//-------------------------------------------
+	// Protected Namespace
+	//-------------------------------------------
+	
+	protected namespace trait = aspect_trait_ns;
+	
 }
 }

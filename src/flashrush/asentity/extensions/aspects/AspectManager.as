@@ -80,11 +80,11 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 	
 	/** @private **/
 	protected final function createFamily( aspectType:Class ):AspectFamily {
-		const aspectInfo:AspectInfo = AspectUtil.getInfo( aspectType );
+		const aspectInfo:AspectInfo = AspectDescriber.describe( aspectType );
 		const family:AspectFamily = new AspectFamily( aspectInfo, consistencyLock );
 		
 		// helpers
-		var trait:FamilyTrait;
+		var trait:AspectTrait;
 		var i:int;
 		
 		// sign
@@ -93,12 +93,12 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
 			trait = aspectInfo.traits[i];
 			switch ( trait.kind ) {
-				case FamilyTrait.REQUIRED:
+				case AspectTrait.REQUIRED:
 					requiredBits.add( trait.type );
 					break;
-				case FamilyTrait.OPTIONAL:
+				case AspectTrait.OPTIONAL:
 					break;
-				case FamilyTrait.EXCLUDED:
+				case AspectTrait.EXCLUDED:
 					mask.remove( trait.type );
 					break;
 			}

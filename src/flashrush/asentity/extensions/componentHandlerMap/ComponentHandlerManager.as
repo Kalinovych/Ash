@@ -13,10 +13,10 @@ import flashrush.collections.LinkedSet;
 import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
 
-public class ComponentHandlerNotifier implements IComponentHandler {
+public class ComponentHandlerManager implements IComponentHandler {
 	private var _mappings:Dictionary = new Dictionary();
 	
-	public function ComponentHandlerNotifier() {
+	public function ComponentHandlerManager() {
 	}
 	
 	public function addMapping( mapping:IComponentHandlerMapping ):void {
@@ -34,8 +34,7 @@ public class ComponentHandlerNotifier implements IComponentHandler {
 		
 		var handlerMappings:LinkedNodeList = _mappings[componentType];
 		if ( handlerMappings ) {
-			for ( var node:LLNodeBase = handlerMappings.first; node; node = node.next ) {
-				var mapping:IComponentHandlerMapping = node.item;
+			for ( var mapping:ComponentHandlerMapping = handlerMappings.first; mapping; mapping = mapping.next ) {
 				mapping.handler.handleComponentAdded( entity, componentType, component );
 			}
 		}
@@ -46,8 +45,7 @@ public class ComponentHandlerNotifier implements IComponentHandler {
 		
 		var handlerMappings:LinkedNodeList = _mappings[componentType];
 		if ( handlerMappings ) {
-			for ( var node:LLNodeBase = handlerMappings.first; node; node = node.next ) {
-				var mapping:IComponentHandlerMapping = node.item;
+			for ( var mapping:ComponentHandlerMapping = handlerMappings.first; mapping; mapping = mapping.next ) {
 				mapping.handler.handleComponentRemoved( entity, componentType, component );
 			}
 		}
