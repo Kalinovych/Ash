@@ -7,7 +7,7 @@ import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LinkedSet;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 import flashrush.utils.getClassName;
 
@@ -59,7 +59,7 @@ public class Entity {
 	/**
 	 *  Determines whether the entity currently in a space.
 	 */
-	public final function get isInSpace():Boolean {
+	public final function get alive():Boolean {
 		return (space != null);
 	}
 	

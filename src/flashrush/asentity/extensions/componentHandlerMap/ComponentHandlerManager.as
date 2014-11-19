@@ -10,7 +10,7 @@ import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.collections.LinkedNodeList;
 import flashrush.collections.LinkedSet;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 
 public class ComponentHandlerManager implements IComponentHandler {

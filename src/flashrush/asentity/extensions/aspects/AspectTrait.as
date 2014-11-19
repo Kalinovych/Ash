@@ -47,11 +47,8 @@ public class AspectTrait {
 		var kindName:String = "required";
 		if ( isOptional ) kindName = "optional";
 		else if ( isExcluded ) kindName = "exclude";
-		return "[AspectTrait " + fieldName.localName + ":" + getClassName( type ) + ",attrs:" + kindName + (autoInject ? "" : ",trait") + "]";
-		/*var kindName:String = "required";
-		if (isOptional) kindName = "optional";
-		else if (isExcluded) kindName = "exclude";
-		return "[AspectTrait " + getClassName(type) + ",field=" + fieldName + "," + kindName + "]";*/
+		return "[AspectTrait " + fieldName.localName + ":" + getClassName( type )
+				+ ",attrs:" + kindName + (autoInject ? "" : ",trait") + "]";
 	}
 	
 	CONFIG::debug

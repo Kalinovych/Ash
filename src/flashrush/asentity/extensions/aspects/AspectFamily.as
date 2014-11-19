@@ -17,7 +17,7 @@ use namespace asentity;
 /**
  * Class responsible for concrete aspect detection
  */
-internal class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
+public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	internal var aspectInfo:AspectInfo;
 	
 	internal var aspects:AspectList = new AspectList();

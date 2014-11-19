@@ -7,7 +7,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.*;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.collections.LinkedSet;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 
 use namespace asentity;

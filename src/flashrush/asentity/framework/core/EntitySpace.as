@@ -10,7 +10,7 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.InternalLinkedSet;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 import flashrush.signals.ICallbacks;
 import flashrush.signals.Signal1;

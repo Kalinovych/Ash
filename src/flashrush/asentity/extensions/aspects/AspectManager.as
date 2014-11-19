@@ -3,8 +3,9 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import flashrush.asentity.framework.api.asentity;
+import flashrush.asentity.extensions.aspects.FamilyNode;
 import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
+import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
@@ -12,7 +13,7 @@ import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.utils.BitFactory;
 import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LinkedMap;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 
 use namespace asentity;
@@ -50,14 +51,20 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 	
 	/** @private **/
 	public function processAddedEntity( entity:Entity ):void {
-		use namespace list_internal;
+		for (var familyNode:FamilyNode = families.firstNode as FamilyNode; familyNode; familyNode = familyNode.next ) {
+			if ($entityMatchAspect(entity, familyNode.family)) {
+				familyNode.family.addQualifiedEntity( entity );
+			}
+		}
+		
+		/*use namespace list_internal;
 		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
 			const family:AspectFamily = node.item;
 			if ( $entityMatchAspect( entity, family ) ) {
 				family.addQualifiedEntity( entity );
 			}
-		}
+		}*/
 	}
 	
 	/** @private **/

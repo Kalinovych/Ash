@@ -20,7 +20,7 @@ public class EntityFactory {
 	}
 
 	public function dispose( entity:Entity ):void {
-		if ( entity.isInSpace ) {
+		if ( entity.alive ) {
 			throw new IllegalOperationError( "Can't recycle alive entity" );
 		}
 	}
