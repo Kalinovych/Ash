@@ -10,13 +10,13 @@ import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMa
 import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerUnmapper;
 
 public class ComponentHandlerMap implements IComponentHandlerMap {
-	private var _notifier:ComponentHandlerManager;
+	private var _handlerManager:ComponentHandlerManager;
 	private var _mappers:Dictionary = new Dictionary();
 	
 	private const NULL_UNMAPPER:IComponentHandlerUnmapper = new NullComponentHandlerUnmapper();
 	
-	public function ComponentHandlerMap( notifier:ComponentHandlerManager = null ) {
-		_notifier = notifier || new ComponentHandlerManager();
+	public function ComponentHandlerMap( handlerManager:ComponentHandlerManager = null ) {
+		_handlerManager = handlerManager || new ComponentHandlerManager();
 	}
 	
 	public function map( componentType:Class ):IComponentHandlerMapper {
@@ -27,18 +27,24 @@ public class ComponentHandlerMap implements IComponentHandlerMap {
 		return _mappers[componentType] || NULL_UNMAPPER;
 	}
 	
+	public function unmapAll():void {
+		for (var type:Class in _mappers) {
+			unmap(type).fromAll();
+		}
+	}
+	
 	public function processAdded( component:Object ):void {
 		const type:Class = component.constructor as Class;
-		_notifier.handleComponentAdded(null, type, component );
+		_handlerManager.handleComponentAdded(null, type, component );
 	}
 	
 	public function processRemoved( component:Object ):void {
 		const type:Class = component.constructor as Class;
-		_notifier.handleComponentAdded(null, type, component );
+		_handlerManager.handleComponentAdded(null, type, component );
 	}
 	
 	private function createMapper( componentType:Class ):ComponentHandlerMapper {
-		var mapper:ComponentHandlerMapper = new ComponentHandlerMapper( componentType, _notifier );
+		var mapper:ComponentHandlerMapper = new ComponentHandlerMapper( componentType, _handlerManager );
 		_mappers[componentType] = mapper;
 		return mapper;
 	}

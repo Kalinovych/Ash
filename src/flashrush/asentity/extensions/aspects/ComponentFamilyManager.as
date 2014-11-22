@@ -66,7 +66,7 @@ public class ComponentFamilyManager implements IEntityProcessor, IComponentProce
 		var family:AspectList = familiesByType[componentType];
 		if ( !family ) return;
 		
-		var aspect:Aspect = new Aspect();
+		var aspect:EntityNode = new EntityNode();
 		aspect.entity = entity;
 		family.add( aspect );
 	}

@@ -4,7 +4,7 @@
  */
 package ecs.engine.core {
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.core.EntityList;
+import flashrush.asentity.framework.core.EntityLinker;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.systems.SystemList;
@@ -20,7 +20,7 @@ use namespace asentity;
  * Scoped collection of entities and systems
  */
 public class ESContext {
-	asentity var entityList:EntityList = new EntityList();
+	asentity var entityList:EntityLinker = new EntityLinker();
 	asentity var systemList:SystemList = new SystemList();
 	
 	private var entityHandlers:InternalLinkedSet = new InternalLinkedSet();
@@ -29,21 +29,21 @@ public class ESContext {
 	public function ESContext() {}
 	
 	public function addEntity( entity:Entity ):Entity {
-		entityList.add( entity );
+		entityList.link( entity );
 		
 		$notifyEntityAdded( entity );
 		return entity;
 	}
 	
 	public function removeEntity( entity:Entity ):Entity {
-		entityList.remove( entity );
+		entityList.unlink( entity );
 		
 		$notifyEntityRemoved( entity );
 		return entity;
 	}
 	
 	public function removeAllEntities():void {
-		entityList.removeAll( $notifyEntityRemoved );
+		entityList.unlinkAll( $notifyEntityRemoved );
 	}
 	
 	public function addSystem( system:ISystem, order:int = 0 ):* {

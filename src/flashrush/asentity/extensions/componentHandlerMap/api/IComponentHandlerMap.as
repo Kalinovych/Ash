@@ -7,5 +7,7 @@ public interface IComponentHandlerMap {
 	function map( componentType:Class ):IComponentHandlerMapper;
 	
 	function unmap( componentType:Class ):IComponentHandlerUnmapper;
+	
+	function unmapAll():void;
 }
 }

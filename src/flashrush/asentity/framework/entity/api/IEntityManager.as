@@ -17,13 +17,9 @@ public interface IEntityManager {
 
 	function add( entity:Entity ):Entity;
 
-	function has( id:uint ):Boolean;
-
-	function get( id:uint ):Entity;
+	function contains( entity:Entity ):Boolean;
 
 	function remove( entity:Entity ):Entity;
-
-	function removeById( id:uint ):Entity;
 
 	function removeAll():void;
 

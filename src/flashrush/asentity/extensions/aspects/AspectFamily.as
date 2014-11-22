@@ -28,8 +28,8 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	private var consistencyLock:ConsistencyLock;
 	
-	private var poolHead:Aspect;
-	private var disposeCacheHead:Aspect;
+	private var poolHead:EntityNode;
+	private var disposeCacheHead:EntityNode;
 	
 	/**
 	 * Constructs new family of the aspect
@@ -55,7 +55,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	public function handleComponentAdded( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
-		const aspect:Aspect = aspectByEntity[entity];
+		const aspect:EntityNode = aspectByEntity[entity];
 		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		if ( !trait ) return;
@@ -84,7 +84,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	public function handleComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
-		const aspect:Aspect = aspectByEntity[entity];
+		const aspect:EntityNode = aspectByEntity[entity];
 		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		// exit if the family hasn't such trait
@@ -128,7 +128,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	private final function $createAspectOf( entity:Entity ):void {
 		// Create new aspect node and assign components from the entity to the aspect variables
 		//var aspect:Node = nodePool.get();
-		var aspect:Aspect;
+		var aspect:EntityNode;
 		if ( poolHead ) {
 			aspect = poolHead;
 			poolHead = poolHead.next;
@@ -139,7 +139,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		aspect.entity = entity;
 		
 		// set components to aspect fields if it has own class. 
-		if ( aspectInfo.type != Aspect ) {
+		if ( aspectInfo.type != EntityNode ) {
 			for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
 				const trait:AspectTrait = aspectInfo.traits[i];
 				if ( trait.autoInject ) {
@@ -154,7 +154,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	[Inline]
 	private final function $removeAspectOf( entity:Entity ):void {
-		const aspect:Aspect = aspectByEntity[entity];
+		const aspect:EntityNode = aspectByEntity[entity];
 		delete aspectByEntity[entity];
 		aspects.remove( aspect );
 		
@@ -167,7 +167,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		}
 	}
 	
-	private final function $disposeAspect( aspect:Aspect ):void {
+	private final function $disposeAspect( aspect:EntityNode ):void {
 		for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
 			const trait:AspectTrait = aspectInfo.traits[i];
 			if ( trait.autoInject ) {
@@ -186,7 +186,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	private function releaseCache():void {
 		while ( disposeCacheHead ) {
-			const aspect:Aspect = disposeCacheHead;
+			const aspect:EntityNode = disposeCacheHead;
 			disposeCacheHead = disposeCacheHead.cacheNext;
 			
 			aspect.cacheNext = null;

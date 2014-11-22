@@ -29,17 +29,14 @@ public class ComponentHandlerMapper implements IComponentHandlerMapper, ICompone
 		mapping && deleteMapping( mapping );
 	}
 	
-	public function toCallback( callback:Function ):void {
+	/*public function toCallback( callback:Function ):void {
 		
-	}
+	}*/
 	
 	public function fromAll():void {
 		for each(var mapping:IComponentHandlerMapping in _mappings) {
 			deleteMapping( mapping );
 		}
-		/*for (var handler:IComponentHandler in _mappings ) {
-			fromHandler( handler );
-		}*/
 	}
 	
 	private function createMapping( handler:IComponentHandler ):ComponentHandlerMapping {

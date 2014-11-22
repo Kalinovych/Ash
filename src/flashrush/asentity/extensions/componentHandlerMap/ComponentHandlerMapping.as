@@ -10,8 +10,8 @@ public class ComponentHandlerMapping implements IComponentHandlerMapping {
 	private var _componentType:Class;
 	private var _handler:IComponentHandler;
 	
-	public var prev:ComponentHandlerMapping;
-	public var next:ComponentHandlerMapping;
+	internal var prev:ComponentHandlerMapping;
+	internal var next:ComponentHandlerMapping;
 	
 	public function ComponentHandlerMapping( componentType:Class, handler:IComponentHandler ) {
 		_componentType = componentType;

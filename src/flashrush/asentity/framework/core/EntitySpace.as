@@ -37,8 +37,8 @@ public class EntitySpace {
 	 *
 	 */
 	
-	private var _entities:EntityList = new EntityList( this );
-	private var _entityHandlers:InternalLinkedSet = new InternalLinkedSet();
+	private var _entities:EntityLinker = new EntityLinker( this );
+	private var _handlers:InternalLinkedSet = new InternalLinkedSet();
 	
 	public function EntitySpace() {
 		super();
@@ -72,7 +72,7 @@ public class EntitySpace {
 		}
 		
 		if ( !entity.space ) {
-			_entities.add( entity );
+			_entities.link( entity );
 			$processAddedEntity( entity );
 		}
 		return entity;
@@ -90,34 +90,26 @@ public class EntitySpace {
 		}
 		
 		if ( entity.space == this ) {
-			_entities.remove( entity );
+			_entities.unlink( entity );
 			$processRemovedEntity( entity );
 		}
 		return entity;
 	}
 	
 	public function removeAll():void {
-		_entities.removeAll( $processRemovedEntity );
+		_entities.unlinkAll( $processRemovedEntity );
 	}
 	
-	public function filterEntities( bits:BitSign, mask:BitSign, handler:Function ):void {
-		for ( var entity:Entity = firstEntity; entity; entity = entity.next ) {
-			if ( entity.componentBits.hasAllOf( bits, mask ) ) {
-				handler( entity );
-			}
-		}
-	}
-
 //-------------------------------------------
 // Framework internals
 //-------------------------------------------
 	
 	asentity function addEntityHandler( handler:IEntityProcessor ):void {
-		_entityHandlers.add( handler );
+		_handlers.add( handler );
 	}
 	
 	asentity function removeEntityHandler( handler:IEntityProcessor ):void {
-		_entityHandlers.remove( handler );
+		_handlers.remove( handler );
 	}
 
 //-------------------------------------------
@@ -128,7 +120,7 @@ public class EntitySpace {
 	protected final function $processAddedEntity( entity:Entity ):void {
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
+		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
 			const handler:IEntityProcessor = node.item;
 			handler.processAddedEntity( entity );
 		}
@@ -138,7 +130,7 @@ public class EntitySpace {
 	protected final function $processRemovedEntity( entity:Entity ):void {
 		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = _entityHandlers.firstNode; node; node = node.next ) {
+		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
 			const handler:IEntityProcessor = node.item;
 			handler.processRemovedEntity( entity );
 		}

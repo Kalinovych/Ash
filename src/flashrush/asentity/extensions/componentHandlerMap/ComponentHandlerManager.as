@@ -9,15 +9,12 @@ import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMa
 import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.collections.LinkedNodeList;
-import flashrush.collections.LinkedSet;
-import flashrush.collections.LLNodeBase;
 import flashrush.collections.list_internal;
 
 public class ComponentHandlerManager implements IComponentHandler {
 	private var _mappings:Dictionary = new Dictionary();
 	
-	public function ComponentHandlerManager() {
-	}
+	public function ComponentHandlerManager() {}
 	
 	public function addMapping( mapping:IComponentHandlerMapping ):void {
 		var handlerMappings:LinkedNodeList = (_mappings[mapping.componentType] ||= new LinkedNodeList());

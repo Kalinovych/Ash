@@ -3,7 +3,6 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import flashrush.asentity.extensions.aspects.FamilyNode;
 import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
@@ -12,8 +11,8 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityProcessor;
 import flashrush.asentity.framework.utils.BitFactory;
 import flashrush.asentity.framework.utils.BitSign;
-import flashrush.collections.LinkedMap;
 import flashrush.collections.LLNodeBase;
+import flashrush.collections.LinkedMap;
 import flashrush.collections.list_internal;
 
 use namespace asentity;
@@ -56,15 +55,6 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 				familyNode.family.addQualifiedEntity( entity );
 			}
 		}
-		
-		/*use namespace list_internal;
-		
-		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
-			const family:AspectFamily = node.item;
-			if ( $entityMatchAspect( entity, family ) ) {
-				family.addQualifiedEntity( entity );
-			}
-		}*/
 	}
 	
 	/** @private **/
@@ -115,12 +105,7 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 		family.mask = mask;
 		
 		// scan space for an entities that match the aspect
-		_space.filterEntities( requiredBits, mask, family.addQualifiedEntity );
-		/*for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
-			if ( $entityMatchAspect( entity, family ) ) {
-				family.addQualifiedEntity( entity );
-			}
-		}*/
+		filterEntities( requiredBits, mask, family.addQualifiedEntity );
 		
 		// register family as an observer of components of described types.
 		for ( i = 0; i < aspectInfo.traitCount; i++ ) {
@@ -128,6 +113,14 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 		}
 		
 		return family;
+	}
+	
+	protected function filterEntities( bits:BitSign, mask:BitSign, handler:Function ):void {
+		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
+			if ( entity.componentBits.hasAllOf( bits, mask ) ) {
+				handler( entity );
+			}
+		}
 	}
 	
 	[Inline]
