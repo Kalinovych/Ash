@@ -2,8 +2,8 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.extensions.componentHandlerMap {
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMapping;
+package flashrush.asentity.extensions.componentMap {
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
 import flashrush.asentity.framework.componentManager.IComponentHandler;
 
 public class ComponentHandlerMapping implements IComponentHandlerMapping {

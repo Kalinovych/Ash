@@ -2,8 +2,8 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.extensions.componentHandlerMap {
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
+package flashrush.asentity.extensions.componentMap {
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.core.EntitySpace;
 
 public class ComponentHandlerMapExtension {
@@ -15,7 +15,7 @@ public class ComponentHandlerMapExtension {
 	}
 	
 	public function extend():void {
-		var componentHandlerNotifier:ComponentHandlerManager = new ComponentHandlerManager();
+		var componentHandlerNotifier:ComponentHandlerNotifier = new ComponentHandlerNotifier();
 		_componentHandlerMap = new ComponentHandlerMap( componentHandlerNotifier );
 		_componentManager.addComponentHandler( componentHandlerNotifier );
 	}

@@ -7,7 +7,7 @@ package flashrush.asentity.framework.core {
 public class ConsistencyLock {
 	private var _isLocked:Boolean = false;
 	
-	private var unlockCallbacks:Vector.<Function> = new Vector.<Function>( 1e3, true );
+	private var unlockCallbacks:Vector.<Function> = new Vector.<Function>( 1e2, true );
 	private var cbCount:uint = 0;
 	
 	public function ConsistencyLock() {}
@@ -21,9 +21,9 @@ public class ConsistencyLock {
 		unlockCallbacks[cbCount++] = callback;
 	}
 	
-	//-------------------------------------------
-	// Internals
-	//-------------------------------------------
+//-------------------------------------------
+// Internals
+//-------------------------------------------
 	
 	internal function lock():void {
 		_isLocked = true;

@@ -2,20 +2,20 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.extensions.componentHandlerMap {
+package flashrush.asentity.extensions.componentMap {
 import flash.utils.Dictionary;
 
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMapper;
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMapping;
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerUnmapper;
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapper;
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerUnmapper;
 import flashrush.asentity.framework.componentManager.IComponentHandler;
 
 public class ComponentHandlerMapper implements IComponentHandlerMapper, IComponentHandlerUnmapper {
 	private var _componentType:Class;
-	private var _notifier:ComponentHandlerManager;
+	private var _notifier:ComponentHandlerNotifier;
 	private var _mappings:Dictionary = new Dictionary();
 	
-	public function ComponentHandlerMapper( componentType:Class, notifier:ComponentHandlerManager ) {
+	public function ComponentHandlerMapper( componentType:Class, notifier:ComponentHandlerNotifier ) {
 		_componentType = componentType;
 		_notifier = notifier;
 	}

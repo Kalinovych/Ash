@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;

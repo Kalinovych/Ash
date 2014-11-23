@@ -2,19 +2,19 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.extensions.componentHandlerMap {
+package flashrush.asentity.extensions.componentMap {
 import flash.utils.Dictionary;
 
-import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMapping;
+import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
 import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.collections.LinkedNodeList;
 import flashrush.collections.list_internal;
 
-public class ComponentHandlerManager implements IComponentHandler {
+public class ComponentHandlerNotifier implements IComponentHandler {
 	private var _mappings:Dictionary = new Dictionary();
 	
-	public function ComponentHandlerManager() {}
+	public function ComponentHandlerNotifier() {}
 	
 	public function addMapping( mapping:IComponentHandlerMapping ):void {
 		var handlerMappings:LinkedNodeList = (_mappings[mapping.componentType] ||= new LinkedNodeList());

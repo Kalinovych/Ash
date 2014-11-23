@@ -3,6 +3,7 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.ComponentHandlerList;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.utils.BitSign;
@@ -39,7 +40,7 @@ public class Entity {
 	asentity var _components:Dictionary = new Dictionary();
 	asentity var _componentCount:uint = 0;
 	asentity var componentBits:BitSign;
-	asentity var componentHandlers:LinkedSet/*<IComponentObserver>*/ = new LinkedSet();
+	asentity var componentHandlers:ComponentHandlerList = new ComponentHandlerList();
 	
 	asentity var space:EntitySpace;
 	asentity var prev:Entity;

@@ -17,11 +17,11 @@ use namespace asentity;
 /**
  * A space entity component notifier
  */
-public class ComponentManager {
+public class ComponentHandlerManager {
 	private var _space:EntitySpace;
 	private var _handlers:LinkedSet = new LinkedSet();
 	
-	public function ComponentManager( space:EntitySpace ) {
+	public function ComponentHandlerManager( space:EntitySpace ) {
 		_space = space;
 	}
 	
