@@ -7,9 +7,6 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
-import flashrush.gdf.api.gdf_core;
-import flashrush.ds.InternalList;
-import flashrush.ds.Node;
 
 use namespace asentity;
 use namespace gdf_core;

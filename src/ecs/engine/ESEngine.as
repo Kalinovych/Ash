@@ -5,7 +5,6 @@
 
 package ecs.engine {
 import com.flashrush.signals.ISignal;
-import com.flashrush.signals.v2.SignalPro;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;

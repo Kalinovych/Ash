@@ -6,7 +6,7 @@ package flashrush.asentity.extensions.componentMap {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.collections.LinkedNodeList;
 import flashrush.collections.list_internal;
@@ -26,7 +26,7 @@ public class ComponentHandlerNotifier implements IComponentHandler {
 		handlerMappings && handlerMappings.remove( mapping );
 	}
 	
-	public function handleComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentAdded( component:*, componentType:Class, entity:Entity ):void {
 		use namespace list_internal;
 		
 		var handlerMappings:LinkedNodeList = _mappings[componentType];
@@ -37,7 +37,7 @@ public class ComponentHandlerNotifier implements IComponentHandler {
 		}
 	}
 	
-	public function handleComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentRemoved( component:*, componentType:Class, entity:Entity ):void {
 		use namespace list_internal;
 		
 		var handlerMappings:LinkedNodeList = _mappings[componentType];

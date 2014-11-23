@@ -4,7 +4,7 @@
  */
 package flashrush.asentity.extensions.componentMap {
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 
 public class ComponentHandlerMapping implements IComponentHandlerMapping {
 	private var _componentType:Class;

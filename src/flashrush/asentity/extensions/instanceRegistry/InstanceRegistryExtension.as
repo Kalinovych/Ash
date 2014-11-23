@@ -3,19 +3,18 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.instanceRegistry {
-import ecs.engine.ESContext;
 import ecs.engine.core.ESContext;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityProcessor;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
 
 use namespace asentity;
 
-public class InstanceRegistryExtension implements IEntityProcessor, IComponentProcessor, ISystemHandler {
+public class InstanceRegistryExtension implements IEntityHandler, IComponentProcessor, ISystemHandler {
 	asentity var registry:InstanceRegistry;
 	protected var observeComponents:Boolean;
 	protected var observeSystems:Boolean;
@@ -41,7 +40,7 @@ public class InstanceRegistryExtension implements IEntityProcessor, IComponentPr
 		}
 	}
 
-	public function processAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		if ( observeEntities ) {
 			registry.handleAdded( entity );
 		}
@@ -52,7 +51,7 @@ public class InstanceRegistryExtension implements IEntityProcessor, IComponentPr
 		}
 	}
 
-	public function processRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		if ( observeEntities ) {
 			registry.handleRemoved( entity );
 		}

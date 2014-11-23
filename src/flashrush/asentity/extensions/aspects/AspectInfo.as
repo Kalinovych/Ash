@@ -9,7 +9,7 @@ import flash.utils.Dictionary;
  * Contains the information that describes an aspect of an entity.
  */
 public class AspectInfo {
-	public var type:Class = EntityNode;
+	public var type:Class = AspectNode;
 	
 	public const traits:Vector.<AspectTrait> = new <AspectTrait>[];
 	
@@ -24,7 +24,7 @@ public class AspectInfo {
 	 * @param nodeClass The Class of the described aspect
 	 */
 	public function AspectInfo( nodeClass:Class = null ) {
-		this.type = nodeClass || EntityNode;
+		this.type = nodeClass || AspectNode;
 	}
 	
 	public function addTrait( trait:AspectTrait ):void {

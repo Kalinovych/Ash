@@ -6,7 +6,7 @@ package ecs.engine {
 import flashrush.asentity.extensions.aspects.AspectList;
 import flashrush.asentity.extensions.aspects.AspectManager;
 import flashrush.asentity.extensions.componentMap.ComponentHandlerNotifier;
-import flashrush.asentity.extensions.componentMap.ComponentHandlerMap;
+import flashrush.asentity.extensions.componentMap.ComponentMap;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.componentManager.ComponentHandlerManager;
 import flashrush.asentity.framework.core.EntitySpace;
@@ -42,8 +42,8 @@ public class Engine {
 		_componentManager = new ComponentHandlerManager( _space );
 		
 		var componentHandlerNotifier:ComponentHandlerNotifier = new ComponentHandlerNotifier();
-		_componentHandlerMap = new ComponentHandlerMap( componentHandlerNotifier );
-		_componentManager.addComponentHandler( componentHandlerNotifier );
+		_componentHandlerMap = new ComponentMap( componentHandlerNotifier );
+		_componentManager.register( componentHandlerNotifier );
 		
 		_aspectManager = new AspectManager( _space, _componentHandlerMap );
 	}

@@ -5,7 +5,7 @@
 package flashrush.asentity.extensions.aspects {
 import flashrush.asentity.framework.entity.Entity;
 
-public class EntityNode {
+public class AspectNode {
 	
 //-------------------------------------------
 // Properties
@@ -13,15 +13,15 @@ public class EntityNode {
 	
 	public var entity:Entity;
 
-	public var prev/*<EntityNode>*/:*;
+	public var prev/*<AspectNode>*/:*;
 
-	public var next/*<EntityNode>*/:*;
+	public var next/*<AspectNode>*/:*;
 	
 //-------------------------------------------
 // Internals
 //-------------------------------------------
 	
-	internal var cacheNext:EntityNode;
+	internal var cacheNext:AspectNode;
 	
 //-------------------------------------------
 // Protected

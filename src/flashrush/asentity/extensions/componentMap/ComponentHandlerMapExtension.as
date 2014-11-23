@@ -16,7 +16,7 @@ public class ComponentHandlerMapExtension {
 	
 	public function extend():void {
 		var componentHandlerNotifier:ComponentHandlerNotifier = new ComponentHandlerNotifier();
-		_componentHandlerMap = new ComponentHandlerMap( componentHandlerNotifier );
+		_componentHandlerMap = new ComponentMap( componentHandlerNotifier );
 		_componentManager.addComponentHandler( componentHandlerNotifier );
 	}
 }

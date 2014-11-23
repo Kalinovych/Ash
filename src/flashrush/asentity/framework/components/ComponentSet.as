@@ -6,11 +6,6 @@ package flashrush.asentity.framework.components {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.components.IComponentProcessor;
-import flashrush.gdf.api.gdf_core;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.Node;
-import flashrush.signatures.api.ISignature;
 
 use namespace asentity;
 use namespace gdf_core;

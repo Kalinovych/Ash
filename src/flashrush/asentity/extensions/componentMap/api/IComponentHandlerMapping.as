@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.componentMap.api {
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 
 public interface IComponentHandlerMapping {
 	function get componentType():Class;

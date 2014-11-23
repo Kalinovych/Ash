@@ -6,12 +6,9 @@ package flashrush.asentity.framework.components {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.collections.LLNode;
 import flashrush.collections.LinkedCollection;
 import flashrush.collections.list_internal;
-
-use namespace list_internal;
 
 public class ComponentHandlerList extends LinkedCollection {
 	private var _nodes:Dictionary = new Dictionary();
@@ -19,11 +16,11 @@ public class ComponentHandlerList extends LinkedCollection {
 	public function ComponentHandlerList() {}
 	
 	public final function get firstNode():LLNode {
-		return first;
+		return list_internal::first;
 	}
 	
 	public final function get lastNode():LLNode {
-		return last;
+		return list_internal::last;
 	}
 	
 	public function add( item:IComponentHandler ):Boolean {
@@ -32,7 +29,7 @@ public class ComponentHandlerList extends LinkedCollection {
 		
 		const node:LLNode = new LLNode( item );
 		_nodes[item] = node;
-		linkLast( node );
+		list_internal::linkLast( node );
 		return true;
 	}
 	
@@ -41,14 +38,14 @@ public class ComponentHandlerList extends LinkedCollection {
 		if ( node ) {
 			node.list_internal::item = null;
 			delete _nodes[item];
-			unlink( node );
+			list_internal::unlink( node );
 			return true;
 		}
 		return false;
 	}
 	
 	asentity function removeAll():void {
-		unlinkAll();
+		//unlinkAll();
 	}
 }
 }

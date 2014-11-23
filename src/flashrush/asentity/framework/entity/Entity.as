@@ -2,14 +2,11 @@ package flashrush.asentity.framework.entity {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
 import flashrush.asentity.framework.components.ComponentHandlerList;
+import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
-import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.utils.BitSign;
-import flashrush.collections.LinkedSet;
-import flashrush.collections.LLNodeBase;
-import flashrush.collections.list_internal;
+import flashrush.collections.LLNode;
 import flashrush.utils.getClassName;
 
 use namespace asentity;
@@ -101,12 +98,20 @@ public class Entity {
 		_components[type] = component;
 		++_componentCount;
 		
-		// notify observers
-		use namespace list_internal;
+		var node:LLNode = componentHandlers.firstNode;
+		while ( node ) {
+			const handler:IComponentHandler = node.item;
+			handler.handleComponentRemoved( component, type, this );
+			node = node.nextNode;
+		}
 		
-		for ( var node:LLNodeBase = componentHandlers.first; node; node = node.next ) {
-			const observer:IComponentProcessor = node.item;
-			observer.processAddedComponent( this, type, component );
+		return this;
+	}
+	
+	public function addAll( ...components ):Entity {
+		const count:uint = components.length;
+		for ( var i:int = 0; i < count; ++i ) {
+			add( components[i] );
 		}
 		return this;
 	}
@@ -126,12 +131,12 @@ public class Entity {
 		delete _components[type];
 		--_componentCount;
 		
-		// notify observers
-		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = componentHandlers.first; node; node = node.next ) {
-			const observer:IComponentProcessor = node.item;
-			observer.processRemovedComponent( this, type, component );
+		var node:LLNode = componentHandlers.firstNode;
+		while ( node ) {
+			const handler:IComponentHandler = node.item;
+			handler.handleComponentRemoved( component, type, this );
+			node = node.nextNode;
 		}
 		return component;
 	}
@@ -162,8 +167,8 @@ public class Entity {
 	 *   + Aggregated control of sub-component properties.
 	 * Cons:
 	 *   - Manual(out of engine) aggregator implementation for each component type that can be added multiple
-	 *   - Require solution to notify about added/removed sub-component. 
-	 *   
+	 *   - Require solution to notify about added/removed sub-component.
+	 *
 	 * Explanation sample:
 	 *   component Armor {
 	 *     value:Number;
@@ -179,14 +184,14 @@ public class Entity {
 	 *   unitArmor
 	 *      ? unitArmor.add(bonusArmor)
 	 *      : entity.add(bonusArmor);
-	 *      
-	 *   
+	 *
+	 *
 	 *
 	 *****
 	 * Stackable component solution.
 	 * Pros: Auto-managed by Entity
 	 * Cons: one-to-one component-entity relation, e.g. not able to use shared/singleton components.
-	 * 
+	 *
 	 * Component interface:
 	 * component T {
 	 *   prev:T
@@ -290,7 +295,9 @@ public class Entity {
 	 * @return An array containing all the components that are on the entity.
 	 */
 	public function getAll( dest:Array = null ):Array {
-		dest ? dest.length = _componentCount : dest = [];
+		if ( dest ) dest.length = _componentCount;
+		else dest = [];
+		
 		var i:int = 0;
 		for each( var component:* in _components ) {
 			dest[i++] = component;

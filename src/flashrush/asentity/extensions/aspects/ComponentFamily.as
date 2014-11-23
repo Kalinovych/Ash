@@ -18,8 +18,8 @@ public class ComponentFamily implements IComponentProcessor {
 	private var _aspects:AspectList = new AspectList();
 	private var consistencyLock:ConsistencyLock;
 	
-	private var disposeCacheHead:EntityNode;
-	private static var poolHead:EntityNode;
+	private var disposeCacheHead:AspectNode;
+	private static var poolHead:AspectNode;
 	
 	public function ComponentFamily( componentType:Class, consistencyLock:ConsistencyLock ) {
 		this.mappingType = componentType;
@@ -67,13 +67,13 @@ public class ComponentFamily implements IComponentProcessor {
 	 */
 	[Inline]
 	private final function $createAspectOf( entity:Entity ):void {
-		var aspect:EntityNode;
+		var aspect:AspectNode;
 		if ( poolHead ) {
 			aspect = poolHead;
 			poolHead = poolHead.cacheNext;
 			aspect.cacheNext = null;
 		} else {
-			aspect = new EntityNode();
+			aspect = new AspectNode();
 		}
 		aspect.entity = entity;
 		aspectByEntity[entity] = aspect;
@@ -82,7 +82,7 @@ public class ComponentFamily implements IComponentProcessor {
 	
 	[Inline]
 	private final function $removeAspectOf( entity:Entity ):void {
-		const aspect:EntityNode = aspectByEntity[entity];
+		const aspect:AspectNode = aspectByEntity[entity];
 		delete aspectByEntity[entity];
 		_aspects.remove( aspect );
 		
@@ -95,7 +95,7 @@ public class ComponentFamily implements IComponentProcessor {
 		}
 	}
 	
-	private final function $disposeAspect( aspect:EntityNode ):void {
+	private final function $disposeAspect( aspect:AspectNode ):void {
 		aspect.entity = null;
 		aspect.prev = null;
 		aspect.next = null;
@@ -106,7 +106,7 @@ public class ComponentFamily implements IComponentProcessor {
 	
 	private function releaseCache():void {
 		while ( disposeCacheHead ) {
-			const aspect:EntityNode = disposeCacheHead;
+			const aspect:AspectNode = disposeCacheHead;
 			disposeCacheHead = disposeCacheHead.cacheNext;
 			
 			aspect.cacheNext = null;

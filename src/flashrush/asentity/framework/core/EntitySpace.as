@@ -7,14 +7,11 @@ import flash.errors.IllegalOperationError;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityProcessor;
-import flashrush.asentity.framework.utils.BitSign;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.collections.InternalLinkedSet;
 import flashrush.collections.LLNodeBase;
+import flashrush.collections.LinkedSet;
 import flashrush.collections.list_internal;
-import flashrush.signals.ICallbacks;
-import flashrush.signals.Signal1;
-import flashrush.signals.Signal3;
 
 use namespace asentity;
 
@@ -38,7 +35,7 @@ public class EntitySpace {
 	 */
 	
 	private var _entities:EntityLinker = new EntityLinker( this );
-	private var _handlers:InternalLinkedSet = new InternalLinkedSet();
+	private var _handlers:LinkedSet = new LinkedSet();
 	
 	public function EntitySpace() {
 		super();
@@ -104,11 +101,11 @@ public class EntitySpace {
 // Framework internals
 //-------------------------------------------
 	
-	asentity function addEntityHandler( handler:IEntityProcessor ):void {
+	asentity function addEntityHandler( handler:IEntityHandler ):void {
 		_handlers.add( handler );
 	}
 	
-	asentity function removeEntityHandler( handler:IEntityProcessor ):void {
+	asentity function removeEntityHandler( handler:IEntityHandler ):void {
 		_handlers.remove( handler );
 	}
 
@@ -121,8 +118,8 @@ public class EntitySpace {
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
-			const handler:IEntityProcessor = node.item;
-			handler.processAddedEntity( entity );
+			const handler:IEntityHandler = node.item;
+			handler.handleEntityAdded( entity );
 		}
 	}
 	
@@ -131,8 +128,8 @@ public class EntitySpace {
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
-			const handler:IEntityProcessor = node.item;
-			handler.processRemovedEntity( entity );
+			const handler:IEntityHandler = node.item;
+			handler.handleEntityRemoved( entity );
 		}
 	}
 }

@@ -3,8 +3,6 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.components {
-import flashrush.asentity.framework.core.*;
-
 /**
  * Design of ComponentManager public interface.
  * 

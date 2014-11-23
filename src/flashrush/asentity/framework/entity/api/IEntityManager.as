@@ -23,8 +23,8 @@ public interface IEntityManager {
 
 	function removeAll():void;
 
-	function registerHandler( handler:IEntityProcessor ):Boolean;
+	function registerHandler( handler:IEntityHandler ):Boolean;
 
-	function unregisterHandler( handler:IEntityProcessor ):Boolean;
+	function unregisterHandler( handler:IEntityHandler ):Boolean;
 }
 }

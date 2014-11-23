@@ -6,9 +6,8 @@ package flashrush.asentity.extensions.aspects {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.ConsistencyLock;
-import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.utils.BitSign;
 
@@ -28,8 +27,8 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	private var consistencyLock:ConsistencyLock;
 	
-	private var poolHead:EntityNode;
-	private var disposeCacheHead:EntityNode;
+	private var poolHead:AspectNode;
+	private var disposeCacheHead:AspectNode;
 	
 	/**
 	 * Constructs new family of the aspect
@@ -53,9 +52,9 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		}
 	}
 	
-	public function handleComponentAdded( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentAdded( component:*, componentType:Class, entity:Entity ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
-		const aspect:EntityNode = aspectByEntity[entity];
+		const aspect:AspectNode = aspectByEntity[entity];
 		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		if ( !trait ) return;
@@ -82,9 +81,9 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		}
 	}
 	
-	public function handleComponentRemoved( entity:Entity, componentType:Class, component:* ):void {
+	public function handleComponentRemoved( component:*, componentType:Class, entity:Entity ):void {
 		// the node of the aspect of the entity that are exists or not in this family.
-		const aspect:EntityNode = aspectByEntity[entity];
+		const aspect:AspectNode = aspectByEntity[entity];
 		const trait:AspectTrait = aspectInfo.traitMap[componentType];
 		
 		// exit if the family hasn't such trait
@@ -128,7 +127,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	private final function $createAspectOf( entity:Entity ):void {
 		// Create new aspect node and assign components from the entity to the aspect variables
 		//var aspect:Node = nodePool.get();
-		var aspect:EntityNode;
+		var aspect:AspectNode;
 		if ( poolHead ) {
 			aspect = poolHead;
 			poolHead = poolHead.next;
@@ -139,7 +138,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		aspect.entity = entity;
 		
 		// set components to aspect fields if it has own class. 
-		if ( aspectInfo.type != EntityNode ) {
+		if ( aspectInfo.type != AspectNode ) {
 			for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
 				const trait:AspectTrait = aspectInfo.traits[i];
 				if ( trait.autoInject ) {
@@ -154,7 +153,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	[Inline]
 	private final function $removeAspectOf( entity:Entity ):void {
-		const aspect:EntityNode = aspectByEntity[entity];
+		const aspect:AspectNode = aspectByEntity[entity];
 		delete aspectByEntity[entity];
 		aspects.remove( aspect );
 		
@@ -167,7 +166,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 		}
 	}
 	
-	private final function $disposeAspect( aspect:EntityNode ):void {
+	private final function $disposeAspect( aspect:AspectNode ):void {
 		for ( var i:int = 0; i < aspectInfo.traitCount; i++ ) {
 			const trait:AspectTrait = aspectInfo.traits[i];
 			if ( trait.autoInject ) {
@@ -186,7 +185,7 @@ public class AspectFamily implements IComponentHandler/*, IEntityObserver */ {
 	
 	private function releaseCache():void {
 		while ( disposeCacheHead ) {
-			const aspect:EntityNode = disposeCacheHead;
+			const aspect:AspectNode = disposeCacheHead;
 			disposeCacheHead = disposeCacheHead.cacheNext;
 			
 			aspect.cacheNext = null;

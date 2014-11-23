@@ -9,10 +9,6 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
 import flashrush.asentity.framework.systems.api.ISystemManager;
-import flashrush.gdf.api.gdf_core;
-import flashrush.ds.InternalList;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.Node;
 
 use namespace asentity;
 use namespace gdf_core;

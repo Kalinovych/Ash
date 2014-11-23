@@ -8,7 +8,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.core.ConsistencyLock;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityProcessor;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.asentity.framework.utils.BitFactory;
 import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LLNodeBase;
@@ -17,7 +17,7 @@ import flashrush.collections.list_internal;
 
 use namespace asentity;
 
-public class AspectManager implements IAspectManager, IEntityProcessor {
+public class AspectManager implements IAspectManager, IEntityHandler {
 	private var _space:EntitySpace;
 	private var componentHandlerMap:IComponentHandlerMap;
 	private var consistencyLock:ConsistencyLock;
@@ -49,7 +49,7 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 	}
 	
 	/** @private **/
-	public function processAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		for (var familyNode:FamilyNode = families.firstNode as FamilyNode; familyNode; familyNode = familyNode.next ) {
 			if ($entityMatchAspect(entity, familyNode.family)) {
 				familyNode.family.addQualifiedEntity( entity );
@@ -58,7 +58,7 @@ public class AspectManager implements IAspectManager, IEntityProcessor {
 	}
 	
 	/** @private **/
-	public function processRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		use namespace list_internal;
 		
 		for ( var node:LLNodeBase = families.first; node; node = node.next ) {

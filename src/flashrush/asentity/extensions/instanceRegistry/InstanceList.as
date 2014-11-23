@@ -4,10 +4,6 @@
  */
 package flashrush.asentity.extensions.instanceRegistry {
 
-import flashrush.gdf.api.gdf_core;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.Node;
-
 use namespace gdf_core;
 
 /**

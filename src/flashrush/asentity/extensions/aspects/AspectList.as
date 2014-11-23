@@ -20,24 +20,24 @@ public class AspectList {
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was added.</p>
 	 */
-	public const OnItemAdded:Signal1 = new Signal1( EntityNode );
+	public const OnItemAdded:Signal1 = new Signal1( AspectNode );
 	
 	/**
 	 * A signal that is dispatched whenever a node is removed from the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was removed.</p>
 	 */
-	public const OnItemRemoved:Signal1 = new Signal1( EntityNode );
+	public const OnItemRemoved:Signal1 = new Signal1( AspectNode );
 	
 	/**
 	 * List of nodes that was added in the current update
 	 */
-	public const addedItems:Vector.<EntityNode> = new Vector.<EntityNode>();
+	public const addedItems:Vector.<AspectNode> = new Vector.<AspectNode>();
 	
 	/**
 	 * List of nodes that was removed in the current update
 	 */
-	public const removedItems:Vector.<EntityNode> = new Vector.<EntityNode>();
+	public const removedItems:Vector.<AspectNode> = new Vector.<AspectNode>();
 	
 //-------------------------------------------
 // Internal fields
@@ -107,13 +107,13 @@ public class AspectList {
 	 * @param arg An optional advanced one argument that should be passes as second argument to the callback.
 	 */
 	public function forEach( callback:Function, arg:* = null ):void {
-		var aspect:EntityNode;
+		var aspect:AspectNode;
 		if ( arg ) {
-			for ( aspect = linker.first as EntityNode; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first as AspectNode; aspect; aspect = aspect.next ) {
 				callback( aspect, arg );
 			}
 		} else {
-			for ( aspect = linker.first as EntityNode; aspect; aspect = aspect.next ) {
+			for ( aspect = linker.first as AspectNode; aspect; aspect = aspect.next ) {
 				callback( aspect );
 			}
 		}
@@ -126,7 +126,7 @@ public class AspectList {
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 	 */
-	public function swap( node1:EntityNode, node2:EntityNode ):void {
+	public function swap( node1:AspectNode, node2:AspectNode ):void {
 		linker.swap( node1, node2 );
 	}
 	
@@ -174,13 +174,13 @@ public class AspectList {
 		removedItems.length = 0;
 	}
 	
-	internal function add( node:EntityNode ):void {
+	internal function add( node:AspectNode ):void {
 		linker.linkLast( node );
 		addedItems[addedItems.length] = node;
 		OnItemAdded.dispatch( node );
 	}
 	
-	internal function remove( node:EntityNode ):void {
+	internal function remove( node:AspectNode ):void {
 		linker.unlink( node );
 		removedItems[removedItems.length] = node;
 		OnItemRemoved.dispatch( node );

@@ -8,7 +8,7 @@ import flash.utils.Dictionary;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapper;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapping;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerUnmapper;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 
 public class ComponentHandlerMapper implements IComponentHandlerMapper, IComponentHandlerUnmapper {
 	private var _componentType:Class;

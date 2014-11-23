@@ -8,50 +8,20 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.ComponentHandlerList;
 import flashrush.asentity.framework.components.IComponentHandler;
-import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.collections.LLNode;
 
 use namespace asentity;
 
 /**
- * Helps to subscribe global component handlers directly to all existing entities
- * and auto-subscribe/unsubscribe it to future added.
+ * Handles added/removed entities and register/unregister handlers from it.
  */
-public class ComponentHandlerManager {
-	private var _space:EntitySpace;
-	private var _handlers:ComponentHandlerList = new ComponentHandlerList();
+internal class ComponentHandlerEntityHandler implements IEntityHandler {
+	private var _handlers:ComponentHandlerList;
 	
-	public function ComponentHandlerManager( space:EntitySpace ) {
-		_space = space;
-	}
-	
-	public function register( handler:IComponentHandler ):void {
-		if ( _handlers.add( handler ) ) {
-			for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
-				entity.addComponentHandler( handler );
-			}
-		}
-	}
-	
-	public function unregister( handler:IComponentHandler ):void {
-		if ( _handlers.remove( handler ) ) {
-			for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
-				entity.removeComponentHandler( handler );
-			}
-		}
-	}
-	
-	public function unregisterAll():void {
-		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
-			var node:LLNode = _handlers.firstNode;
-			while ( node ) {
-				const handler:IComponentHandler = node.item;
-				entity.removeComponentHandler( handler );
-				node = node.nextNode;
-			}
-		}
-		_handlers.removeAll();
+	public function ComponentHandlerEntityHandler( handlers:ComponentHandlerList ) {
+		_handlers = handlers;
 	}
 	
 	public function handleEntityAdded( entity:Entity ):void {
@@ -73,6 +43,7 @@ public class ComponentHandlerManager {
 					handler.handleComponentAdded( components[componentType], componentType, entity );
 					node = node.nextNode;
 				}
+				
 			}
 		}
 	}

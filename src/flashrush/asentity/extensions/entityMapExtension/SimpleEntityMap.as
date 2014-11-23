@@ -4,9 +4,9 @@
  */
 package flashrush.asentity.extensions.entityMapExtension {
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityProcessor;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 
-internal class SimpleEntityMap implements EntityMap, IEntityProcessor {
+internal class SimpleEntityMap implements EntityMap, IEntityHandler {
 	protected var entityByName:Object = {};
 
 	public function SimpleEntityMap() {}
@@ -15,12 +15,12 @@ internal class SimpleEntityMap implements EntityMap, IEntityProcessor {
 		return entityByName[name];
 	}
 
-	public function processAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		var name:Name = entity.get( Name );
 		name && ( entityByName[name.name] = entity );
 	}
 
-	public function processRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		var name:Name = entity.get( Name );
 		name && ( delete entityByName[name.name] );
 	}

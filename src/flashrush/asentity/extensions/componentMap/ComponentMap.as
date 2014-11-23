@@ -9,13 +9,13 @@ import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMap;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMapper;
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerUnmapper;
 
-public class ComponentHandlerMap implements IComponentHandlerMap {
+public class ComponentMap implements IComponentHandlerMap {
 	private var _handlerManager:ComponentHandlerNotifier;
 	private var _mappers:Dictionary = new Dictionary();
 	
 	private const NULL_UNMAPPER:IComponentHandlerUnmapper = new NullComponentHandlerUnmapper();
 	
-	public function ComponentHandlerMap( handlerManager:ComponentHandlerNotifier = null ) {
+	public function ComponentMap( handlerManager:ComponentHandlerNotifier = null ) {
 		_handlerManager = handlerManager || new ComponentHandlerNotifier();
 	}
 	
@@ -35,12 +35,12 @@ public class ComponentHandlerMap implements IComponentHandlerMap {
 	
 	public function processAdded( component:Object ):void {
 		const type:Class = component.constructor as Class;
-		_handlerManager.handleComponentAdded(null, type, component );
+		_handlerManager.handleComponentAdded( component, type, null );
 	}
 	
 	public function processRemoved( component:Object ):void {
 		const type:Class = component.constructor as Class;
-		_handlerManager.handleComponentAdded(null, type, component );
+		_handlerManager.handleComponentAdded( component, type, null );
 	}
 	
 	private function createMapper( componentType:Class ):ComponentHandlerMapper {
@@ -52,7 +52,7 @@ public class ComponentHandlerMap implements IComponentHandlerMap {
 }
 
 import flashrush.asentity.extensions.componentMap.api.IComponentHandlerUnmapper;
-import flashrush.asentity.framework.componentManager.IComponentHandler;
+import flashrush.asentity.framework.components.IComponentHandler;
 
 class NullComponentHandlerUnmapper implements IComponentHandlerUnmapper {
 	

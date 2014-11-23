@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems {
-import flashrush.asentity.extensions.aspects.EntityNode;
+import flashrush.asentity.extensions.aspects.AspectNode;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
 
@@ -39,7 +39,7 @@ public/* abstract */class System implements ISystem {
 	public namespace callback;
 	
 	[AspectHandler(Aspect1,Aspect2)]
-	callback function onAspectAdded( aspect:EntityNode ):void {
+	callback function onAspectAdded( aspect:AspectNode ):void {
 		
 	}
 	

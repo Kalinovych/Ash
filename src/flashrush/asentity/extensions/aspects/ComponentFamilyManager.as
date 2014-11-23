@@ -8,18 +8,18 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.IComponentProcessor;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.asentity.framework.entity.api.IEntityProcessor;
+import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.collections.LLNode;
 import flashrush.collections.LinkedSet;
 
 use namespace asentity;
 
-public class ComponentFamilyManager implements IEntityProcessor, IComponentProcessor {
+public class ComponentFamilyManager implements IEntityHandler, IComponentProcessor {
 	private var familiesByType:Dictionary/*<aspectType:Class, LinkedSet<Entity>  >*/ = new Dictionary();
 	
 	public function ComponentFamilyManager() {}
 	
-	public function processAddedEntity( entity:Entity ):void {
+	public function handleEntityAdded( entity:Entity ):void {
 		entity.addComponentHandler( this );
 		
 		const components:* = entity._components;
@@ -28,7 +28,7 @@ public class ComponentFamilyManager implements IEntityProcessor, IComponentProce
 		}
 	}
 	
-	public function processRemovedEntity( entity:Entity ):void {
+	public function handleEntityRemoved( entity:Entity ):void {
 		const components:* = entity._components;
 		for ( var componentType:* in components ) {
 			processRemovedComponent( entity, componentType, components[componentType] );
@@ -66,7 +66,7 @@ public class ComponentFamilyManager implements IEntityProcessor, IComponentProce
 		var family:AspectList = familiesByType[componentType];
 		if ( !family ) return;
 		
-		var aspect:EntityNode = new EntityNode();
+		var aspect:AspectNode = new AspectNode();
 		aspect.entity = entity;
 		family.add( aspect );
 	}

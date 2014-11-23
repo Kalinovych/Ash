@@ -89,8 +89,6 @@ public class InstanceRegistry implements IInstanceRegistry {
 }
 
 import flashrush.asentity.extensions.instanceRegistry.InstanceList;
-import flashrush.ds.LinkedSet;
-import flashrush.ds.ListBase;
 
 class InstanceFamily {
 	public var type:Class;

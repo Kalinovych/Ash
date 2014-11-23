@@ -7,12 +7,11 @@ package ecs.engine {
 import com.flashrush.signals.ISignal;
 import com.flashrush.signals.Signal;
 
-import flashrush.asentity.extensions.componentMap.ComponentHandler;
 import ecs.engine.threads.RenderThread;
 import ecs.engine.threads.UpdateThread;
+
 import flashrush.asentity.extensions.aspects.AspectManager;
 import flashrush.asentity.extensions.entityMapExtension.EntityMap;
-
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
