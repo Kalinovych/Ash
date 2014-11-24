@@ -9,6 +9,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.collections.LLNode;
 import flashrush.collections.LinkedCollection;
 import flashrush.collections.list_internal;
+import flashrush.collections.list_internal;
 
 public class ComponentHandlerList extends LinkedCollection {
 	private var _nodes:Dictionary = new Dictionary();
@@ -45,7 +46,7 @@ public class ComponentHandlerList extends LinkedCollection {
 	}
 	
 	asentity function removeAll():void {
-		//unlinkAll();
+		list_internal::unlinkAll();
 	}
 }
 }
