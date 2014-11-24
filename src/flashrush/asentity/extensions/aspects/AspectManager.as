@@ -11,7 +11,7 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.asentity.framework.utils.BitFactory;
 import flashrush.asentity.framework.utils.BitSign;
-import flashrush.collections.LLNodeBase;
+import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.LinkedMap;
 import flashrush.collections.list_internal;
 

@@ -3,10 +3,12 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.ComponentHandlerList;
+import flashrush.asentity.framework.components.ComponentHandlerNode;
 import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.utils.BitSign;
 import flashrush.collections.LLNode;
+import flashrush.collections.list_internal;
 import flashrush.utils.getClassName;
 
 use namespace asentity;
@@ -98,10 +100,9 @@ public class Entity {
 		_components[type] = component;
 		++_componentCount;
 		
-		var node:LLNode = componentHandlers.firstNode;
+		var node:ComponentHandlerNode = componentHandlers.firstNode;
 		while ( node ) {
-			const handler:IComponentHandler = node.item;
-			handler.handleComponentRemoved( component, type, this );
+			node.handler.handleComponentRemoved( component, type, this );
 			node = node.nextNode;
 		}
 		
@@ -131,12 +132,11 @@ public class Entity {
 		delete _components[type];
 		--_componentCount;
 		
-		
-		var node:LLNode = componentHandlers.firstNode;
+		var node:ComponentHandlerNode = componentHandlers.firstNode;
 		while ( node ) {
-			const handler:IComponentHandler = node.item;
+			const handler:IComponentHandler = node.list_internal::item;
 			handler.handleComponentRemoved( component, type, this );
-			node = node.nextNode;
+			node = node.list_internal::next;
 		}
 		return component;
 	}
@@ -279,6 +279,17 @@ public class Entity {
 	}
 	
 	/**
+	 * Does the entity have a component of a particular type.
+	 *
+	 * @param type The class of the component sought.
+	 * @return true if the entity has a component of the type, false if not.
+	 */
+	[Inline]
+	public final function has( type:Class ):Boolean {
+		return ( _components[type] != null );
+	}
+	
+	/**
 	 * Get a component from the entity.
 	 *
 	 * @param type The class of the component requested.
@@ -295,7 +306,8 @@ public class Entity {
 	 * @return An array containing all the components that are on the entity.
 	 */
 	public function getAll( dest:Array = null ):Array {
-		if ( dest ) dest.length = _componentCount;
+		if ( dest )
+			dest.length = _componentCount;
 		else dest = [];
 		
 		var i:int = 0;
@@ -303,17 +315,6 @@ public class Entity {
 			dest[i++] = component;
 		}
 		return dest;
-	}
-	
-	/**
-	 * Does the entity have a component of a particular type.
-	 *
-	 * @param type The class of the component sought.
-	 * @return true if the entity has a component of the type, false if not.
-	 */
-	[Inline]
-	public final function has( type:Class ):Boolean {
-		return ( _components[type] != null );
 	}
 	
 	public function toString():String {

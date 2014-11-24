@@ -7,6 +7,7 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.components.ComponentHandlerList;
+import flashrush.asentity.framework.components.ComponentHandlerNode;
 import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
@@ -44,21 +45,22 @@ public class ComponentHandlerManager {
 	
 	public function unregisterAll():void {
 		for ( var entity:Entity = _space.firstEntity; entity; entity = entity.next ) {
-			var node:LLNode = _handlers.firstNode;
+			_handlers.forEach( entity.removeComponentHandler );
+			/*var node:LLNode = _handlers.firstNode;
 			while ( node ) {
 				const handler:IComponentHandler = node.item;
 				entity.removeComponentHandler( handler );
 				node = node.nextNode;
-			}
+			}*/
 		}
 		_handlers.removeAll();
 	}
 	
 	public function handleEntityAdded( entity:Entity ):void {
 		// register current component handlers in the new entity
-		var node:LLNode = _handlers.firstNode;
+		var node:ComponentHandlerNode = _handlers.firstNode;
 		while ( node ) {
-			entity.addComponentHandler( node.item );
+			entity.addComponentHandler( node.handler );
 			node = node.nextNode;
 		}
 		
@@ -69,7 +71,7 @@ public class ComponentHandlerManager {
 			for ( var componentType:* in components ) {
 				node = _handlers.firstNode;
 				while ( node ) {
-					const handler:IComponentHandler = node.item;
+					const handler:IComponentHandler = node.handler;
 					handler.handleComponentAdded( components[componentType], componentType, entity );
 					node = node.nextNode;
 				}
@@ -79,9 +81,9 @@ public class ComponentHandlerManager {
 	
 	public function handleEntityRemoved( entity:Entity ):void {
 		// unregister all managed handlers from the removed entity
-		var node:LLNode = _handlers.firstNode;
+		var node:ComponentHandlerNode = _handlers.firstNode;
 		while ( node ) {
-			entity.removeComponentHandler( node.item );
+			entity.removeComponentHandler( node.handler );
 			node = node.nextNode;
 		}
 		
@@ -91,7 +93,7 @@ public class ComponentHandlerManager {
 		for ( var componentType:* in components ) {
 			node = _handlers.lastNode;
 			while ( node ) {
-				const handler:IComponentHandler = node.item;
+				const handler:IComponentHandler = node.handler;
 				handler.handleComponentRemoved( components[componentType], componentType, entity );
 				node = node.prevNode;
 			}

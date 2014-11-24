@@ -9,7 +9,7 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.collections.InternalLinkedSet;
-import flashrush.collections.LLNodeBase;
+import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.list_internal;
 
