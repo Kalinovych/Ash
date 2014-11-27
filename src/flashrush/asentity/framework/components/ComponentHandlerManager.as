@@ -2,24 +2,20 @@
  * Copyright (c) 2014, FlashRushGames.com
  * @author Alexander Kalinovych
  */
-package flashrush.asentity.framework.componentManager {
+package flashrush.asentity.framework.components {
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.asentity.framework.components.ComponentHandlerList;
-import flashrush.asentity.framework.components.ComponentHandlerNode;
-import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
-import flashrush.collections.LLNode;
 
 use namespace asentity;
 
 /**
- * Helps to subscribe global component handlers directly to all existing entities
- * and auto-subscribe/unsubscribe it to future added.
+ * Helps to subscribe component handlers directly to each existing entity
+ * and auto-subscribe/unsubscribe to each added/removed entity.
  */
-public class ComponentHandlerManager {
+public class ComponentHandlerManager implements IComponentHandlerManager {
 	private var _space:EntitySpace;
 	private var _handlers:ComponentHandlerList = new ComponentHandlerList();
 	
@@ -57,7 +53,7 @@ public class ComponentHandlerManager {
 	}
 	
 	public function handleEntityAdded( entity:Entity ):void {
-		// register current component handlers in the new entity
+		// add registered handlers to the new entity
 		var node:ComponentHandlerNode = _handlers.firstNode;
 		while ( node ) {
 			entity.addComponentHandler( node.handler );
@@ -71,8 +67,7 @@ public class ComponentHandlerManager {
 			for ( var componentType:* in components ) {
 				node = _handlers.firstNode;
 				while ( node ) {
-					const handler:IComponentHandler = node.handler;
-					handler.handleComponentAdded( components[componentType], componentType, entity );
+					node.handler.handleComponentAdded( components[componentType], componentType, entity );
 					node = node.nextNode;
 				}
 			}
@@ -80,12 +75,7 @@ public class ComponentHandlerManager {
 	}
 	
 	public function handleEntityRemoved( entity:Entity ):void {
-		// unregister all managed handlers from the removed entity
-		var node:ComponentHandlerNode = _handlers.firstNode;
-		while ( node ) {
-			entity.removeComponentHandler( node.handler );
-			node = node.nextNode;
-		}
+		var node:ComponentHandlerNode;
 		
 		// notify handlers in backward order
 		// about each component removed with entity
@@ -93,12 +83,19 @@ public class ComponentHandlerManager {
 		for ( var componentType:* in components ) {
 			node = _handlers.lastNode;
 			while ( node ) {
-				const handler:IComponentHandler = node.handler;
-				handler.handleComponentRemoved( components[componentType], componentType, entity );
+				node.handler.handleComponentRemoved( components[componentType], componentType, entity );
 				node = node.prevNode;
 			}
 			
 		}
+		
+		// remove registered handlers from the removed entity
+		node = _handlers.firstNode;
+		while ( node ) {
+			entity.removeComponentHandler( node.handler );
+			node = node.nextNode;
+		}
+		
 	}
 	
 }

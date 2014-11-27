@@ -4,6 +4,6 @@
  */
 package flashrush.asentity.extensions.aspects {
 public interface IAspectManager {
-	function getAspects( aspectClass:Class ):AspectList;
+	function getAspects( aspectClass:Class ):NodeList;
 }
 }

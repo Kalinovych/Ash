@@ -8,9 +8,8 @@ import flash.errors.IllegalOperationError;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
-import flashrush.collections.InternalLinkedSet;
-import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.LinkedSet;
+import flashrush.collections.base.LLNodeBase;
 import flashrush.collections.list_internal;
 
 use namespace asentity;

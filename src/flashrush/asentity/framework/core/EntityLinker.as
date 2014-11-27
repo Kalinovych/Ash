@@ -13,7 +13,7 @@ public class EntityLinker {
 	public var last:Entity;
 	public var length:uint = 0;
 	
-	public var space:EntitySpace;
+	private var space:EntitySpace;
 	
 	public function EntityLinker( space:EntitySpace = null ) {
 		this.space = space;

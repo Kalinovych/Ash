@@ -3,19 +3,20 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
-import flashrush.asentity.extensions.aspects.AspectList;
+import flashrush.asentity.extensions.aspects.NodeList;
 import flashrush.asentity.extensions.aspects.AspectManager;
-import flashrush.asentity.extensions.componentMap.ComponentHandlerNotifier;
-import flashrush.asentity.extensions.componentMap.ComponentMap;
-import flashrush.asentity.extensions.componentMap.api.IComponentHandlerMap;
-import flashrush.asentity.framework.componentManager.ComponentHandlerManager;
+import flashrush.asentity.extensions.componentHandlerMap.ComponentHandlerProcessor;
+import flashrush.asentity.extensions.componentHandlerMap.ComponentHandlerMap;
+import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
+import flashrush.asentity.framework.components.ComponentHandlerManager;
+import flashrush.asentity.framework.components.IComponentHandlerManager;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.entity.Entity;
 
 public class Engine {
 	private var _space:EntitySpace;
-	private var _componentManager:ComponentHandlerManager;
-	private var _componentHandlerMap:IComponentHandlerMap;
+	private var _componentHandlerManager:IComponentHandlerManager;
+	private var _componentMap:IComponentHandlerMap;
 	private var _aspectManager:AspectManager;
 	
 	public function Engine() {
@@ -32,20 +33,38 @@ public class Engine {
 		return entity;
 	}
 	
-	public function getEntities( aspectClass:Class ):AspectList {
+	public function getEntities( aspectClass:Class ):NodeList {
 		return _aspectManager.getAspects( aspectClass );
 	}
 	
+	//-------------------------------------------
+	// Protected methods                         
+	//-------------------------------------------
+	
 	protected function init():void {
-		_space = new EntitySpace();
-		
-		_componentManager = new ComponentHandlerManager( _space );
-		
-		var componentHandlerNotifier:ComponentHandlerNotifier = new ComponentHandlerNotifier();
-		_componentHandlerMap = new ComponentMap( componentHandlerNotifier );
-		_componentManager.register( componentHandlerNotifier );
-		
-		_aspectManager = new AspectManager( _space, _componentHandlerMap );
+		initSpace();
+		initComponentHandlerManager();
+		initComponentMap();
+		initAspectManager();
 	}
+	
+	protected function initSpace():void {
+		_space = new EntitySpace();
+	}
+	
+	protected function initComponentHandlerManager():void {
+		_componentHandlerManager = new ComponentHandlerManager( _space );
+	}
+	
+	protected function initComponentMap():void {
+		var componentHandlerNotifier:ComponentHandlerProcessor = new ComponentHandlerProcessor();
+		_componentMap = new ComponentHandlerMap( componentHandlerNotifier );
+		_componentHandlerManager.register( componentHandlerNotifier );
+	}
+	
+	protected function initAspectManager():void {
+		_aspectManager = new AspectManager( _space, _componentMap );
+	}
+	
 }
 }

@@ -63,10 +63,10 @@ public class ComponentFamilyManager implements IEntityHandler, IComponentProcess
 	
 	[Inline]
 	protected final function _processAddedComponent( entity:Entity, componentType:Class, component:* ):void {
-		var family:AspectList = familiesByType[componentType];
+		var family:NodeList = familiesByType[componentType];
 		if ( !family ) return;
 		
-		var aspect:AspectNode = new AspectNode();
+		var aspect:EntityNode = new EntityNode();
 		aspect.entity = entity;
 		family.add( aspect );
 	}

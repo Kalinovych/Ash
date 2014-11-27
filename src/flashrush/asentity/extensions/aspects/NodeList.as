@@ -10,7 +10,7 @@ import flashrush.collections.NodeLinker;
 /**
  *
  */
-public class AspectList {
+public class NodeList {
 //-------------------------------------------
 // Events
 //-------------------------------------------
@@ -20,30 +20,30 @@ public class AspectList {
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was added.</p>
 	 */
-	public const OnItemAdded:Signal1 = new Signal1( AspectNode );
+	public const OnItemAdded:Signal1 = new Signal1( EntityNode );
 	
 	/**
 	 * A signal that is dispatched whenever a node is removed from the node list.
 	 *
 	 * <p>The signal will pass a single parameter to the listeners - the node that was removed.</p>
 	 */
-	public const OnItemRemoved:Signal1 = new Signal1( AspectNode );
+	public const OnItemRemoved:Signal1 = new Signal1( EntityNode );
 	
 	/**
 	 * List of nodes that was added in the current update
 	 */
-	public const addedItems:Vector.<AspectNode> = new Vector.<AspectNode>();
+	public const addedItems:Vector.<EntityNode> = new Vector.<EntityNode>();
 	
 	/**
 	 * List of nodes that was removed in the current update
 	 */
-	public const removedItems:Vector.<AspectNode> = new Vector.<AspectNode>();
+	public const removedItems:Vector.<EntityNode> = new Vector.<EntityNode>();
 	
 //-------------------------------------------
 // Internal fields
 //-------------------------------------------
 	
-	internal var linker:NodeLinker = new NodeLinker();
+	internal var nodes:NodeLinker = new NodeLinker();
 	
 //-------------------------------------------
 // Constructor
@@ -53,32 +53,32 @@ public class AspectList {
 	 * @private
 	 * Constructor
 	 */
-	function AspectList() {}
+	function NodeList() {}
 	
 //-------------------------------------------
 // Properties
 //-------------------------------------------
 	
 	public final function get first():* {
-		return linker.first;
+		return nodes.first;
 	}
 	
 	public final function get last():* {
-		return linker.last;
+		return nodes.last;
 	}
 	
 	/**
 	 * The number of aspects in the list.
 	 */
 	public final function get length():int {
-		return linker.length;
+		return nodes.length;
 	}
 	
 	/**
 	 * Determines whether the list is empty or not. false if the list contains at lease one element.
 	 */
 	public final function get empty():Boolean {
-		return !linker.first;
+		return !nodes.first;
 	}
 	
 //-------------------------------------------
@@ -106,14 +106,14 @@ public class AspectList {
 	 * <code>function callback(node:MyNode, someValue:SomeType ):void</code>
 	 * @param arg An optional advanced one argument that should be passes as second argument to the callback.
 	 */
-	public function forEach( callback:Function, arg:* = null ):void {
-		var aspect:AspectNode;
+	public function forEach( callback:Function, arg:* = undefined ):void {
+		var aspect:EntityNode;
 		if ( arg ) {
-			for ( aspect = linker.first as AspectNode; aspect; aspect = aspect.next ) {
+			for ( aspect = nodes.first as EntityNode; aspect; aspect = aspect.next ) {
 				callback( aspect, arg );
 			}
 		} else {
-			for ( aspect = linker.first as AspectNode; aspect; aspect = aspect.next ) {
+			for ( aspect = nodes.first as EntityNode; aspect; aspect = aspect.next ) {
 				callback( aspect );
 			}
 		}
@@ -126,8 +126,8 @@ public class AspectList {
 	/**
 	 * Swaps the positions of two nodes in the list. Useful when sorting a list.
 	 */
-	public function swap( node1:AspectNode, node2:AspectNode ):void {
-		linker.swap( node1, node2 );
+	public function swap( node1:EntityNode, node2:EntityNode ):void {
+		nodes.swap( node1, node2 );
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class AspectList {
 	 * <p>This insertion sort implementation runs in place so no objects are created during the sort.</p>
 	 */
 	public function insertionSort( sortFunction:Function ):void {
-		linker.insertionSort( sortFunction );
+		nodes.insertionSort( sortFunction );
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class AspectList {
 	 * <p>This merge sort implementation creates and uses a single Vector during the sort operation.</p>
 	 */
 	public function mergeSort( sortFunction:Function ):void {
-		linker.mergeSort( sortFunction );
+		nodes.mergeSort( sortFunction );
 	}
 	
 //-------------------------------------------
@@ -174,14 +174,14 @@ public class AspectList {
 		removedItems.length = 0;
 	}
 	
-	internal function add( node:AspectNode ):void {
-		linker.linkLast( node );
+	internal function add( node:EntityNode ):void {
+		nodes.linkLast( node );
 		addedItems[addedItems.length] = node;
 		OnItemAdded.dispatch( node );
 	}
 	
-	internal function remove( node:AspectNode ):void {
-		linker.unlink( node );
+	internal function remove( node:EntityNode ):void {
+		nodes.unlink( node );
 		removedItems[removedItems.length] = node;
 		OnItemRemoved.dispatch( node );
 		// N.B. Don't set node.next and node.prev to null
@@ -189,7 +189,7 @@ public class AspectList {
 	}
 	
 	internal function removeAll():void {
-		linker.unlinkAll( OnItemRemoved.dispatch );
+		nodes.unlinkAll( OnItemRemoved.dispatch );
 	}
 }
 }

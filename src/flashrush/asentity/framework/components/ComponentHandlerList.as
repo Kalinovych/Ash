@@ -8,10 +8,11 @@ import flash.utils.Dictionary;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.collections.base.LinkedCollection;
 import flashrush.collections.factories.CustomLLNodeFactory;
+import flashrush.collections.factories.ILinkedNodeFactory;
 import flashrush.collections.list_internal;
 
 public class ComponentHandlerList extends LinkedCollection {
-	private static var nodeFactory:CustomLLNodeFactory = new CustomLLNodeFactory( ComponentHandlerNode, "handler" );
+	private static var nodeFactory:ILinkedNodeFactory = new CustomLLNodeFactory( ComponentHandlerNode, "handler" );
 	
 	private var _nodes:Dictionary = new Dictionary();
 	
@@ -32,6 +33,7 @@ public class ComponentHandlerList extends LinkedCollection {
 			return false;
 		
 		const node:ComponentHandlerNode = _nodeFactory.createNode( item );
+		_nodes[item] = node;
 		list_internal::linkLast( node );
 		return true;
 	}
@@ -39,16 +41,23 @@ public class ComponentHandlerList extends LinkedCollection {
 	public function remove( item:IComponentHandler ):Boolean {
 		const node:ComponentHandlerNode = _nodes[item];
 		if ( node ) {
-			delete _nodes[item];
-			list_internal::unlink( node );
-			_nodeFactory.disposeNode( node );
+			deleteNode( node, false );
 			return true;
 		}
 		return false;
 	}
 	
 	asentity function removeAll():void {
-		list_internal::unlinkAll( null );
+		while ( list_internal::first ) {
+			deleteNode( list_internal::first, true )
+		}
+	}
+	
+	[Inline]
+	private final function deleteNode( node:ComponentHandlerNode, disposeLinks:Boolean ):void {
+		delete _nodes[node.handler];
+		list_internal::unlink( node );
+		_nodeFactory.disposeNode( node, disposeLinks );
 	}
 }
 }
