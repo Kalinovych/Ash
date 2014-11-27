@@ -3,9 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems.api {
-public interface ISystem extends IUpdatable {
-	function onAdded():void;
-	
-	function onRemoved():void;
+public interface IUpdatable {
+	function update( time:Number ):void;
 }
 }

@@ -3,8 +3,6 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems {
-import ash.core.Node;
-
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
@@ -14,7 +12,8 @@ import flashrush.asentity.framework.systems.api.ISystemManager;
 import flashrush.collections.LLNode;
 import flashrush.collections.LinkedSet;
 import flashrush.collections.NodeLinker;
-import flashrush.collections.base.LLNodeBase;
+import flashrush.utils.getClass;
+import flashrush.utils.getClassName;
 
 use namespace asentity;
 
@@ -23,7 +22,7 @@ use namespace asentity;
  */
 public class SystemManager implements ISystemManager {
 	private var _list:NodeLinker = new NodeLinker();
-	private var _nodeMap:Dictionary/*<SystemClass, Node>*/ = new Dictionary();
+	private var _nodeMap:Dictionary/*<Class, SystemNode>*/ = new Dictionary();
 	private var _handlers:LinkedSet = new LinkedSet();
 	
 	public function SystemManager() {
@@ -35,27 +34,22 @@ public class SystemManager implements ISystemManager {
 	}
 	
 	public function add( system:ISystem, order:int = 0 ):void {
-		var type:Class = system.constructor;
+		const type:Class = getClass( system );
+		
 		if ( _nodeMap[type] ) {
-			remove( type );
+			//remove( type );
+			throw new ArgumentError( "A system of type " + getClassName( type ) + " already added to the SystemManager" );
 		}
 		
-		const node:SystemNode = new SystemNode();
-		node.system = system;
-		node.order = order;
+		storeSystem( type, system, order );
 		
-		_nodeMap[system] = node;
-		linkNode( node );
+		notifyHandlersSystemAdded( system );
 		
 		system.onAdded();
-		
-		// notify observers
-		var handlerNode:LLNode = _handlers.firstNode;
-		while ( handlerNode ) {
-			var handler:ISystemHandler = handlerNode.item;
-			handler.onSystemAdded( system );
-			handlerNode = handlerNode.nextNode;
-		}
+	}
+	
+	public function has( systemType:Class ):Boolean {
+		return _nodeMap[systemType];
 	}
 	
 	public function get( systemType:Class ):* {
@@ -63,7 +57,7 @@ public class SystemManager implements ISystemManager {
 		return ( node ? node.system : null );
 	}
 	
-	public function remove( systemOrType:* ):* {
+	public function remove( systemOrType:* ):ISystem {
 		const type:Class = ( systemOrType is Class ? systemOrType : systemOrType.constructor );
 		const systemNode:SystemNode = _nodeMap[type];
 		if ( !systemNode ) {
@@ -78,14 +72,6 @@ public class SystemManager implements ISystemManager {
 		
 		system.onRemoved();
 		
-		// notify observers
-		var handlerNode:LLNode = _handlers.firstNode;
-		while ( handlerNode ) {
-			var handler:ISystemHandler = handlerNode.item;
-			handler.onSystemRemoved( system );
-			handlerNode = handlerNode.nextNode;
-		}
-		
 		return system;
 	}
 	
@@ -93,6 +79,14 @@ public class SystemManager implements ISystemManager {
 		while ( _list.first ) {
 			const node:SystemNode = _list.first;
 			remove( node.system );
+		}
+	}
+	
+	public function update( delta:Number ):void {
+		var node:SystemNode = _list.first;
+		while ( node ) {
+			node.system.update( delta );
+			node = node.next;
 		}
 	}
 	
@@ -126,6 +120,18 @@ public class SystemManager implements ISystemManager {
 		_handlers.remove( handler );
 	}
 	
+	//-------------------------------------------
+	// Private
+	//-------------------------------------------
+	
+	private function storeSystem( systemType:Class, system:ISystem, order:int ):void {
+		const node:SystemNode = new SystemNode();
+		node.system = system;
+		node.order = order;
+		_nodeMap[systemType] = node;
+		linkNode( node );
+	}
+	
 	private function linkNode( node:SystemNode ):void {
 		var prevNode:SystemNode = _list.last;
 		while ( prevNode && prevNode.order > node.order ) {
@@ -138,5 +144,15 @@ public class SystemManager implements ISystemManager {
 			_list.linkFirst( node )
 		}
 	}
+	
+	private function notifyHandlersSystemAdded( system:ISystem ):void {
+		var handlerNode:LLNode = _handlers.firstNode;
+		while ( handlerNode ) {
+			var handler:ISystemHandler = handlerNode.item;
+			handler.onSystemRemoved( system );
+			handlerNode = handlerNode.nextNode;
+		}
+	}
+	
 }
 }

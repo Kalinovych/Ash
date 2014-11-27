@@ -12,7 +12,7 @@ public interface ISystemManager {
 	 * @param system system instance or Class
 	 * @return removed system instance or null if a system not found
 	 */
-	function remove( system:* ):*;
+	function remove( systemOrType:* ):ISystem;
 
 	function removeAll():void;
 

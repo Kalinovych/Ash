@@ -3,6 +3,8 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine.threads {
+import ash.core.Node;
+
 import ecs.engine.processes.api.IUpdateable;
 
 import flashrush.asentity.framework.api.asentity;

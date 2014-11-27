@@ -57,9 +57,7 @@ public class Engine {
 	}
 	
 	protected function initComponentMap():void {
-		var componentHandlerNotifier:ComponentHandlerProcessor = new ComponentHandlerProcessor();
-		_componentMap = new ComponentHandlerMap( componentHandlerNotifier );
-		_componentHandlerManager.register( componentHandlerNotifier );
+		_componentMap = new ComponentHandlerMap( _componentHandlerManager );
 	}
 	
 	protected function initAspectManager():void {

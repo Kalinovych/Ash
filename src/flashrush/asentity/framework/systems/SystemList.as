@@ -21,16 +21,20 @@ public class SystemList {
 		super();
 	}
 	
-	public final function get firstNode():Node {
+	public final function get firstNode():SystemNode {
 		return _list.first;
 	}
 	
-	public final function get lastNode():Node {
+	public final function get lastNode():SystemNode {
 		return _list.last;
 	}
 	
-	public final function length():uint {
+	public final function get length():uint {
 		return _list.length;
+	}
+	
+	public function addNode( node:SystemNode ):void {
+		
 	}
 	
 	public function add( system:ISystem, order:int = 0 ):void {
