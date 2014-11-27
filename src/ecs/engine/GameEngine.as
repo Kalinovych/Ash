@@ -15,7 +15,7 @@ import flashrush.asentity.extensions.entityMapExtension.EntityMap;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
-import flashrush.asentity.framework.systems.SystemCollection;
+import flashrush.asentity.framework.systems.SystemManager;
 
 use namespace asentity;
 
@@ -29,7 +29,7 @@ public class GameEngine {
 	public static const DISPOSED:int = sStateEnum++;
 
 	protected var _entityManager:EntityCollection;
-	protected var _systemManager:SystemCollection;
+	protected var _systemManager:SystemManager;
 
 	protected var _componentManager:ComponentHandler;
 	protected var _aspectManager:AspectManager;
@@ -99,7 +99,7 @@ public class GameEngine {
 
 	protected function initCore():void {
 		_entityManager = new EntityCollection();
-		_systemManager = new SystemCollection();
+		_systemManager = new SystemManager();
 	}
 
 	protected function initManagers():void {

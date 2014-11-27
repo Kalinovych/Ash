@@ -9,7 +9,7 @@ import com.flashrush.signals.ISignal;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.EntityCollection;
-import flashrush.asentity.framework.systems.SystemCollection;
+import flashrush.asentity.framework.systems.SystemManager;
 
 use namespace asentity;
 
@@ -19,11 +19,11 @@ public class ESEngine {
 	protected var _onPostUpdate:ISignal = new SignalPro( Number );
 
 	protected var _entities:EntityCollection;
-	protected var _systems:SystemCollection;
+	protected var _systems:SystemManager;
 
 	public function ESEngine() {
 		_entities = new EntityCollection();
-		_systems = new SystemCollection();
+		_systems = new SystemManager();
 	}
 
 	/* Entities */
@@ -62,7 +62,7 @@ public class ESEngine {
 		_systems.remove( system );
 	}
 
-	public function get systems():SystemCollection {
+	public function get systems():SystemManager {
 		return _systems;
 	}
 

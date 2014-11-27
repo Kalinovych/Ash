@@ -29,7 +29,7 @@ public/* abstract */class System implements ISystem {
 	// Internals
 	//-------------------------------------------
 	
-	asentity var priority:int = 0;
+	//asentity var priority:int = 0;
 	
 	
 	
