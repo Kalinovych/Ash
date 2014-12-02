@@ -4,11 +4,12 @@
  */
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.framework.systems.api.ISystem;
+import flashrush.asentity.framework.systems.mocks.MockSystem;
+import flashrush.asentity.framework.systems.mocks.MockSystem2;
+import flashrush.asentity.framework.systems.mocks.MockSystem3;
 
 import org.hamcrest.assertThat;
 import org.hamcrest.object.equalTo;
-import org.hamcrest.object.isFalse;
-import org.hamcrest.object.isTrue;
 import org.hamcrest.object.nullValue;
 import org.hamcrest.object.sameInstance;
 
@@ -31,16 +32,27 @@ public class SystemManagerTest {
 	}
 	
 	[Test]
+	public function addedSystemsLinkedInRightOrder():void {
+		const s1:ISystem = new MockSystem();
+		const s2:ISystem = new MockSystem2();
+		const s3:ISystem = new MockSystem3();
+		_manager.add( s3, 10 );
+		_manager.add( s1, 5 );
+		_manager.add( s2, 5 );
+		var node:SystemNode = _manager.firstSystemNode;
+		assertThat( node.system, sameInstance( s1 ));
+		node = node.next;
+		assertThat( node.system, sameInstance( s2 ));
+		node = node.next;
+		assertThat( node.system, sameInstance( s3 ));
+	}
+	
+	[Test]
 	public function retrieveSystemByType():void {
 		const system:ISystem = new MockSystem();
 		_manager.add( system );
 		
 		assertThat( _manager.get( MockSystem ), sameInstance( system ) );
-	}
-	
-	[Test]
-	public function get_returnNullIfSystemNotAdded():void {
-		assertThat( _manager.get( MockSystem ), nullValue() );
 	}
 	
 	[Test]
@@ -51,28 +63,29 @@ public class SystemManagerTest {
 	}
 	
 	
-	[Test(expects="ArgumentError")]
-	public function addingTwoSystemOfTheSameTypeThrowsError():void {
-		_manager.add( new MockSystem() );
-		_manager.add( new MockSystem() );
+	[Test]
+	public function sameSystemAddedTwiceStoredTwice():void {
+		const s:ISystem = new MockSystem();
+		_manager.add( s );
+		_manager.add( s );
+		assertThat( _manager.length, equalTo( 2 ) );
 	}
 	
 	
 	[Test]
-	public function has_returnTrueIfSystemOfTypeAdded():void {
-		_manager.add( new MockSystem() );
-		_manager.add( new MockSystem2() );
-		assertThat( _manager.has( MockSystem ), isTrue() );
-		assertThat( _manager.has( MockSystem2 ), isTrue() );
+	public function get_returnSystemByItType():void {
+		const s1:ISystem = new MockSystem();
+		const s2:ISystem = new MockSystem2();
+		_manager.add( s1 );
+		_manager.add( s2 );
+		assertThat( _manager.get( MockSystem2 ), sameInstance( s2 ) );
+		assertThat( _manager.get( MockSystem ), sameInstance( s1 ) );
 	}
-	
 	
 	[Test]
-	public function has_returnFalseIfSystemOfTypeNotAdded():void {
-		_manager.add( new MockSystem() );
-		assertThat( _manager.has( MockSystem2 ), isFalse() );
+	public function get_returnNullIfSystemNotAdded():void {
+		assertThat( _manager.get( MockSystem ), nullValue() );
 	}
-	
 	
 	[Test]
 	public function updateSystems():void {
@@ -83,26 +96,3 @@ public class SystemManagerTest {
 }
 }
 
-import flashrush.asentity.framework.systems.api.ISystem;
-
-class MockSystem implements ISystem {
-	public function onAdded():void {
-	}
-	
-	public function onRemoved():void {
-	}
-	
-	public function update( delta:Number ):void {
-	}
-}
-
-class MockSystem2 implements ISystem {
-	public function onAdded():void {
-	}
-	
-	public function onRemoved():void {
-	}
-	
-	public function update( delta:Number ):void {
-	}
-}

@@ -21,92 +21,90 @@ use namespace asentity;
  * Simple node-based system list implementation with observers
  */
 public class SystemManager implements ISystemManager {
-	private var _list:NodeLinker = new NodeLinker();
-	private var _nodeMap:Dictionary/*<Class, SystemNode>*/ = new Dictionary();
+	private var _linker:NodeLinker = new NodeLinker();
+	//private var _nodeMap:Dictionary/*<Class, SystemNode>*/ = new Dictionary();
 	private var _handlers:LinkedSet = new LinkedSet();
 	
 	public function SystemManager() {
 		super();
 	}
 	
-	public function get length():uint {
-		return _list.length;
+	public final function get length():uint {
+		return _linker.length;
+	}
+	
+	public final function get firstSystemNode():SystemNode {
+		return _linker.first;
+	}
+	
+	public final function get lastSystemNode():SystemNode {
+		return _linker.last;
 	}
 	
 	public function add( system:ISystem, order:int = 0 ):void {
-		const type:Class = getClass( system );
+		const node:SystemNode = new SystemNode();
+		node.system = system;
+		node.order = order;
 		
-		if ( _nodeMap[type] ) {
-			//remove( type );
-			throw new ArgumentError( "A system of type " + getClassName( type ) + " already added to the SystemManager" );
-		}
-		
-		storeSystem( type, system, order );
+		linkNode( node );
 		
 		notifyHandlersSystemAdded( system );
 		
 		system.onAdded();
 	}
 	
-	public function has( systemType:Class ):Boolean {
-		return _nodeMap[systemType];
-	}
-	
-	public function get( systemType:Class ):* {
-		const node:SystemNode = _nodeMap[systemType];
-		return ( node ? node.system : null );
-	}
-	
-	public function remove( systemOrType:* ):ISystem {
-		const type:Class = ( systemOrType is Class ? systemOrType : systemOrType.constructor );
-		const systemNode:SystemNode = _nodeMap[type];
-		if ( !systemNode ) {
-			return null;
+	public function remove( system:ISystem ):Boolean {
+		var node:SystemNode = firstSystemNode;
+		while ( node && node.system != system ) {
+			node = node.next;
 		}
 		
-		const system:ISystem = systemNode.system;
-		
-		delete _nodeMap[type];
-		_list.unlink( systemNode );
-		systemNode.system = null;
+		if ( node ) {
+			_linker.unlink( node );
+			node.system = null;
+		}
 		
 		system.onRemoved();
+		
+		notifyHandlersSystemRemoved( system );
 		
 		return system;
 	}
 	
 	public function removeAll():void {
-		while ( _list.first ) {
-			const node:SystemNode = _list.first;
+		while ( _linker.first ) {
+			const node:SystemNode = _linker.first;
 			remove( node.system );
 		}
 	}
 	
+	public function get( systemType:Class ):* {
+		var node:SystemNode = firstSystemNode;
+		while ( node ) {
+			if ( node.system is systemType ) {
+				return node.system;
+			}
+			node = node.next;
+		}
+		return null;
+	}
+	
 	public function update( delta:Number ):void {
-		var node:SystemNode = _list.first;
+		var node:SystemNode = _linker.first;
 		while ( node ) {
 			node.system.update( delta );
 			node = node.next;
 		}
 	}
 	
-	public function getOrderOf( system:* ):int {
-		const type:Class = ( system is Class ? system : system.constructor );
-		const systemNode:SystemNode = _nodeMap[type];
-		if ( !systemNode ) {
-			throw ArgumentError( "The system " + system + " not found!" )
-		}
-		return systemNode.order;
-	}
-	
 	public function getList( result:Vector.<ISystem> = null ):Vector.<ISystem> {
 		if ( result ) {
-			result.length = _list.length;
+			result.length = _linker.length;
 		} else {
-			result = new Vector.<ISystem>( _list.length );
+			result = new Vector.<ISystem>( _linker.length );
 		}
 		var i:int = 0;
-		for ( var node:SystemNode = _list.first; node; node = node.next, ++i ) {
+		for ( var node:SystemNode = _linker.first; node; node = node.next, ++i ) {
 			result[i] = node.system;
 		}
 		return result;
@@ -124,28 +122,29 @@ public class SystemManager implements ISystemManager {
 	// Private
 	//-------------------------------------------
 	
-	private function storeSystem( systemType:Class, system:ISystem, order:int ):void {
-		const node:SystemNode = new SystemNode();
-		node.system = system;
-		node.order = order;
-		_nodeMap[systemType] = node;
-		linkNode( node );
-	}
-	
 	private function linkNode( node:SystemNode ):void {
-		var prevNode:SystemNode = _list.last;
+		var prevNode:SystemNode = _linker.last;
 		while ( prevNode && prevNode.order > node.order ) {
 			prevNode = prevNode.prev;
 		}
 		
 		if ( prevNode ) {
-			_list.linkAfter( node, prevNode );
+			_linker.linkAfter( node, prevNode );
 		} else {
-			_list.linkFirst( node )
+			_linker.linkFirst( node )
 		}
 	}
 	
 	private function notifyHandlersSystemAdded( system:ISystem ):void {
+		var handlerNode:LLNode = _handlers.firstNode;
+		while ( handlerNode ) {
+			var handler:ISystemHandler = handlerNode.item;
+			handler.onSystemAdded( system );
+			handlerNode = handlerNode.nextNode;
+		}
+	}
+	
+	private function notifyHandlersSystemRemoved( system:ISystem ):void {
 		var handlerNode:LLNode = _handlers.firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.item;

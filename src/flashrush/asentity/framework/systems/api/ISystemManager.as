@@ -3,16 +3,20 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems.api {
+import flashrush.asentity.framework.systems.SystemNode;
+
 public interface ISystemManager {
+	function get length():uint;
+	
+	function get firstSystemNode():SystemNode;
+	
+	function get lastSystemNode():SystemNode;
+	
 	function add( system:ISystem, order:int = 0 ):void;
 
 	function get( systemType:Class ):*;
 
-	/**
-	 * @param system system instance or Class
-	 * @return removed system instance or null if a system not found
-	 */
-	function remove( systemOrType:* ):ISystem;
+	function remove( system:ISystem ):Boolean;
 
 	function removeAll():void;
 
