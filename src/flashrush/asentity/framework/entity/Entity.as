@@ -304,16 +304,15 @@ public class Entity {
 	 *
 	 * @return An array containing all the components that are on the entity.
 	 */
-	public function getAll( dest:Array = null ):Array {
-		if (dest)
-			dest.length = _componentCount;
-		else dest = [];
+	public function getAll( output:Array = null ):Array {
+		if (output) output.length = _componentCount;
+		else output = [];
 		
 		var i:int = 0;
 		for each( var component:* in _components ) {
-			dest[i++] = component;
+			output[i++] = component;
 		}
-		return dest;
+		return output;
 	}
 	
 	public function toString():String {
