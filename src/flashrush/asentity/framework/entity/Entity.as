@@ -82,14 +82,14 @@ public class Entity {
 	 *     .add( new Display( new PlayerClip() );</code>
 	 */
 	public function add( component:Object, type:Class = null ):Entity {
-		if ( !type ) {
+		if (!type) {
 			type = component.constructor;
 		}
 		
 		// if already contains a component of the type, remove it first
 		const current:* = _components[type];
-		if ( current ) {
-			if ( component === current ) {
+		if (current) {
+			if (component === current) {
 				return this;
 			}
 			remove( type );
@@ -124,12 +124,12 @@ public class Entity {
 	 */
 	public function remove( type:Class ):* {
 		var component:* = _components[type];
-		if ( !component ) {
+		if (!component) {
 			return null;
 		}
 		
-		delete _components[type];
 		--_componentCount;
+		delete _components[type];
 		
 		var node:ComponentHandlerNode = componentHandlers.firstNode;
 		while ( node ) {
@@ -222,12 +222,12 @@ public class Entity {
 	 *   removeOne
 	 */
 	public function append( component:Object, type:Class = null ):Entity {
-		if ( !type ) {
+		if (!type) {
 			type = component.constructor;
 		}
 		var current:* = _components[type];
-		if ( current ) {
-			if ( component === current ) {
+		if (current) {
+			if (component === current) {
 				return this;
 			}
 			
@@ -250,23 +250,23 @@ public class Entity {
 		type ||= component.constructor;
 		
 		const head:Object = _components[type];
-		if ( !head ) {
+		if (!head) {
 			return null;
 		}
 		
-		if ( head == component && !head.next ) {
+		if (head == component && !head.next) {
 			return remove( type );
 		}
 		
 		for ( var item:* = head; item; item = item.next ) {
 			// found
-			if ( item == component ) {
-				if ( component == head ) {
+			if (item == component) {
+				if (component == head) {
 					_components[type] = component.next;
 					component.next.prev = null;
 				} else {
 					component.prev.next = component.next;
-					if ( component.next ) {
+					if (component.next) {
 						component.next.prev = component.prev;
 					}
 				}
@@ -305,7 +305,7 @@ public class Entity {
 	 * @return An array containing all the components that are on the entity.
 	 */
 	public function getAll( dest:Array = null ):Array {
-		if ( dest )
+		if (dest)
 			dest.length = _componentCount;
 		else dest = [];
 		

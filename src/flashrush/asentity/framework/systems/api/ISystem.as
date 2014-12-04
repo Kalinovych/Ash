@@ -3,7 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems.api {
-public interface ISystem extends IUpdatable {
+public interface ISystem {
 	function onAdded():void;
 	
 	function onRemoved():void;
