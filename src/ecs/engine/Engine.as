@@ -3,9 +3,8 @@
  * @author Alexander Kalinovych
  */
 package ecs.engine {
-import flashrush.asentity.extensions.aspects.NodeList;
 import flashrush.asentity.extensions.aspects.AspectManager;
-import flashrush.asentity.extensions.componentHandlerMap.ComponentHandlerProcessor;
+import flashrush.asentity.extensions.aspects.NodeList;
 import flashrush.asentity.extensions.componentHandlerMap.ComponentHandlerMap;
 import flashrush.asentity.extensions.componentHandlerMap.api.IComponentHandlerMap;
 import flashrush.asentity.framework.components.ComponentHandlerManager;

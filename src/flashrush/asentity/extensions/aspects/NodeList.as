@@ -5,7 +5,7 @@
 package flashrush.asentity.extensions.aspects {
 import ash.signals.Signal1;
 
-import flashrush.collections.NodeLinker;
+import flashrush.collections.framework.InlineNodeLinker;
 
 /**
  *
@@ -43,7 +43,7 @@ public class NodeList {
 // Internal fields
 //-------------------------------------------
 	
-	internal var nodes:NodeLinker = new NodeLinker();
+	internal var nodes:InlineNodeLinker = new InlineNodeLinker();
 	
 //-------------------------------------------
 // Constructor

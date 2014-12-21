@@ -3,30 +3,15 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.components {
-import flashrush.collections.base.LLNodeBase;
-import flashrush.collections.list_internal;
-
-use namespace list_internal;
-
-public class ComponentHandlerNode extends LLNodeBase {
+public class ComponentHandlerNode {
 	
 	public function ComponentHandlerNode( item:IComponentHandler = null ) {
-		super( item );
+		handler = item;
 	}
 	
 	public var handler:IComponentHandler;
 	
-	/*public final function get handler():IComponentHandler {
-		return list_internal::item;
-	}*/
-	
-	public final function get nextNode():ComponentHandlerNode {
-		return list_internal::next;
-	}
-	
-	public final function get prevNode():ComponentHandlerNode {
-		return list_internal::prev;
-	}
-	
+	public var prev:ComponentHandlerNode;
+	public var next:ComponentHandlerNode;
 }
 }

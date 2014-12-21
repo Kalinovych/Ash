@@ -10,9 +10,6 @@ import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.asentity.framework.systems.SystemList;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
-import flashrush.collections.InternalLinkedSet;
-import flashrush.collections.base.LLNodeBase;
-import flashrush.collections.list_internal;
 
 use namespace asentity;
 

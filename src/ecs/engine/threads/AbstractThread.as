@@ -6,7 +6,6 @@ package ecs.engine.threads {
 import ecs.engine.processes.api.IProcess;
 
 import flashrush.asentity.framework.api.asentity;
-import flashrush.collections.LinkedSet;
 
 use namespace asentity;
 

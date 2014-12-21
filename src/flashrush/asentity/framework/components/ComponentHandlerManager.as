@@ -57,7 +57,7 @@ public class ComponentHandlerManager implements IComponentHandlerManager {
 		var node:ComponentHandlerNode = _handlers.firstNode;
 		while ( node ) {
 			entity.addComponentHandler( node.handler );
-			node = node.nextNode;
+			node = node.next;
 		}
 		
 		// if the new entity already contains some components
@@ -68,7 +68,7 @@ public class ComponentHandlerManager implements IComponentHandlerManager {
 				node = _handlers.firstNode;
 				while ( node ) {
 					node.handler.handleComponentAdded( components[componentType], componentType, entity );
-					node = node.nextNode;
+					node = node.next;
 				}
 			}
 		}
@@ -84,7 +84,7 @@ public class ComponentHandlerManager implements IComponentHandlerManager {
 			node = _handlers.lastNode;
 			while ( node ) {
 				node.handler.handleComponentRemoved( components[componentType], componentType, entity );
-				node = node.prevNode;
+				node = node.prev;
 			}
 			
 		}
@@ -93,7 +93,7 @@ public class ComponentHandlerManager implements IComponentHandlerManager {
 		node = _handlers.firstNode;
 		while ( node ) {
 			entity.removeComponentHandler( node.handler );
-			node = node.nextNode;
+			node = node.next;
 		}
 		
 	}

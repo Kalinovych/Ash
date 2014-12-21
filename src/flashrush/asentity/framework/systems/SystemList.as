@@ -3,13 +3,10 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.framework.systems {
-import ash.core.Node;
-
 import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
-import flashrush.collections.NodeLinker;
 
 use namespace asentity;
 

@@ -11,9 +11,8 @@ import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
 import flashrush.asentity.framework.utils.BitFactory;
 import flashrush.asentity.framework.utils.BitSign;
-import flashrush.collections.LinkedMap;
-import flashrush.collections.base.LLNodeBase;
-import flashrush.collections.list_internal;
+import flashrush.collections.fast.LinkedMap;
+import flashrush.collections.fast.core.LinkedNode;
 
 use namespace asentity;
 
@@ -43,7 +42,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 		var family:AspectFamily = families.get( type );
 		if ( !family ) {
 			family = createFamily( type );
-			families.put( type, family );
+			families.add( type, family );
 		}
 		return family.aspects;
 	}
@@ -59,9 +58,7 @@ public class AspectManager implements IAspectManager, IEntityHandler {
 	
 	/** @private **/
 	public function handleEntityRemoved( entity:Entity ):void {
-		use namespace list_internal;
-		
-		for ( var node:LLNodeBase = families.first; node; node = node.next ) {
+		for ( var node:LinkedNode = families.firstNode; node; node = node.next ) {
 			const family:AspectFamily = node.item;
 			if ( family.aspectByEntity[entity] ) {
 				family.removeQualifiedEntity( entity );

@@ -5,6 +5,7 @@
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
+import flashrush.assert;
 
 import mockolate.mock;
 import mockolate.nice;
@@ -33,32 +34,41 @@ public class SystemManagerTest {
 	[Mock(inject=false)]
 	public var handlerMock:ISystemHandler;
 	
+	
+	private var system:System;
+	private var system2:System;
+	private var system3:System;
+	
 	[Before]
 	public function setUp():void {
 		manager = new SystemManager();
+		system = new System();
+		system2 = new System();
+		system3 = new System();
 	}
 	
 	[After]
 	public function tearDown():void {
 		manager = null;
+		system = null;
+		system2 = null;
+		system3 = null;
 	}
 	
 	[Test]
 	public function add_linksSystemInTheManager():void {
-		const s:System = new System();
-		manager.add( s );
-		assertThat( manager.first, sameInstance( s ) );
-		assertThat( manager.last, sameInstance( s ) );
+		assert(manager).instanceOf(SystemManager);
+		
+		manager.add( system );
+		assertThat( manager.first, sameInstance( system ) );
+		assertThat( manager.last, sameInstance( system ) );
 	}
 	
 	[Test]
 	public function addedSystems_linkedInAscendingOrder():void {
-		const s1:System = new System();
-		const s2:System = new System();
-		const s3:System = new System();
-		manager.add( s1, 10 );
-		manager.add( s2, 1 );
-		manager.add( s3, 5 );
+		manager.add( system, 10 );
+		manager.add( system2, 1 );
+		manager.add( system3, 5 );
 		
 		var s:System = manager.first;
 		while ( s.next ) {
@@ -67,26 +77,20 @@ public class SystemManagerTest {
 		}
 	}
 	
-	
 	[Test]
 	public function systemsAddedWithSameOrderStoredInOrderTheyAdded():void {
-		const s1:System = new System();
-		const s2:System = new System();
-		const s3:System = new System();
-		manager.add( s1, 5 );
-		manager.add( s2, 5 );
-		manager.add( s3, 5 );
+		manager.add( system, 5 );
+		manager.add( system2, 5 );
+		manager.add( system3, 5 );
 		
-		assertThat( manager.first, sameInstance( s1 ) );
-		assertThat( manager.first.next, sameInstance( s2 ) );
-		assertThat( manager.first.next.next, sameInstance( s3 ) );
+		assertThat( manager.first, sameInstance( system ) );
+		assertThat( manager.first.next, sameInstance( system2 ) );
+		assertThat( manager.first.next.next, sameInstance( system3 ) );
 	}
 	
 	[Test]
-	public function add_returnReferenceToSystemManager():void {
-		const s:System = new System();
-		const result:* = manager.add( s );
-		assertThat( result, sameInstance( manager ) );
+	public function add_returnsReferenceToSelf():void {
+		assertThat( manager.add( system ), sameInstance( manager ) );
 	}
 	
 	[Test(expects="TypeError")]
@@ -94,39 +98,27 @@ public class SystemManagerTest {
 		manager.add( null );
 	}
 	
-	[Test]
-	public function add_callsSystemOnAdded():void {
-		const system:System = strict( System );
-		mock( system ).method( "onAdded" ).noArgs().once();
-		manager.add( system );
-		verify( system );
-	}
-	
 	
 	[Test(expects="ArgumentError")]
 	public function addingSystemThatAlreadyAdded_throwsError():void {
-		const s:System = new System();
-		manager.add( s );
-		manager.add( s );
+		manager.add( system );
+		manager.add( system );
 	}
 	
 	[Test]
 	public function remove_unlinksTheSystemFromManager():void {
-		const s:System = new System();
-		manager.add( s );
-		manager.remove( s );
+		manager.add( system );
+		manager.remove( system );
 		assertThat( manager.first, nullValue() );
 	}
 	
 	[Test]
 	public function remove_updatesSystemCounter():void {
-		const s1:System = new System();
-		const s2:System = new System();
-		manager.add( s1 );
-		manager.add( s2 );
-		manager.remove( s1 );
+		manager.add( system );
+		manager.add( system2 );
+		manager.remove( system );
 		assertEquals( 1, manager.numSystems );
-		manager.remove( s2 );
+		manager.remove( system2 );
 		assertEquals( 0, manager.numSystems );
 	}
 	
@@ -137,20 +129,26 @@ public class SystemManagerTest {
 	
 	[Test(expects="ArgumentError")]
 	public function removingNotContainedSystem_throwsError():void {
-		const s:System = new System();
-		manager.remove( s );
+		manager.remove( system );
 	}
 	
 	[Test]
-	public function remove_callsSystemOnRemoved():void {
+	public function shouldCallSystems_onAdded_whenSystemAdded():void {
+		const system:System = strict( System );
+		mock( system ).method( "onAdded" ).noArgs().once();
+		manager.add( system );
+		verify( system );
+	}
+	
+	[Test]
+	public function shouldCallSystems_onRemoved_whenSystemRemoved():void {
 		const system:System = strict( System );
 		mock( system ).method( "onAdded" );
 		mock( system ).method( "onRemoved" ).noArgs().once();
 		manager.add( system );
 		manager.remove( system );
-		//verify( system );
+		verify( system );
 	}
-	
 	
 	[Test]
 	public function remove_setsTheSystemManagerToNull():void {
@@ -270,39 +268,44 @@ public class SystemManagerTest {
 		}
 	}
 	
-	
 	[Test]
-	public function registerSystemHandler():void {
+	public function canRegisterSystemHandler():void {
 		const handler:ISystemHandler = nice(ISystemHandler);
 		manager.registerHandler(handler);
 	}
 	
-	
 	[Test]
-	public function registeredHandlerNotifiedSystemAdded():void {
-		const s:System = new System();
-		const h:ISystemHandler = strict(ISystemHandler);
+	public function shouldNotifyHandlersWhenSystemAdded():void {
+		const handler:ISystemHandler = strict(ISystemHandler);
+		const handler2:ISystemHandler = strict(ISystemHandler);
 		
-		mock(h).method("onSystemAdded").args(s).once();
+		mock(handler).method("onSystemAdded").args(system).once();
+		mock(handler2).method("onSystemAdded").args(system).once();
 		
-		manager.registerHandler(h);
-		manager.add(s);
+		manager.registerHandler(handler);
+		manager.registerHandler(handler2);
 		
-		verify(h);
+		manager.add(system);
+		
+		verify(handler);
+		verify(handler2);
 	}
 	
 	[Test]
-	public function registeredHandlerNotifiedSystemRemoved():void {
-		const s:System = new System();
-		const h:ISystemHandler = strict(ISystemHandler);
+	public function shouldNotifyHandlersWhenSystemRemoved():void {
+		const handler:ISystemHandler = strict(ISystemHandler);
+		const handler2:ISystemHandler = strict(ISystemHandler);
 		
-		mock(h).method("onSystemRemoved").args(s).once();
+		mock(handler).method("onSystemRemoved").args(system).once();
+		mock(handler2).method("onSystemRemoved").args(system).once();
 		
-		manager.add(s);
-		manager.registerHandler(h);
-		manager.remove(s);
+		manager.add(system);
+		manager.registerHandler(handler);
+		manager.registerHandler(handler2);
+		manager.remove(system);
 		
-		verify(h);
+		verify(handler);
+		verify(handler2);
 	}
 	
 	

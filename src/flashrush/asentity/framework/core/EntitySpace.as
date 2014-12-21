@@ -8,9 +8,8 @@ import flash.errors.IllegalOperationError;
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.Entity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
-import flashrush.collections.LinkedSet;
-import flashrush.collections.base.LLNodeBase;
-import flashrush.collections.list_internal;
+import flashrush.collections.fast.LinkedSet;
+import flashrush.collections.fast.core.LinkedNode;
 
 use namespace asentity;
 
@@ -55,19 +54,19 @@ public class EntitySpace {
 	public final function get entityCount():uint {
 		return _entities.length;
 	}
-	
+
 //-------------------------------------------
 // Public methods
 //-------------------------------------------
 	
 	public function add( entity:Entity ):Entity {
 		CONFIG::debug{
-			if ( entity.space && entity.space != this ) {
+			if (entity.space && entity.space != this) {
 				throw new IllegalOperationError( "The entity belongs to an other space and can't be added!" );
 			}
 		}
 		
-		if ( !entity.space ) {
+		if (!entity.space) {
 			_entities.link( entity );
 			$processAddedEntity( entity );
 		}
@@ -80,12 +79,12 @@ public class EntitySpace {
 	
 	public function remove( entity:Entity ):Entity {
 		CONFIG::debug{
-			if ( entity.space && entity.space != this ) {
+			if (entity.space && entity.space != this) {
 				throw new IllegalOperationError( "The entity belongs to an other space and can't be removed from this one." );
 			}
 		}
 		
-		if ( entity.space == this ) {
+		if (entity.space == this) {
 			_entities.unlink( entity );
 			$processRemovedEntity( entity );
 		}
@@ -95,7 +94,7 @@ public class EntitySpace {
 	public function removeAll():void {
 		_entities.unlinkAll( $processRemovedEntity );
 	}
-	
+
 //-------------------------------------------
 // Framework internals
 //-------------------------------------------
@@ -114,9 +113,8 @@ public class EntitySpace {
 	
 	[Inline]
 	protected final function $processAddedEntity( entity:Entity ):void {
-		use namespace list_internal;
 		
-		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
+		for ( var node:LinkedNode = _handlers.firstNode; node; node = node.next ) {
 			const handler:IEntityHandler = node.item;
 			handler.handleEntityAdded( entity );
 		}
@@ -124,9 +122,7 @@ public class EntitySpace {
 	
 	[Inline]
 	protected final function $processRemovedEntity( entity:Entity ):void {
-		use namespace list_internal;
-		
-		for ( var node:LLNodeBase = _handlers.firstNode; node; node = node.next ) {
+		for ( var node:LinkedNode = _handlers.firstNode; node; node = node.next ) {
 			const handler:IEntityHandler = node.item;
 			handler.handleEntityRemoved( entity );
 		}

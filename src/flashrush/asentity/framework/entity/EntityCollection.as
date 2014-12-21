@@ -7,7 +7,6 @@ import flash.utils.Dictionary;
 
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.entity.api.IEntityHandler;
-import flashrush.collections.base.LinkedListBase;
 
 use namespace asentity;
 use namespace gdf_core;

@@ -7,7 +7,6 @@ import flashrush.asentity.framework.components.ComponentHandlerNode;
 import flashrush.asentity.framework.components.IComponentHandler;
 import flashrush.asentity.framework.core.EntitySpace;
 import flashrush.asentity.framework.utils.BitSign;
-import flashrush.collections.list_internal;
 import flashrush.utils.getClassName;
 
 use namespace asentity;
@@ -102,7 +101,7 @@ public class Entity {
 		var node:ComponentHandlerNode = componentHandlers.firstNode;
 		while ( node ) {
 			node.handler.handleComponentRemoved( component, type, this );
-			node = node.nextNode;
+			node = node.next;
 		}
 		
 		return this;
@@ -133,9 +132,8 @@ public class Entity {
 		
 		var node:ComponentHandlerNode = componentHandlers.firstNode;
 		while ( node ) {
-			const handler:IComponentHandler = node.list_internal::item;
-			handler.handleComponentRemoved( component, type, this );
-			node = node.list_internal::next;
+			node.handler.handleComponentRemoved( component, type, this );
+			node = node.next;
 		}
 		return component;
 	}

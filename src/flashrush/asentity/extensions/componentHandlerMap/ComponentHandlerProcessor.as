@@ -22,7 +22,7 @@ public class ComponentHandlerProcessor implements IComponentHandler {
 	public function handleComponentAdded( component:*, componentType:Class, entity:Entity ):void {
 		const handlers:ComponentHandlerList = _handlers[componentType];
 		if ( handlers ) {
-			for ( var node:ComponentHandlerNode = handlers.firstNode; node; node = node.nextNode ) {
+			for ( var node:ComponentHandlerNode = handlers.firstNode; node; node = node.next ) {
 				node.handler.handleComponentAdded( component, componentType, entity );
 			}
 		}
@@ -31,7 +31,7 @@ public class ComponentHandlerProcessor implements IComponentHandler {
 	public function handleComponentRemoved( component:*, componentType:Class, entity:Entity ):void {
 		const handlers:ComponentHandlerList = _handlers[componentType];
 		if ( handlers ) {
-			for ( var node:ComponentHandlerNode = handlers.firstNode; node; node = node.nextNode ) {
+			for ( var node:ComponentHandlerNode = handlers.firstNode; node; node = node.next ) {
 				node.handler.handleComponentRemoved( component, componentType, entity );
 			}
 		}

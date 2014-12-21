@@ -5,8 +5,8 @@
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
-import flashrush.collections.LLNode;
-import flashrush.collections.LinkedSet;
+import flashrush.collections.fast.LinkedSet;
+import flashrush.collections.fast.core.LinkedNode;
 
 use namespace asentity;
 
@@ -39,7 +39,7 @@ public class SystemManager {
 		system.manager = this;
 		system.order = order;
 		link( system );
-		for ( var handlerNode:LLNode = _handlers.firstNode; handlerNode; handlerNode = handlerNode.nextNode ) {
+		for ( var handlerNode:LinkedNode = _handlers.firstNode; handlerNode; handlerNode = handlerNode.next ) {
 			const handler:ISystemHandler = handlerNode.item;
 			handler.onSystemAdded( system );
 		}
@@ -58,7 +58,7 @@ public class SystemManager {
 		
 		--_numSystems;
 		unlink( system );
-		for ( var handlerNode:LLNode = _handlers.lastNode; handlerNode; handlerNode = handlerNode.prevNode ) {
+		for ( var handlerNode:LinkedNode = _handlers.lastNode; handlerNode; handlerNode = handlerNode.prev ) {
 			const handler:ISystemHandler = handlerNode.item;
 			handler.onSystemRemoved( system );
 		}

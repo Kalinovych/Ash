@@ -3,9 +3,7 @@
  * @author Alexander Kalinovych
  */
 package flashrush.asentity.extensions.aspects {
-import flashrush.collections.base.LLNodeBase;
-
-public class FamilyNode extends LLNodeBase {
+public class FamilyNode {
 	public var family:AspectFamily;
 	
 	public var prev:FamilyNode;

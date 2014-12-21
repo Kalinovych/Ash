@@ -7,9 +7,9 @@ import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystem;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
 import flashrush.asentity.framework.systems.api.ISystemManager;
-import flashrush.collections.LLNode;
-import flashrush.collections.LinkedSet;
-import flashrush.collections.NodeLinker;
+import flashrush.collections.fast.LinkedSet;
+import flashrush.collections.fast.core.LinkedNode;
+import flashrush.collections.framework.InlineNodeLinker;
 
 use namespace asentity;
 
@@ -17,7 +17,7 @@ use namespace asentity;
  * Simple node-based system list implementation with observers
  */
 public class SystemNodeManager implements ISystemManager {
-	private var _linker:NodeLinker = new NodeLinker();
+	private var _linker:InlineNodeLinker = new InlineNodeLinker();
 	//private var _nodeMap:Dictionary/*<Class, SystemNode>*/ = new Dictionary();
 	private var _handlers:LinkedSet = new LinkedSet();
 	
@@ -132,20 +132,20 @@ public class SystemNodeManager implements ISystemManager {
 	}
 	
 	private function notifyHandlersSystemAdded( system:ISystem ):void {
-		var handlerNode:LLNode = _handlers.firstNode;
+		var handlerNode:LinkedNode = _handlers.firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.item;
 			handler.onSystemAdded( system );
-			handlerNode = handlerNode.nextNode;
+			handlerNode = handlerNode.next;
 		}
 	}
 	
 	private function notifyHandlersSystemRemoved( system:ISystem ):void {
-		var handlerNode:LLNode = _handlers.firstNode;
+		var handlerNode:LinkedNode = _handlers.firstNode;
 		while ( handlerNode ) {
 			var handler:ISystemHandler = handlerNode.item;
 			handler.onSystemRemoved( system );
-			handlerNode = handlerNode.nextNode;
+			handlerNode = handlerNode.next;
 		}
 	}
 	
