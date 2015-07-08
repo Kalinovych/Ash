@@ -5,8 +5,7 @@
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.framework.api.asentity;
 
-public/* abstract */
-class System {
+public/* abstract */class System {
 	
 	
 	public function System() {}

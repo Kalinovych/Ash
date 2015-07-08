@@ -67,8 +67,8 @@ public class ESEngine {
 	}
 
 	/* Processing */
-	public function update( deltaTime:Number ):void {
-		
+	public function update( step:Number ):void {
+		_systems.update( step );
 	}
 }
 }
