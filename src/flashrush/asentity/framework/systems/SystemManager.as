@@ -5,7 +5,7 @@
 package flashrush.asentity.framework.systems {
 import flashrush.asentity.framework.api.asentity;
 import flashrush.asentity.framework.systems.api.ISystemHandler;
-import flashrush.collections.fast.LinkedSet;
+import flashrush.collections.LinkedSet;
 import flashrush.collections.fast.core.LinkedNode;
 
 use namespace asentity;
